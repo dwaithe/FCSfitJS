@@ -1,11 +1,21 @@
 # FoCuS-fit-JS
 FoCuS-fit-JS is a javascript browser based software for fitting correlated FCS (Fluorescence Correlation Spectroscopy) curves. This is browser version of the fitting software previously included with FoCuS-point and FoCuS-scan Python software. 
 
+### Software
+
 Click here to visit and use the software - https://dwaithe.github.io/FCSfitJS/
+
+### Supported Files  
+
+At this time, FoCuS-fit-JS supports correlated files of the following types.  
+- Zeiss FCS files Version >= 3.0 (.fcs files)  
+- Correlator.com files Version >= 1.0 (.sin files)  
+- FoCuS-point/scan correlated files Version >=2.0 (.csv files)  
+If you have a file which is not presently supported, but you would like to fit with this software, then please submit a request in the below cited Issues section.
 
 ### Issues
 
-Found a bug, have a question, or want to suggest a feature? Please visit the following page and regsiter your issue: https://github.com/dwaithe/FCSfitJS/issues
+Found a bug, have a question, or want to suggest a feature? Please visit the following page and register your issue: https://github.com/dwaithe/FCSfitJS/issues
 
 ### Offline use  
 
