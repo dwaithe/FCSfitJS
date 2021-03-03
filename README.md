@@ -7,10 +7,12 @@ Click here to visit and use the software - https://dwaithe.github.io/FCSfitJS/
 
 ### Supported Files  
 
-At this time, FoCuS-fit-JS supports correlated files of the following types.  
+At this time, FoCuS-fit-JS supports correlated files of the following types: 
+
 - Zeiss FCS files Version >= 3.0 (.fcs files)  
 - Correlator.com files Version >= 1.0 (.sin files)  
 - FoCuS-point/scan correlated files Version >=2.0 (.csv files)  
+
 If you have a file which is not presently supported, but you would like to fit with this software, then please submit a request in the below cited Issues section.
 
 ### Issues
