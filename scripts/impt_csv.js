@@ -1,26 +1,8 @@
 //Part of the controller. The classes and methods here are for parsing input files to populate model.
 
 
-var check_version = function(line){
-	
-		if (lines[0].split(",")[1] == 2){
-			console.log('version 2.0')
-			 return true
-
-		}else{console.log('unsupported file version',lines[0].split[1]);
-				return false;
-		}
-}
-
-
-
-
-
 
 var parse_csv = function(feed,filepath){
-
-
-
 
 	metadata = {}
 	lines = feed.split("\n")
@@ -80,7 +62,7 @@ var parse_csv = function(feed,filepath){
 	//Populate objects
 	if(parseInt(metadata['numOfCH']) == 1){
 		corrObj1 = new CorrObj(filepath)
-		fit_obj.objIdArr.push(corrObj1)
+		
 		corrObj1.autoNorm = autoNorm
 		corrObj1.autotime = autotime
 		corrObj1.max = d3.max(autoNorm)
@@ -153,7 +135,7 @@ var parse_csv = function(feed,filepath){
 			{corrObj1.name = corrObj1.name+"-CH"+corrObj1.ch_type}
 
 		corrObj1.param = JSON.parse(JSON.stringify(fit_obj.def_param))
-		
+		fit_obj.objIdArr.push(corrObj1)
 
 
 	}else if (metadata['numOfCH'] ==2){
@@ -162,9 +144,7 @@ var parse_csv = function(feed,filepath){
 		corrObj2 = new CorrObj(filepath);
 		corrObj3 = new CorrObj(filepath);
 		
-		fit_obj.objIdArr.push(corrObj1);
-		fit_obj.objIdArr.push(corrObj2);
-		fit_obj.objIdArr.push(corrObj3);
+		
 		
 		corrObj1.autoNorm = autoNorm[0]
 		corrObj1.max = d3.max(autoNorm[0])
@@ -260,14 +240,20 @@ var parse_csv = function(feed,filepath){
 		corrObj2.param = JSON.parse(JSON.stringify(fit_obj.def_param))
 		corrObj3.param = JSON.parse(JSON.stringify(fit_obj.def_param))
 		
-	
-
-
-
+		fit_obj.objIdArr.push(corrObj1);
+		fit_obj.objIdArr.push(corrObj2);
+		fit_obj.objIdArr.push(corrObj3);
 	}
+}
 
 
-	 
+var check_version = function(line){
+	
+		if (lines[0].split(",")[1] == 2){
+			console.log('version 2.0')
+			 return true
 
-
+		}else{console.log('unsupported file version',lines[0].split[1]);
+				return false;
+		}
 }

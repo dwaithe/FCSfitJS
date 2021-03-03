@@ -680,11 +680,15 @@ var open_file_imprt = function(event){
       for (var i = 0; i < input.files.length; i++) {
         reader[i] = new FileReader();
         reader[i].onload = function(ev){
-      
-        parse_data = parse_csv(ev.currentTarget.result,input.files[count].name)
+      	namestr = input.files[count].name.split(".");
+      	ext = namestr[namestr.length-1];
+      	console.log('ext',ext)
+      	if(ext == 'csv') parse_data = parse_csv(ev.currentTarget.result,input.files[count].name)
+      	else if(ext == 'fcs') parse_data = parse_fcs(ev.currentTarget.result,input.files[count].name)
+        else if(ext == 'sin' || ext == 'SIN') parse_data = parse_sin(ev.currentTarget.result,input.files[count].name)
         
         if(parse_data == false){
-          console.log("There was a problem reading file: ",input.files[count].name)
+          console.log("There was a problem reading file: ",input.files[count].name,ext)
 
         }
         count +=1
