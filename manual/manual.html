@@ -1,0 +1,304 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    
+
+    <title>FoCuS-fit-JS Manual</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../scripts/bootstrap.min.css" rel="stylesheet">
+
+
+    <!-- Custom styles for this template -->
+    <link href="../scripts/blog.css" rel="stylesheet">
+    <style type="text/css">
+      
+
+      .displayed {
+  margin: 1ex auto;
+  display: table;
+  text-align: center;
+  width: 100%;
+}
+
+.eqn {
+  vertical-align: middle;
+}
+
+.eqno {
+  display: table-cell;
+  text-align: left;
+}
+
+    </style>
+
+  </head>
+
+  <body>
+
+    <div class="blog-masthead">
+      <div class="container">
+        <nav class="blog-nav">
+          <a class="blog-nav-item active" href="#">Home</a>
+          <a class="blog-nav-item" href="#">New features</a>
+          <a class="blog-nav-item" href="#">Press</a>
+          <a class="blog-nav-item" href="#">New hires</a>
+          <a class="blog-nav-item" href="#">About</a>
+        </nav>
+      </div>
+    </div>
+<div class="container-fluid">
+<div class="row">
+      <div class="col-md-6">
+        <div class="blog-post">
+
+                  <h1 class="blog-title">The FoCuS-fit-JS Manual</h1>
+        <p class="lead blog-description">The official manual for fitting FCS curves with FoCuS-fit-JS.</p>
+        <h3>FoCuS-fit-JS interface</h3>
+                  <img  src="images/screenshot.png"  class="img-fluid">
+                  <p> Figure 1) Overview image of FoCuS-fit-JS Interface.</p>
+      <p> FoCuS-fit-JS is browser-based software designed for the bulk fitting of Fluorescence Correlation Spectroscopy (FCS) curves. This software closely mimics the functionality of the ¬¬fitting interface in FoCuS-point[1] and FoCuS-scan[2] Python software. FoCuS-fit-JS does not correlate raw data, like FoCuS-point/scan, but does allow you to fit curves that have been correlated by these software or correlated using another software package or hardware correlator. Please see the Github page for an up-to-date list of supported file types. FoCuS-fit-JS is completely browser-based and so it can be run from any system which can run a conventional browser. </p>
+
+<p>The FoCuS-fit-JS interface is divided up into three sections (Figure 1, A-C). There is the area where files are imported and the fit and model parameters organised (A, Fit controls). There is the main plot area for the FCS curves, their models and the accompanying residuals (B, Main Plot Window. Whereas for organising the data, and for controlling which data gets plotted, there is Data Viewer Window (C, Data Viewer Window).</p>
+<p>
+FoCuS-fit-JS has been designed to make it as easy as possible to process and analyze large amounts of data. The following manual describes the functionality of the interface as well as providing background into the models which are currently available to fit the data with. If you have any questions or suggestions, please raise an issues here: </p>
+
+      </div>
+      </div>
+    
+<div class="col-md-2 col-sm-offset-1 blog-sidebar">
+          <div class="sidebar-module sidebar-module-inset">
+            <h4>About</h4>
+            <p>Etiam porta <em>sem malesuada magna</em> mollis euismod. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur.</p>
+          </div>
+                <div class="sidebar-module">
+                  <h4>Sections</h4>
+                  <ol class="list-unstyled">
+                    <li><a href="#import">File Import and Fitting Parameters</a></li>
+                    <li><a href="#plot">Main Plot Window</a></li>
+                    <li><a href="#viewer">Data Viewer</a></li>
+                    <li><a href="#equations">Diffusion coefficient calculation</a></li>
+                    
+                  </ol>
+                </div>
+                <div class="sidebar-module">
+                  <h4>Links</h4>
+                  <ol class="list-unstyled">
+                    <li><a href="https://github.com/dwaithe/FCSfitJS">GitHub Repository</a></li>
+                    <li><a href="https://dwaithe.github.io/home/">Author's homepage</a></li>
+                    <li><a href="https://twitter.com/dwaithe">Author's Twitter</a></li>
+                   
+                  </ol>
+                </div>
+        </div><!-- /.blog-sidebar -->
+</div>
+</div>
+
+
+    <div class="container-fluid">
+
+      
+
+      <div class="row">
+        <div class="col-md-3">
+          <img  src="images/Fitcontrols.png" class="img-fluid"><br>
+          <p>
+           Figure 2) Fit controls detail.
+          </p>
+
+        </div>
+
+
+
+<div class="col-md-5 blog-main">
+
+          
+<a name="import"></a>
+<h3>File import and fitting parameters.</h3>
+
+<p>
+
+
+<strong>1</strong>) Previously correlated data files, can be loaded int FoCuS-fit-JS software using the 'Choose Files' button. Loaded files will appear in the Data Viewer on the right-hand side (<strong>C</strong>). <br>  
+<strong>2</strong>) The first drop-down box with Equation 1A as default refers to which diffusion equation to use  and the way in which the axial diffusion component is handled when fitting a 3D diffusion equation. The second drop-down box, describes which of the two triplet state equations to use, either 'no triplet' or 'Triplet Eq. 2A' or 'Triplet Eq. 2B'. The final dropdown box sets whether 2D or 3D diffusion is used. N.B. More details about the equations are described in Diffusion coefficient calculation section of this manual.  <br>  
+<strong>3</strong>) Once the equations have been chosen the number of diffusing species and triplet states can be selected in the next row of interface controls, 1-3 in both cases.   <br>  
+<strong>4</strong>) Every correlated curve has fit parameters associated with it. To view the parameters of any of the correlated data, select it from the drop-down list 'Display model parameters for data'. When this data-file is selected in this list its parameters will appear below.  <br>  
+<strong>5</strong>) When clicked, the button marked 'Current' fits a curve to the selected data-file using the parameters depicted in (<strong>8</strong>). Whereas, the button marked 'All' will fit all of the correlation functions loaded in the data-series box (<strong>C</strong>) with the parameters currently shown in (<strong>8</strong>). The button marked 'Only highlighted' will fit those data-files that have been highlighted in the data-series box (<strong>C</strong>) with the displayed parameters.  <br>  
+<strong>6</strong>) The 'Fit from' and 'to' fields refer to time range which will be fit and is linked to the grey bar limits which are shown in the plot area (<strong>8</strong>).<br>  
+<strong>7</strong>) For complicated experiments, where multiple fit parameters are changed from the defaults, it can be useful to save the fit profile to make it straight-forward to repeat the experiment. During a single session this can be done through using the ‘store’ button to save the currently used settings, and the ‘apply’ button to apply them. If the settings will be used for subsequent experiments it can be useful to write them onto the host computer, do this by using the ‘save’ button and then later loading them through using the ‘load’ button. <br>  
+<strong>8</strong>) This section contains the parameters that are fit as well as the controls that control the fitting. The parameters that are visible are linked to the equation options that have been selected using the menus in (2-3).  (<strong>9</strong>) The left-hand column specifies the variable name of this fit parameter. (<strong>10</strong>) During the fitting each variable will be initiated at the value specified in the ‘Init’ column. During fitting those parameters that have the 'vary' check box <strong>(11)</strong> checked will be estimated by the fit algorithm within the ranges specified by the 'min'  <strong>(12)</strong> and 'max'  (<strong>13</strong>) boxes which are specified for each parameter.<br>  
+
+The parameters afor the data-series can be exported to the clipboard (<strong>14</strong>) or saved (<strong>15)</strong>) using these buttons. If data is specifically highlighted in the Data Viewer box (<strong>C</strong>) it alone will be copied and not all the data in the data series. <br> 
+</p>
+</div>
+</div>
+
+<div class="row">
+        <div class="col-md-3">
+          <img  src="images/Mainplot.png" class="img-fluid"><br>
+          <p>
+           Figure 3) Main plot detail.
+          </p>
+        </div>
+
+<div class="col-md-5 blog-main">
+<br>
+<a name="plot"></a>
+<h2>Main Plot Window</h2>
+1) Above the plot window is a Navigation Toolbar. The tools on the toolbar allow manipulation of the plotted correlation functions. The 'Zoom/Scaling' buttons allows the user to zoom in and out of the visualisations and controls how the plot can be moved. By clicking the 'Both' option (default) the plot, when mainpulated with the mouse will expand and contract, and move in both the x-axis and y-axis. If 'Vertical' is selected then the plot will scale and zoom only in the y-axis. Similarly, if the 'Horizontal' option is selected the plot can only be manipulated in the x-axis. This options allow the user to easily zoom and scale plots, especially when the amplitudes of the curves vary drammatically. Click 'Reset' to remove any previous movement or zoom transformation, click 'Zoom in' to expand the plot in the display by 10%, click 'Zoom out' to shrink the plot conversely by 10%. Alternatively, Zoom actions can be performed by rolling the mouse button either forwards or backwards <br>  
+2) This is the main plot window. The data-files which has been checked in the Data Viewer (C) will appear here along with the corresponding fit function if these particular data-files have been fitted and their parameters estimated. To move the plotted curves, 'left-click-and-hold' with the mouse as you reposition the plot. <br>
+3) This correponds to the blue vertical bars on the blot and represents limits being applied to any fiting operation. To move this limits please use the Fit slider Range (6) or manually type in values in (A - 6).
+4) dark-grey/black circles present datapoints from each imported curve.
+5) The red continuous function represents the curve generated from fitting a model to the data.
+6) By clicking and dragging on it is possible to restrict or increase the region being fit, as depicted by the blue vertical limits shown by (3).  <br>  
+7) This plot window displays the residuals calculated from the fitting procedure for each of the plotted data-files.<br>  
+
+
+</div>
+</div>
+
+<div class="row">
+        <div class="col-md-3">
+          <img  src="images/DataViewer.png" class="img-fluid"><br>
+           <p>
+           Figure 3) Data Viewer detail.
+          </p>
+        </div>
+
+<div class="col-md-5 blog-main">
+  <br>
+<a name="viewer"></a>
+<h2>Data Viewer Window</h2>
+
+<strong>1</strong>) The Data Viewer panel contains all the data-files which can be plotted and fit using the FoCuS-fit-js software. The data-files, each representing an input recording are grouped by input file type (i.e. .fcs files). To plot a data-file correlation function, check the box associated with each name in the list, followed by clicking the 'Plot Checked Data’ button (<strong>3</strong>).  Checked files will be plotted. Highlighting is different to checking. Highlighting files will affect the processing of the data-files whereas checking only affects the plotting.  <br>  
+
+<strong>2</strong>) This set of check boxes represent the different correlation channels to be included or hidden in the data-series box, enabling them or not for plotting or fitting. CH0 refers to 1st channel, CH1 refers to the 2nd channel, CH01 refers to the cross-correlation with respect to the 1st channel to the 2nd and the CH10 represents the alternate cross-correlation function.  <br>  
+
+<strong>3</strong>) Clicking 'Plot Checked data' will plot all of the data in the list (1). To check all data in the list (1) click the 'check all’ button. To uncheck all checked data click the 'check all' button a second time.  The 'Clear Fit Data All/Highlighted' will clear all parameters which have been estimated during fitting or will clear those of only the highlighted data-files should any be highlighted.    <br>  
+<strong>Tip: There are certain actions that can be performed on highlighted data. To highlight data, left-click and select multiple data-file names by using the 'shift' key or the 'ctrl' (windows) or 'command' key (MacOS). </strong> <br>   
+<strong>Tip: To select all the data-files of a given type, click it's group header (e.g. .fcs files) </strong><br>  
+
+ <br>  
+
+</p>
+<a name="equations"></a>
+<h3>Diffusion coefficient calculation </h3>
+<p>
+FoCuS-fit-JS has a number of options for configuring the equation that is used to fit the calculated correlation function. Within FoCuS-fit-JS, it is possible to fit an equation with either 2D or 3D diffusion equations with between one to three diffusion components. There is also the option to include, one to three triplet states in the equation also (although 'no triplet 'is the default). Triplet state equations are used to model the cases when the fluorophores under investigation have dark-states that can be induced by the imaging regime. If present it is normal to correct for triplet states in the diffusion equation, due to the impact they have on the overall correlation curve. The overall equation for analyzing the correlation function is</p>
+
+<span class="displayed">
+  
+  <img src="images/09_CodeCogsEqn.gif" class="eqn" style="width: 39.63ex">
+  <span class="eqno">(9)</span>
+</span>
+<!--G_N (\tau)= O_f+G_N (0)[G_D (\tau).G_T (\tau)]  -->
+<p>
+where τ represents time, O<sub>f</sub> represents the offset (normally zero), G<sub>N</sub>(0) is the amplitude of the correlation function, G<sub>D</sub> is the diffusing component and G<sub>T</sub> is the optional triplet state. For 2D diffusion (e.g. in a bi-layer) G<sub>2</sub>D is used (in place of G<sub>D</sub>) 
+</p> 
+<span class="displayed">
+  
+  <img src="images/10_CodeCogsEqn.gif" class="eqn" style="width: 39.63ex">
+  <span class="eqno">(10)</span>
+  <!-- G_2D (\tau)= \sum_{k=1}^{D_s}A_k \left(1+\left( \frac{\tau_c }{\tau_{xyk}}\right )^{\alpha^k}\right)^{-1} -->
+
+</span>
+<p>
+and between one and three diffusing species are included using the Ds parameter. For the case D<sub>s</sub> = 1, A<sub>1</sub> = 1, else ∑D<sub>s</sub> A<sub>k</sub> = 1 and this parameter k=1 serves to establish how the amplitude is composed of the different diffusing species. τ<sub>xyk</sub> is the lateral diffusion rate coefficient and represents the time taken for the diffusing species to move laterally through the illumination area. α is the anomalous factor which is important for compensating for when the diffusion kinetics are non-idea. For ideal diffusion, the anomalous factor = 1.0 whereas if, for example, Continuous Wave STED depletion is used this factor can drop towards 0.0 unless time-gating is employed. A similar factor is not included for the z-dimension at this time as anomalous diffusion from conventional STED illumination is only potent in the z-axis. For studying cases of 3D diffusion, FoCuS-scan/point has two different equations at its disposal: 
+</p> 
+<span class="displayed">
+  <img src="images/11_CodeCogsEqn.gif" class="eqn" style="width: 49.63ex">
+  <span class="eqno">(1A)</span><!-- G_3D (\tau)= \sum_{k=1}^{D_s}A_k \left(1+\left( \frac{\tau}{\tau_{xyk}}\right )^{\alpha^k}\right)^{-1}\left(1+\left( \frac{\tau }{\tau_{zk}}\right )\right)^{-1/2} -->
+</span>
+<p>and</p>
+<span class="displayed">
+  <img src="images/12_CodeCogsEqn.gif" class="eqn" style="width: 49.63ex">
+  <span class="eqno">(1B)</span>
+  <!-- G_3D (\tau)= \sum_{k=1}^{D_s}A_k \left(1+\left( \frac{\tau}{\tau_{xyk}}\right )^{\alpha^k}\right)^{-1}\left(1+\left( \frac{\tau }{AR_{k}^{2}\tau_{xyk}}\right )\right)^{-1/2} -->
+
+</span>
+<p>
+τ<sub>zk</sub> is the transit time in the axial dimension of each species. The reason you might use the second G<sub>3</sub>D equation is that in ideal cases τ<sub>z</sub> is related to τ<sub>xy</sub> through some constant factor (AR) and so it is desirable to just find AR rather than trying to learn τ<sub>z</sub> that is dependent on τ. The anomalous factor is not applied to the calculation of τ<sub>z</sub> as often the dominant dimension of diffusion is in the lateral dimension and so the contribution of the anomalous factor in the axial-dimension is considered to be trivial. Finally, FoCuS-scan/point offers two triplet equations [1], </p>
+<span class="displayed">
+  <img src="images/13_CodeCogsEqn.gif" class="eqn" style="width: 40.63ex">
+  <span class="eqno">(2A)</span>
+<!--  -->
+
+</span>
+<span class="displayed">
+  <img src="images/14_CodeCogsEqn.gif" class="eqn" style="width: 30.63ex">
+  <span class="eqno">(2B)</span>
+<!-- G_{T}(\tau) = 1 -\sum_{j=1}^{T_s}T_j + \sum_{j=1}^{T_s}T_j\exp\left( -\frac{\tau}{\tau_{T_j}}\right) -->
+
+</span>
+
+<p>
+The fitting itself in FoCuS-scan/point is performed using a Levenberg-Marquardt algorithm from the lmfit python library (https://lmfit.github.io/lmfit-py/). In addition to the parameters derived directly from fitting the diffusion equations mentioned above there are also some other parameters which are indirectly calculated by which are equally useful.
+With the above models it is possible to calculate the diffusion coefficient with knowledge of the detection beam radius and the measured transit time using: D<sub>k</sub>=ω<sub>xy</sub><sup>2</sup>/4.τ<sub>xyk</sub>, where D<sup>k</sup> is the diffusion coefficient (μm<sup>2</sup>.s<sup>-1</sup>) of species k and ω<sub>xy</sub> is the lateral beam radius (μm). The lateral beam radius can be calculated from the beam FWHM with: ω<sub>xy</sub>= FWHM/√(2.In(2)). Furthermore, the diffusion coefficient can also be calculated from the axial transit time measurement with D<sub>k</sub>=ω<sub>z</sub><sup>2</sup>/4.τ<sub>zk</sub>  where  ω<sub>z</sub>=FWHM<sub>z</sub>/√(2.In(2)) and FWHMz  is the FWHM in the axial direction. </p>
+<p>
+To assist in the calculation and interpretation of cross-correlation data FoCuS-scan/point also offers coincidence analysis through:
+</p>
+<span class="displayed">
+  <img src="images/15_CodeCogsEqn.gif" class="eqn" style="width: 30.63ex">
+  <span class="eqno">(3)</span>
+<!-- Coincidence = \frac{\sum IH_{0}IH_{1}}{\sum IH_{0}\sum IH_{1}} -->
+
+</span>
+<p>
+, where IH0 and IH1 are intensity histograms calculated from the first and second raw input intensity data in a given spatial location. This equation is a form of brightness analysis that correlates the coincidence of brightness within the acquired channels.
+</p>
+<p>
+Amplitude ratio measurements can be used to assess the relative abundance of species in an experiment:
+</p>
+<span class="displayed">
+  <img src="images/16_CodeCogsEqn.gif" class="eqn" style="width: 30.63ex">
+  <span class="eqno">(4a)</span>
+<!--  ACAC_{01} = G_N^{AC_{0}}(0)/ G_N^{AC_{1}}(0)  -->
+</span>
+and
+<span class="displayed">
+  <img src="images/17_CodeCogsEqn.gif" class="eqn" style="width: 30.63ex">
+  <span class="eqno">(4b)</span>
+<!-- ACCC_{01} = G_N^{AC_{0}}(0)/ G_N^{CC_{1}}(0)  -->
+</span>
+
+
+
+
+<p>
+where ACA<sub>01</sub> is the amplitude ratio of the first channel with respect to the second and  G<sub>N</sub><sup>AC0</sup>(0) is the amplitude measurement from the first autocorrelation channel and G<sub>N</sub><sup>AC1</sup>(0) is the same measurement from the second channel. ACCC<sub>01</sub> is similar but represents the amplitude ratio of the first channel to the amplitude calculated from cross-correlation function amplitude G<sub>N</sub><sup>CC01</sup>(0).
+</p>
+<p>
+[1] Haustein, E. and Schwille, P., 2004. Fluorescence correlation spectroscopy: an introduction to its concepts and applications. Biophysics Textbook Online.
+</p>
+
+          
+
+        
+
+      </div><!-- /.row -->
+
+    </div><!-- /.container -->
+
+    <footer class="blog-footer">
+      <p>
+        <a href="#">Back to top</a>
+      </p>
+    </footer>
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="../scripts/jquery-3.2.1.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
+    
+    <script src="../scripts/bootstrap.min.js"></script>
+    
+  </body>
+</html>
