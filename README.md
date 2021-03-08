@@ -15,6 +15,10 @@ At this time, FoCuS-fit-JS supports correlated files of the following types:
 
 If you have a file which is not presently supported, but you would like to fit with this software, then please submit a request in the below cited Issues section.
 
+### Manual and Documentation
+
+To find out how to use and understand the functionality of FoCuS-fit-JS, please visit the manual: https://dwaithe.github.io/FCSfitJS/manual/manual.html
+
 ### Issues
 
 Found a bug, have a question, or want to suggest a feature? Please visit the following page and register your issue: https://github.com/dwaithe/FCSfitJS/issues
