@@ -211,7 +211,7 @@ where τ represents time, O<sub>f</sub> represents the offset (normally zero), G
 
 </span>
 <p>
-and between one and three diffusing species are included using the Ds parameter. For the case D<sub>s</sub> = 1, A<sub>1</sub> = 1, else ∑D<sub>s</sub> A<sub>k</sub> = 1 and this parameter k=1 serves to establish how the amplitude is composed of the different diffusing species. τ<sub>xyk</sub> is the lateral diffusion rate coefficient and represents the time taken for the diffusing species to move laterally through the illumination area. α is the anomalous factor which is important for compensating for when the diffusion kinetics are non-idea. For ideal diffusion, the anomalous factor = 1.0 whereas if, for example, Continuous Wave STED depletion is used this factor can drop towards 0.0 unless time-gating is employed. A similar factor is not included for the z-dimension at this time as anomalous diffusion from conventional STED illumination is only potent in the z-axis. For studying cases of 3D diffusion, FoCuS-scan/point has two different equations at its disposal: 
+and between one and three diffusing species are included using the Ds parameter. For the case D<sub>s</sub> = 1, A<sub>1</sub> = 1, else ∑D<sub>s</sub> A<sub>k</sub> = 1 and this parameter k=1 serves to establish how the amplitude is composed of the different diffusing species. τ<sub>xyk</sub> is the lateral diffusion rate coefficient and represents the time taken for the diffusing species to move laterally through the illumination area. α is the anomalous factor which is important for compensating for when the diffusion kinetics are non-idea. For ideal diffusion, the anomalous factor = 1.0 whereas if, for example, Continuous Wave STED depletion is used this factor can drop towards 0.0 unless time-gating is employed. A similar factor is not included for the z-dimension at this time as anomalous diffusion from conventional STED illumination is only potent in the z-axis. For studying cases of 3D diffusion, FoCuS-fit-JS has two different equations at its disposal: 
 </p> 
 <span class="displayed">
   <img src="images/11_CodeCogsEqn.gif" class="eqn" style="width: 49.63ex">
@@ -225,7 +225,7 @@ and between one and three diffusing species are included using the Ds parameter.
 
 </span>
 <p>
-τ<sub>zk</sub> is the transit time in the axial dimension of each species. The reason you might use the second G<sub>3</sub>D equation is that in ideal cases τ<sub>z</sub> is related to τ<sub>xy</sub> through some constant factor (AR) and so it is desirable to just find AR rather than trying to learn τ<sub>z</sub> that is dependent on τ. The anomalous factor is not applied to the calculation of τ<sub>z</sub> as often the dominant dimension of diffusion is in the lateral dimension and so the contribution of the anomalous factor in the axial-dimension is considered to be trivial. Finally, FoCuS-scan/point offers two triplet equations [1], </p>
+τ<sub>zk</sub> is the transit time in the axial dimension of each species. The reason you might use the second G<sub>3</sub>D equation is that in ideal cases τ<sub>z</sub> is related to τ<sub>xy</sub> through some constant factor (AR) and so it is desirable to just find AR rather than trying to learn τ<sub>z</sub> that is dependent on τ. The anomalous factor is not applied to the calculation of τ<sub>z</sub> as often the dominant dimension of diffusion is in the lateral dimension and so the contribution of the anomalous factor in the axial-dimension is considered to be trivial. Finally, FoCuS-fit-JS offers two triplet equations [3], </p>
 <span class="displayed">
   <img src="images/13_CodeCogsEqn.gif" class="eqn" style="width: 40.63ex">
   <span class="eqno">(2A)</span>
@@ -240,10 +240,10 @@ and between one and three diffusing species are included using the Ds parameter.
 </span>
 
 <p>
-The fitting itself in FoCuS-scan/point is performed using a Levenberg-Marquardt algorithm from the lmfit python library (https://lmfit.github.io/lmfit-py/). In addition to the parameters derived directly from fitting the diffusion equations mentioned above there are also some other parameters which are indirectly calculated by which are equally useful.
+The fitting itself in FoCuS-fit-JS is performed using a Levenberg-Marquardt algorithm implemented in Javascript (<a href="https://github.com/mljs/levenberg-marquardt">https://github.com/mljs/levenberg-marquardt</a>). In addition to the parameters derived directly from fitting the diffusion equations mentioned above there are also some other parameters which are indirectly calculated by which are equally useful.
 With the above models it is possible to calculate the diffusion coefficient with knowledge of the detection beam radius and the measured transit time using: D<sub>k</sub>=ω<sub>xy</sub><sup>2</sup>/4.τ<sub>xyk</sub>, where D<sup>k</sup> is the diffusion coefficient (μm<sup>2</sup>.s<sup>-1</sup>) of species k and ω<sub>xy</sub> is the lateral beam radius (μm). The lateral beam radius can be calculated from the beam FWHM with: ω<sub>xy</sub>= FWHM/√(2.In(2)). Furthermore, the diffusion coefficient can also be calculated from the axial transit time measurement with D<sub>k</sub>=ω<sub>z</sub><sup>2</sup>/4.τ<sub>zk</sub>  where  ω<sub>z</sub>=FWHM<sub>z</sub>/√(2.In(2)) and FWHMz  is the FWHM in the axial direction. </p>
 <p>
-To assist in the calculation and interpretation of cross-correlation data FoCuS-scan/point also offers coincidence analysis through:
+To assist in the calculation and interpretation of cross-correlation data FoCuS-fit-JS also offers coincidence analysis through:
 </p>
 <span class="displayed">
   <img src="images/15_CodeCogsEqn.gif" class="eqn" style="width: 30.63ex">
@@ -276,7 +276,9 @@ and
 where ACA<sub>01</sub> is the amplitude ratio of the first channel with respect to the second and  G<sub>N</sub><sup>AC0</sup>(0) is the amplitude measurement from the first autocorrelation channel and G<sub>N</sub><sup>AC1</sup>(0) is the same measurement from the second channel. ACCC<sub>01</sub> is similar but represents the amplitude ratio of the first channel to the amplitude calculated from cross-correlation function amplitude G<sub>N</sub><sup>CC01</sup>(0).
 </p>
 <p>
-[1] Haustein, E. and Schwille, P., 2004. Fluorescence correlation spectroscopy: an introduction to its concepts and applications. Biophysics Textbook Online.
+[1] Waithe D., Clausen P. M., Sezgin E. Eggeling C., 2016. FoCuS-point: software for STED fluorescence correlation and time-gated single photon counting 
+[2] Waithe D., Schneider F., Chojnacki J., Clausen M.P. , Dilip Shrestha 2,  Bernardino de la Serna, J., Eggeling C., 2018. Optimized processing and analysis of conventional confocal microscopy generated scanning FCS data.
+[3] Haustein, E. and Schwille, P., 2004. Fluorescence correlation spectroscopy: an introduction to its concepts and applications. Biophysics Textbook Online.
 </p>
 
           
