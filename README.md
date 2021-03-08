@@ -28,3 +28,5 @@ Found a bug, have a question, or want to suggest a feature? Please visit the fol
 A browser (e.g. Chrome, Safari, Mozilla) is needed to use the FoCuS-fit-JS software, but not a internet connection. To use the software offline then please download a copy of this repository (see the green button marked 'Code' above, and click 'Download as ZIP'). To use the software please unzip the downloaded file and open the local copy of index.html file in your browser. The offline version although fully functional will not be updated automatically if bugs are found over time. For the latest version of the software please visit the online version of the software, or download a fresh version of the repository.
 
 ### How to Cite
+
+We are still in the pre-beta phase. Please check back here soon.
