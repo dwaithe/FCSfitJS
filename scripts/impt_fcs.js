@@ -112,9 +112,9 @@ var parse_fcs = function(feed,filepath){
 		corrObj1.ch_type = 0;
 		if (cscale_arr.length != 0)
 			{//Average counts per bin. Apparently they are normalised to time.
-				unit = cscale_arr[0][cscale_arr[0].length-1]/(cscale_arr[0].length-1)
+				
 				//And to be in kHz we divide by 1000.
-				corrObj1.kcount = d3.mean(cdata_arr[0])/unit/1000000
+				corrObj1.kcount = d3.mean(cdata_arr[0])/1000
 			}
 
 		corrObj1.param = JSON.parse(JSON.stringify(fit_obj.def_param))
@@ -149,7 +149,7 @@ var parse_fcs = function(feed,filepath){
 		if (cscale_arr.length != 0)
 			{//Average counts per bin. Apparently they are normalised to time.
 				//And to be in kHz we divide by 1000.
-				corrObj2.kcount = d3.mean(cdata_arr[1])/unit/1000000
+				corrObj2.kcount = d3.mean(cdata_arr[1])/1000
 			}
 
 		corrObj2.param = JSON.parse(JSON.stringify(fit_obj.def_param))
