@@ -295,7 +295,6 @@ class PlotManager{
   
   zoom = d3.zoom()
       .on('zoom', event => {
-      console.log('called')
       //The zoom functionality works great if you want joint scaling in both x and y.
       //We want to sometimes scales in one axis and not the other.
       //This made it necessary to independently store and update the scaling parameters.

@@ -187,25 +187,86 @@ function populate_list_view(response_data){
 		for(t=0;t<fit_obj.objIdArr.length;t++){  
 
 				var name = fit_obj.objIdArr[t].name
-				if (fit_obj.objIdArr[t].ch_type == '0'){
-		    		if (document.getElementById('CH0_chbx').checked == false){
+				console.log('ch_ch',fit_obj.objIdArr[t].ch_type)
+				if (fit_obj.objIdArr[t].ch_type == '0' || fit_obj.objIdArr[t].ch_type == '1_1'){
+		    		if (document.getElementById('CH1_chbx').checked == false){
 		    			continue
 		    		}
 		    	}
-		    	else if (fit_obj.objIdArr[t].ch_type  == '1'){
-		    		if (document.getElementById('CH1_chbx').checked == false){
+		    	else if (fit_obj.objIdArr[t].ch_type  == '1'|| fit_obj.objIdArr[t].ch_type == '2_2'){
+		    		if (document.getElementById('CH2_chbx').checked == false){
 		    			continue
 		    		}
 
 		    	}
-		    	else if (fit_obj.objIdArr[t].ch_type  == '2'){
-		    		if (document.getElementById('CH01_chbx').checked == false){
+		    	else if (fit_obj.objIdArr[t].ch_type  == '2'|| fit_obj.objIdArr[t].ch_type == '1_2'){
+		    		if (document.getElementById('CH12_chbx').checked == false){
 		    			continue
 		    		}
 		    		
 		    	}
-		    	else if (fit_obj.objIdArr[t].ch_type  == '3'){
-		    		if (document.getElementById('CH10_chbx').checked == false){
+		    	else if (fit_obj.objIdArr[t].ch_type  == '3'|| fit_obj.objIdArr[t].ch_type == '2_1'){
+		    		if (document.getElementById('CH21_chbx').checked == false){
+		    			continue
+		    		}
+		    		
+		    	}
+		    	else if (fit_obj.objIdArr[t].ch_type == '1_3'){
+		    		if (document.getElementById('CH13_chbx').checked == false){
+		    			continue
+			    		}
+		    		
+		    	}
+		    	else if (fit_obj.objIdArr[t].ch_type == '1_4'){
+		    		if (document.getElementById('CH14_chbx').checked == false){
+		    			continue
+		    		}
+		    		
+		    	}
+		    	else if (fit_obj.objIdArr[t].ch_type == '2_3'){
+		    		if (document.getElementById('CH23_chbx').checked == false){
+		    			continue
+		    		}
+		    		
+		    	}
+		    	else if (fit_obj.objIdArr[t].ch_type == '2_4'){
+		    		if (document.getElementById('CH24_chbx').checked == false){
+		    			continue
+		    		}
+		    		
+		    	}
+		    	else if (fit_obj.objIdArr[t].ch_type == '3_4'){
+		    		if (document.getElementById('CH34_chbx').checked == false){
+		    			continue
+		    		}
+		    		
+		    	}
+		    	else if (fit_obj.objIdArr[t].ch_type == '3_1'){
+		    		if (document.getElementById('CH31_chbx').checked == false){
+		    			continue
+			    		}
+		    		
+		    	}
+		    	else if (fit_obj.objIdArr[t].ch_type == '4_1'){
+		    		if (document.getElementById('CH41_chbx').checked == false){
+		    			continue
+		    		}
+		    		
+		    	}
+		    	else if (fit_obj.objIdArr[t].ch_type == '3_2'){
+		    		if (document.getElementById('CH32_chbx').checked == false){
+		    			continue
+		    		}
+		    		
+		    	}
+		    	else if (fit_obj.objIdArr[t].ch_type == '4_2'){
+		    		if (document.getElementById('CH42_chbx').checked == false){
+		    			continue
+		    		}
+		    		
+		    	}
+		    	else if (fit_obj.objIdArr[t].ch_type == '4_3'){
+		    		if (document.getElementById('CH43_chbx').checked == false){
 		    			continue
 		    		}
 		    		
@@ -306,28 +367,112 @@ function populate_data_viewer(){
     			break;
     	}
     	
-    	if (fit_obj.objIdArr[t].ch_type == '0'){
-    		if (document.getElementById('CH0_chbx').checked == false){
+    	if (fit_obj.objIdArr[t].ch_type == '0'|| fit_obj.objIdArr[t].ch_type == '1_1'){
+    		if (document.getElementById('CH1_chbx').checked == false){
     			fit_obj.objIdArr[t].toFit = false
     			continue
     		}
     	}
-    	else if (fit_obj.objIdArr[t].ch_type == '1'){
-    		if (document.getElementById('CH1_chbx').checked == false){
+    	else if (fit_obj.objIdArr[t].ch_type == '1'|| fit_obj.objIdArr[t].ch_type == '2_2'){
+    		if (document.getElementById('CH2_chbx').checked == false){
     			fit_obj.objIdArr[t].toFit = false
     			continue
     		}
 
     	}
-    	else if (fit_obj.objIdArr[t].ch_type == '2'){
-    		if (document.getElementById('CH01_chbx').checked == false){
+    	else if (fit_obj.objIdArr[t].ch_type == '3_3'){
+    		if (document.getElementById('CH3_chbx').checked == false){
+    			fit_obj.objIdArr[t].toFit = false
+    			continue
+    		}
+
+    	}
+    	else if (fit_obj.objIdArr[t].ch_type == '4_4'){
+    		if (document.getElementById('CH4_chbx').checked == false){
+    			fit_obj.objIdArr[t].toFit = false
+    			continue
+    		}
+
+    	}
+    	else if (fit_obj.objIdArr[t].ch_type == '2'|| fit_obj.objIdArr[t].ch_type == '1_2'){
+    		if (document.getElementById('CH12_chbx').checked == false){
     			fit_obj.objIdArr[t].toFit = false
     			continue
     		}
     		
     	}
-    	else if (fit_obj.objIdArr[t].ch_type == '3'){
-    		if (document.getElementById('CH10_chbx').checked == false){
+    	else if (fit_obj.objIdArr[t].ch_type == '3'|| fit_obj.objIdArr[t].ch_type == '2_1'){
+    		if (document.getElementById('CH21_chbx').checked == false){
+    			fit_obj.objIdArr[t].toFit = false
+    			continue
+    		}
+    		
+    	}
+    	else if (fit_obj.objIdArr[t].ch_type == '1_3'){
+    		if (document.getElementById('CH13_chbx').checked == false){
+    			fit_obj.objIdArr[t].toFit = false
+    			continue
+    		}
+    		
+    	}
+    	else if (fit_obj.objIdArr[t].ch_type == '1_4'){
+    		if (document.getElementById('CH14_chbx').checked == false){
+    			fit_obj.objIdArr[t].toFit = false
+    			continue
+    		}
+    		
+    	}
+    	else if (fit_obj.objIdArr[t].ch_type == '2_3'){
+    		if (document.getElementById('CH23_chbx').checked == false){
+    			fit_obj.objIdArr[t].toFit = false
+    			continue
+    		}
+    		
+    	}
+    	else if (fit_obj.objIdArr[t].ch_type == '2_4'){
+    		if (document.getElementById('CH24_chbx').checked == false){
+    			fit_obj.objIdArr[t].toFit = false
+    			continue
+    		}
+    		
+    	}
+    	else if (fit_obj.objIdArr[t].ch_type == '3_4'){
+    		if (document.getElementById('CH34_chbx').checked == false){
+    			fit_obj.objIdArr[t].toFit = false
+    			continue
+    		}
+    		
+    	}
+    	else if (fit_obj.objIdArr[t].ch_type == '3_1'){
+    		if (document.getElementById('CH31_chbx').checked == false){
+    			fit_obj.objIdArr[t].toFit = false
+    			continue
+    		}
+    		
+    	}
+    	else if (fit_obj.objIdArr[t].ch_type == '4_1'){
+    		if (document.getElementById('CH41_chbx').checked == false){
+    			fit_obj.objIdArr[t].toFit = false
+    			continue
+    		}
+    		
+    	}
+    	else if (fit_obj.objIdArr[t].ch_type == '3_2'){
+    		if (document.getElementById('CH32_chbx').checked == false){
+    			fit_obj.objIdArr[t].toFit = false
+    			continue
+    		}
+    		
+    	}
+    	else if (fit_obj.objIdArr[t].ch_type == '4_2'){
+    		if (document.getElementById('CH42_chbx').checked == false){
+    			fit_obj.objIdArr[t].toFit = false
+    			continue
+    		}
+    		
+    	}
+    	else if (fit_obj.objIdArr[t].ch_type == '4_3'){
+    		if (document.getElementById('CH43_chbx').checked == false){
     			fit_obj.objIdArr[t].toFit = false
     			continue
     		}
@@ -407,18 +552,55 @@ cancel_select = function(){
 
 }
 
-document.getElementById('CH0_chbx').onclick = function(event){
-	populate_data_viewer()
-}
 document.getElementById('CH1_chbx').onclick = function(event){
 	populate_data_viewer()
 }
-document.getElementById('CH01_chbx').onclick = function(event){
+document.getElementById('CH2_chbx').onclick = function(event){
 	populate_data_viewer()
 }
-document.getElementById('CH10_chbx').onclick = function(event){
+document.getElementById('CH3_chbx').onclick = function(event){
 	populate_data_viewer()
 }
+document.getElementById('CH4_chbx').onclick = function(event){
+	populate_data_viewer()
+}
+document.getElementById('CH12_chbx').onclick = function(event){
+	populate_data_viewer()
+}
+document.getElementById('CH13_chbx').onclick = function(event){
+	populate_data_viewer()
+}
+document.getElementById('CH14_chbx').onclick = function(event){
+	populate_data_viewer()
+}
+document.getElementById('CH21_chbx').onclick = function(event){
+	populate_data_viewer()
+}
+document.getElementById('CH23_chbx').onclick = function(event){
+	populate_data_viewer()
+}
+document.getElementById('CH24_chbx').onclick = function(event){
+	populate_data_viewer()
+}
+document.getElementById('CH34_chbx').onclick = function(event){
+	populate_data_viewer()
+}
+document.getElementById('CH31_chbx').onclick = function(event){
+	populate_data_viewer()
+}
+document.getElementById('CH41_chbx').onclick = function(event){
+	populate_data_viewer()
+}
+document.getElementById('CH32_chbx').onclick = function(event){
+	populate_data_viewer()
+}
+document.getElementById('CH42_chbx').onclick = function(event){
+	populate_data_viewer()
+}
+document.getElementById('CH43_chbx').onclick = function(event){
+	populate_data_viewer()
+}
+
 
 
 
