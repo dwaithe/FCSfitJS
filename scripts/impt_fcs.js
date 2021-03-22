@@ -126,7 +126,7 @@ var parse_fcs = function(feed,filepath){
 
 		fit_obj.objIdArr.push(corrObj1)
 
-		if (num_of_channels == 1){
+		if (num_of_channels == 1 || num_of_channels ==0 ){
 			tscale_arr = []
 			tdata_arr = []
 			cscale_arr = []

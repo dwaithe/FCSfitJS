@@ -133,7 +133,7 @@ var parse_csv = function(feed,filepath){
 			{corrObj1.name = corrObj1.name +'_pc_m'+pc_text}
 		else
 			{corrObj1.name = corrObj1.name+"-CH"+corrObj1.ch_type}
-
+		console.log(autoNorm)
 		corrObj1.param = JSON.parse(JSON.stringify(fit_obj.def_param))
 		fit_obj.objIdArr.push(corrObj1)
 

@@ -1,6 +1,6 @@
 var parse_sin = function(feed,filepath){
 	lines = feed.split("\n")
-	console.log('It\'s a sin',lines)
+	
 	tscale = [];
 	tdata = [];
 	tdata2 = [];
@@ -19,7 +19,7 @@ var parse_sin = function(feed,filepath){
 			if (line.length <2){
 				proceed = false
 			}else{
-				console.log(line[0],line.length)
+				
 				tscale.push(parseFloat(line[0])*1000.)
 				tdata.push(parseFloat(line[1]))
 				if (line.length > 2) tdata2.push(parseFloat(line[2]))
@@ -28,16 +28,17 @@ var parse_sin = function(feed,filepath){
 			}
 			}
 		if (proceed == 'intensity'){
-			if (line.length <2){
+			if (line.length <2 && line[0].substring(0,11) != 'TraceNumber'){
 				proceed = false
 			}else if(line.length >1){
+				
 				int_tscale.push(parseFloat(line[0]))
 				int_tdata.push(parseFloat(line[1]))
 				if (line.length > 2) int_tdata2.push(parseFloat(line[2]))
 			}
 		}
 		if (line[0].substring(1,12) == "Correlation") proceed = 'correlated'
-		else if (line[0].substring(1,10) ==  "Intensity") proceed = 'intensity'
+		else if (line[0].substring(1,11) ==  "IntensityH") proceed = 'intensity'
 	}
 
 			corrObj1 = new CorrObj(filepath)
@@ -51,9 +52,9 @@ var parse_sin = function(feed,filepath){
 			corrObj1.parent_uqid = '0'
 			corrObj1.ch_type = 0;
 
-			unit = int_tscale[int_tscale.length-1]/(int_tscale.length-1)
-
-			corrObj1.kcount = d3.mean(int_tdata)/1000	
+			//unit = int_tscale[int_tscale.length-1]/(int_tscale.length-1)
+			//The counts during the interval are already normalised to 1s (even though interval is <1s).
+			corrObj1.kcount = d3.mean(int_tdata)/1000	//Converts to khz
 			corrObj1.param = JSON.parse(JSON.stringify(fit_obj.def_param))
 			
 			corrObj1.max = d3.max(corrObj1.autoNorm)
@@ -140,7 +141,6 @@ var parse_sin = function(feed,filepath){
 		}
 		
 		
-		console.log(corrObj1.autoNorm)
 		
 
 
