@@ -854,6 +854,7 @@ document.getElementById('fitAll_btn').onclick = function(event){
     plt_obj.update_vertical(plt_obj.glb_sel_x0,plt_obj.glb_sel_x1,fit_obj.data_min_y, fit_obj.data_max_y)
 }
 var open_file_imprt = function(event){
+		document.getElementById('splash').style.display = "none";
       var input = event.target;
       console.log('event',event)
       reader = []
