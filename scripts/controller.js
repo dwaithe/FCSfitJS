@@ -17,21 +17,37 @@ class FittingManager{
       
       
       
-      this.order_list = ['offset','GN0','N_FCS','cpm','A1','A2','A3','txy1','txy2','txy3','tz1','tz2','tz3','alpha1','alpha2','alpha3','AR1','AR2','AR3','B1','B2','B3','T1','T2','T3','tauT1','tauT2','tauT3','N_mom','bri','CV','f0','overtb','ACAC','ACCC','above_zero','s2n']
       
-      this.diffModEqSel = ['Equation 1A', 'Equation 1B', 'GS neuron', 'Vesicle Diffusion', 'PB Correction']
+      this.diffModEqSel = ['Equation 1A', 'Equation 1B']
       this.tripModEqSel = ['no triplet', 'Triplet Eq 2A', 'Triplet Eq 2B']
       this.dimenModSel  = ['2D', '3D']
-      this.def_options ={}
-      this.def_options['Diff_eq'] = 0
+      this.def_options = {}
 
+      this.eqn_selected = 0;
 
-      se_initialise_fcs(this);
+      this.initialModel()
       //gs_initialise_fcs(self)
       //vd_initialise_fcs(self)
       //pb_initialise_fcs(self)
 
 
+
+  }
+  initialModel(){
+
+    
+
+    if (this.eqn_selected == 0 || this.eqn_selected ==1){
+    se_initialise_fcs(this)
+    
+   }else{
+    custom_model_init(this)
+
+
+   }
+   //redefines parameters for each dataset.
+   for (var i = 0; i < this.objIdArr.length; i++) {
+        this.objIdArr[i].param = JSON.parse(JSON.stringify(this.def_param))}
 
   }
   defineTable(selected){
@@ -44,16 +60,14 @@ class FittingManager{
               //console.log('callit',modelFitSel.value,this.model_obj_list)
               this.objId_sel = this.model_obj_list[modelFitSel.value]
 
-              //console.log('consideritcalled',this.model_obj_list)    
-              if (this.def_options['Diff_eq'] == 5){
-                //PB.decide_which_to_show(self)
-              }
-              else if (this.def_options['Diff_eq'] == 4){} 
-                //VD.decide_which_to_show(self)
-              else if (this.def_options['Diff_eq'] == 3){
-                //GS.decide_which_to_show(self)
-              }
-              else{
+              if (this.eqn_selected>1){
+                //custom equation
+              
+                
+
+
+              }else{
+                
                 se_decide_which_to_show(this)
                 se_calc_param_fcs(this.objId_sel)
               }
@@ -66,7 +80,6 @@ class FittingManager{
           //var param = JSON.parse(JSON.stringify(this.def_param))
         }
     
-
     }
     fitToParameters(objId,xpos1,xpos2){
       
@@ -126,7 +139,6 @@ class FittingManager{
 
       }
     
-      console.log(gradients)
       const options = {
          
         damping:0.15,
@@ -140,7 +152,11 @@ class FittingManager{
          
        };
 
-      var equation = se_fit_diff_eq_1A_B
+      if (this.eqn_selected ==0 || this.eqn_selected ==1)
+        var equation = se_fit_diff_eq_1A_B
+      else{
+        var equation = custom_model_equation
+      }
 
         
 
@@ -153,7 +169,6 @@ class FittingManager{
       var params = fittedParams[0]['parameterValues']
       var error = fittedParams[0]['parameterError']
 
-      console.log(((Date.now()-start)/1000.),'offset',params[0],'GNO',params[1],'A1',params[2],'txy1',params[3],'alpha1',params[4])
 
       var model_autoNorm = new Array(data.x.length)
       //Now we 
@@ -196,8 +211,11 @@ class FittingManager{
       const opts = {year: 'numeric', month: 'long', day: 'numeric' };
       var d = new Date()
       objId.localTime = d.toLocaleDateString(undefined,opts)+" "+d.toLocaleTimeString()
-
-      se_calc_param_fcs(objId)
+      if (this.eqn_selected ==0 || this.eqn_selected ==1)
+        {se_calc_param_fcs(objId)}
+      else{
+        //custom models don't yet support custom paramaeter calculation.
+      }
 
 
 
@@ -219,6 +237,62 @@ calc_limits(){
     this.data_max_y = d3.max(max_y_time)
 
     }
+copy_plot_data(items_in_list){
+
+  var copyStr = "";
+  var xpos1 = plt_obj.glb_sel_x0
+  var xpos2 = plt_obj.glb_sel_x1
+
+  var minarrL = this.objIdArr[items_in_list[0]].autotime.map(function(v){return Math.abs(v-xpos1)})
+  var minarrR = this.objIdArr[items_in_list[0]].autotime.map(function(v){return Math.abs(v-xpos2)})
+  
+  var minL = 99999
+  var minR = 99999
+  var indx_L = -1
+  var indx_R = -1
+  
+  for (var i = 0; i < minarrL.length; i++) {
+    if (minarrL[i] < minL) {
+      minL = minarrL[i]
+      indx_L = i }
+    if (minarrR[i] < minR) {
+      minR = minarrR[i]
+      indx_R = i }
+      }
+  copyStr += 'Time (ms)'+'\t'
+
+  for (var i = 0; i < items_in_list.length; i++) {
+      var v_ind = items_in_list[i]
+      if (this.objIdArr[v_ind].model_autoNorm !=[]){
+                copyStr += this.objIdArr[v_ind].name+'\t'+this.objIdArr[v_ind].name+' fitted model: '+'\t'}
+
+    }
+    copyStr +='\n'
+
+
+  for (var x = 0; x < this.objIdArr[items_in_list[0]].autotime.length; x++) {
+    copyStr += this.objIdArr[0].autotime[x]+'\t'
+    for (var i = 0; i < items_in_list.length; i++) {
+      var v_ind = items_in_list[i]
+      
+      if (this.objIdArr[v_ind].model_autoNorm !=[]){
+        copyStr += this.objIdArr[v_ind].autoNorm[x]+'\t'
+        if (x >=indx_L && x<indx_R)
+              {
+                
+                copyStr += this.objIdArr[v_ind].model_autoNorm[x-indx_L]+'\t'}
+            else
+              {copyStr +=' '+'\t'}
+
+      
+      }
+    }
+    copyStr +='\n'
+  }
+ 
+
+return copyStr
+}
 copy_params(items_in_list){
     var d = new Date();
     var localTime = d.getTime()
@@ -286,7 +360,7 @@ copy_params(items_in_list){
         rowText.push(this.objIdArr[v_ind].parent_name)
         rowText.push(this.objIdArr[v_ind].parent_uqid)
         rowText.push(this.objIdArr[v_ind].localTime)
-        rowText.push(this.diffModEqSel[this.def_options['Diff_eq']])
+        rowText.push(this.diffModEqSel[this.eqn_selected])
         rowText.push(this.def_options['Diff_species'].toString())
         rowText.push(this.tripModEqSel[this.def_options['Triplet_eq']])
         rowText.push(this.def_options['Triplet_species'].toString())

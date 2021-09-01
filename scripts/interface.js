@@ -6,6 +6,8 @@ var width = 800;
 var height = 600
 
 
+
+
 // disable text selection
 document.onselectstart = function() {
     return false;
@@ -59,8 +61,13 @@ function clearAll() {
     }
 };
 function itemsInList(empty){
-	rows =   document.getElementById('table').rows;
+
 	items_in_list = []
+	if (document.getElementById('table') == null)
+		{return items_in_list}
+
+	rows =   document.getElementById('table').rows;
+	
 	//Finds if they have been selected. 
 	for (var i = 0; i < rows.length; i++) {
 		row = rows[i]
@@ -103,6 +110,7 @@ function define_form(){
 
 	for (var i = 0; i < fit_obj.order_list.length; i++) {
 	    //console.log('fit',fit_obj.objId_sel.param)
+
 		param = fit_obj.objId_sel.param[fit_obj.order_list[i]]
 		var createform = document.createElement('div'); // Create New Element Form
 	createform.setAttribute("class", "form-inline"); // Setting Action Attribute on Form
@@ -187,7 +195,6 @@ function populate_list_view(response_data){
 		for(t=0;t<fit_obj.objIdArr.length;t++){  
 
 				var name = fit_obj.objIdArr[t].name
-				console.log('ch_ch',fit_obj.objIdArr[t].ch_type)
 				if (fit_obj.objIdArr[t].ch_type == '0' || fit_obj.objIdArr[t].ch_type == '1_1'){
 		    		if (document.getElementById('CH1_chbx').checked == false){
 		    			continue
@@ -366,6 +373,8 @@ function populate_data_viewer(){
     		if (key == key1)
     			break;
     	}
+
+    	fit_obj.objIdArr[t].toFit = true
     	
     	if (fit_obj.objIdArr[t].ch_type == '0'|| fit_obj.objIdArr[t].ch_type == '1_1'){
     		if (document.getElementById('CH1_chbx').checked == false){
@@ -479,7 +488,7 @@ function populate_data_viewer(){
     		
     	}
     	
-    	fit_obj.objIdArr[t].toFit = true
+    	
     	//Catches the first mention. This therefore defines a new header.
     	if (!parent_dict.hasOwnProperty(key)){
     		var row = main_list.insertRow(count);
@@ -608,7 +617,6 @@ document.getElementById('clear_fits').onclick = function(event){
 	
 
 	items_to_clear = itemsInList(true)
-	console.log('items_to_clear',items_to_clear)
 	
 
 
@@ -649,6 +657,30 @@ document.getElementById('copy_param').onclick = function(event){
 		copyToClipboard(copyStr)
 	}
 	
+}
+
+document.getElementById('copy_plot_data').onclick = function(event){
+	items_in_list = itemsInList(true)
+	var copyStr = fit_obj.copy_plot_data(items_in_list).replace(/\t/g, ',');
+	if( copyStr == "")
+		alert("You have not fitted any models to your curves and so there is no plot data to copy. Please fit one or more curves and try again.")
+	else{
+		copyToClipboard(copyStr)
+	}
+	
+
+}
+
+document.getElementById('save_plot_data').onclick = function(event){
+	items_in_list = itemsInList(true)
+	var copyStr = fit_obj.copy_plot_data(items_in_list).replace(/\t/g, ',');
+	if( copyStr == "")
+		alert("You have not fitted any models to your curves and so there is no plot data to save. Please fit one or more curves and try again.")
+	else{
+		download(copyStr,'outputPlotData.csv','csv')
+	}
+	
+
 }
 
 
@@ -709,24 +741,47 @@ function change_fit_btn_val(x0,x1){
 		document.getElementById("fit_btn_min").value = x0
         document.getElementById("fit_btn_max").value = x1
     	}
-
+function react_to_eqn_change(){
+	fit_obj.eqn_selected = document.getElementById("equation").value;
+	fit_obj.initialModel()
+	react_to_fit_change()
+}
 function react_to_fit_change(){
 
-		var eqn =  parseInt(document.getElementById("equation").value);
-		var tri =  parseInt(document.getElementById("triplet").value);
-		var dim =  parseInt(document.getElementById("dimension").value);
-		var diffNum = parseInt(document.getElementById("diffNumSpecSpin").value);
-		var tripNum = parseInt(document.getElementById("tripNumSpecSpin").value);
-		
 		var selected =  document.getElementById("modelFitSel").value;
+
+		
 		
 
-		fit_obj.def_options['Dimen'] = dim
-		fit_obj.def_options['Diff_eq'] =eqn
-		fit_obj.def_options['Triplet_eq'] = tri
+		if (fit_obj.eqn_selected == 0 || fit_obj.eqn_selected ==1){
+				document.getElementById("triplet").disabled = false;
+				document.getElementById("dimension").disabled = false;
+				document.getElementById("diffNumSpecSpin").disabled = false;
+				document.getElementById("tripNumSpecSpin").disabled = false;
+		
+				var eqn =  parseInt(document.getElementById("equation").value);
+				var tri =  parseInt(document.getElementById("triplet").value);
+				var dim =  parseInt(document.getElementById("dimension").value);
+				var diffNum = parseInt(document.getElementById("diffNumSpecSpin").value);
+				var tripNum = parseInt(document.getElementById("tripNumSpecSpin").value);
+				
+				
+				
+		
+				fit_obj.def_options['Dimen'] = dim
+				//fit_obj.def_options['Diff_eq'] = eqn
+				fit_obj.def_options['Triplet_eq'] = tri
+		
+				fit_obj.diffNum = diffNum
+				fit_obj.tripNum = tripNum}
+		else{
+			document.getElementById("triplet").disabled = true;
+			document.getElementById("dimension").disabled = true;
+			document.getElementById("diffNumSpecSpin").disabled = true;
+			document.getElementById("tripNumSpecSpin").disabled = true;
 
-		fit_obj.diffNum = diffNum
-		fit_obj.tripNum = tripNum
+
+		}
 
 		fit_obj.objId_sel = fit_obj.model_obj_list[selected]
 		fit_obj.defineTable(selected)
@@ -856,7 +911,6 @@ document.getElementById('fitAll_btn').onclick = function(event){
 var open_file_imprt = function(event){
 		document.getElementById('splash').style.display = "none";
       var input = event.target;
-      console.log('event',event)
       reader = []
 
       count = 0

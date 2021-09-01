@@ -47,7 +47,7 @@ var parse_sin = function(feed,filepath){
 			corrObj1.autoNorm = tdata
 			corrObj1.autotime = tscale
 
-			corrObj1.name = corrObj1.name+'-CH0'
+			corrObj1.name = corrObj1.name+'-CH1'
 			corrObj1.parent_name = '.SIN files'
 			corrObj1.parent_uqid = '0'
 			corrObj1.ch_type = 0;
@@ -69,7 +69,7 @@ var parse_sin = function(feed,filepath){
 			corrObj2.autoNorm = tdata
 			corrObj2.autotime = tscale
 
-			corrObj2.name = corrObj2.name+'-CH1'
+			corrObj2.name = corrObj2.name+'-CH2'
 			corrObj2.parent_name = '.SIN files'
 			corrObj2.parent_uqid = '0'
 			corrObj2.ch_type = 1;
@@ -95,7 +95,7 @@ var parse_sin = function(feed,filepath){
 			corrObj3.autotime = tscale
 			
 			corrObj3.ch_type = 2;
-			corrObj3.name = corrObj3.name+'-CH01'
+			corrObj3.name = corrObj3.name+'-CH12'
 			corrObj3.parent_name = '.SIN files'
 			corrObj3.parent_uqid = '0'
 			
@@ -120,7 +120,7 @@ var parse_sin = function(feed,filepath){
 			corrObj4.autotime = tscale
 			
 			corrObj4.ch_type = 3;
-			corrObj4.name = corrObj4.name+'-CH10'
+			corrObj4.name = corrObj4.name+'-CH21'
 			corrObj4.parent_name = '.SIN files'
 			corrObj4.parent_uqid = '0'
 

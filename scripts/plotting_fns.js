@@ -130,7 +130,7 @@ class PlotManager{
 
 
         for(t=0;t<fit_obj.objIdArr.length;t++){
-                
+            if (fit_obj.objIdArr[t].toFit == true){
             if (fit_obj.objIdArr[t].checked==true){
                 if(fit_obj.objIdArr[t].highlight == true)
                   {points.push(pointSeriesHigh)}else{points.push(pointSeries)}
@@ -153,7 +153,7 @@ class PlotManager{
                
         
                 }
-            }
+            }}
               fit_obj.objIdArr[t].highlight = false
             }
         
@@ -275,7 +275,7 @@ class PlotManager{
   }
   change_zoom = function(factor){
           var zoom_ele = d3.select('d3fc-svg.plot-area')._groups[0][0].__zoom
-          console.log('zoom_ele',zoom_ele,this.scale_x)
+          //console.log('zoom_ele',zoom_ele,this.scale_x)
           zoom_ele.k *= factor
           this.scale_x *=factor
           this.scale_y *=factor
@@ -286,10 +286,7 @@ class PlotManager{
       
     
           d3.select('d3fc-svg.plot-area').call(this.zoom.transform, transform);
-
-          console.log('cool',this.zoom)
           this.prepare_axis()
-          console.log('yup')
 
   }
   
