@@ -1,5 +1,5 @@
 # FoCuS-fit-JS
-FoCuS-fit-JS is a javascript browser based software for fitting correlated FCS (Fluorescence Correlation Spectroscopy) curves. This is browser version of the fitting software previously included with FoCuS-point and FoCuS-scan Python software. 
+FoCuS-fit-JS is a JavaScript browser based software for fitting correlated FCS (Fluorescence Correlation Spectroscopy) curves. This is browser version of the fitting software previously included with FoCuS-point and FoCuS-scan Python software. 
 
 ### Software
 
@@ -42,7 +42,7 @@ When performing FCS fitting sometimes you may want to implement a novel model. W
 - Initialize your model in 'custom_model_init' function, by defining the parameters and their order.
 - Define the equation of your model in 'custom_model_equation'.
 
-By referring to the example and to the pointers in the 'custom_models.js' file it should be possible to install a new model with some basic Javascript expertise. You may want to push your new model to the main branch (e.g. if publishing) or maintain your own fork with the model, either locally or online for others to use. If you follow these steps, then refresh the browser view, then your equation should appear in the equation selection box.
+By referring to the example and to the pointers in the 'custom_models.js' file it should be possible to install a new model with some basic JavaScript expertise. You may want to push your new model to the main branch (e.g. if publishing) or maintain your own fork with the model, either locally or online for others to use. If you follow these steps, then refresh the browser view, then your equation should appear in the equation selection box.
 
 
 
