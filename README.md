@@ -37,7 +37,7 @@ NPHOT-2021-07-00829
 
 ### Want to use your own model?
 
-When performing FCS fitting sometimes you may want to implement a novel model. With FoCuS-fit-JS it is possible to install new custom models. To install a custom model please refer to the script in the 'custommodels' folder entitled 'custom_models.js'. Here you can see an example model called 'PB Correction'. Clone the repository to your local machine. To add your own model you must do three things:
+When performing FCS fitting sometimes you may want to implement a novel model. With FoCuS-fit-JS it is possible to install new custom models. To install a custom model please refer to the script in the 'custommodels' folder entitled 'custom_models.js'. Here you can see an example model called 'PB Correction'. First xlone the repository to your local machine so you can edit the files. To add your own model you must do three things:
 - Name your model (e.g. DW CUSTOM MDOEL 2), and add push to the array 'fit_obj.diffModEqSel'.
 - Initialize your model in 'custom_model_init' function, by defining the parameters and their order.
 - Define the equation of your model in 'custom_model_equation'.
