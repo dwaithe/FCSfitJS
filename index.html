@@ -134,9 +134,9 @@ div.row {
          <div class="form-group">
         <div class="form-inline">
           <div class="input-group-prepend">
-          <select class="form-control form-control" id="equation" name="equation" onchange="react_to_fit_change();">
-            <option value="1">Equation 1A</option>
-            <option value="2">Equation 1B</option>
+          <select class="form-control form-control" id="equation" name="equation" onchange="react_to_eqn_change();">
+            <!-- <option value="1">Equation 1A</option>-->
+            <!-- <option value="2">Equation 1B</option>-->
             <!-- <option value="3">GS neuron</option> -->
             <!-- <option value="4">Vesicle Diffusion</option> -->
             <!-- <option value="5">PB Correction</option> -->
@@ -210,8 +210,12 @@ div.row {
 
           
           </div>
-          <label>Copy: </label><input type="submit" value="Copy Param" class="btn  btn-outline-primary btn-sm" id='copy_param'><br>
-          <label>Save: </label><input type="submit" value="Save Param" class="btn  btn-outline-primary btn-sm" id='save_param'><br>
+          <label>Copy: </label>
+          <input type="submit" value="Copy Param" class="btn  btn-outline-primary btn-sm" id='copy_param'>
+          <input type="submit" value="Copy Plot Data" class="btn  btn-outline-primary btn-sm" id='copy_plot_data'><br>
+          <label>Save: </label>
+          <input type="submit" value="Save Param" class="btn  btn-outline-primary btn-sm" id='save_param'>
+          <input type="submit" value="Save Plot Data" class="btn  btn-outline-primary btn-sm" id='save_plot_data'><br>
 </div>
 </div>
 </div>
@@ -230,7 +234,7 @@ div.row {
             <input type="submit" name="zoom_out" class="btn  btn-outline-primary btn-sm" id="zoom_out" value="Zoom out" />
           <div id="splash">
             <br>
-            <H2> <- Upload your data to get started. </H2>
+            <H2> <- Open your files, to load your data and get started. </H2>
             <br>
             <H3>Or click <a href="test_data.zip">here</a> to download some example data.</H3>
             <H3> The data is zipped, please unzip it before trying to analyse.</H3>
@@ -294,4 +298,22 @@ div.row {
 <script src="scripts/plotting_fns.js"></script>
 <script src="scripts/interface.js"></script>
 <script src="scripts/controller.js"></script>
+<script src="custommodels/custom_models.js"></script>
+
+<script type="text/javascript">
+//Updates models from custom_models
+
+var select1 = document.getElementById("equation"); 
+var options = fit_obj.diffModEqSel
+
+for(var i = 0; i < options.length; i++) {
+    var opt = options[i];
+    var el = document.createElement("option");
+    el.textContent = opt;
+    el.value = i;
+    select1.appendChild(el);
+}
+
+
+</script>
 </body>
