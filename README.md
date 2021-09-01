@@ -29,4 +29,20 @@ A browser (e.g. Chrome, Safari, Mozilla) is needed to use the FoCuS-fit-JS softw
 
 ### How to Cite
 
-We are still in the pre-beta phase. Please check back here soon.
+Paper coming soon: 
+Article Title : Open-source browser-based software simplifies fluorescence correlation spectroscopy data analysis
+DOI : 10.1038/s41566-021-00876-x
+NPHOT-2021-07-00829
+
+
+### Want to use your own model?
+
+When performing FCS fitting sometimes you may want to implement a novel model. With FoCuS-fit-JS it is possible to install new custom models. To install a custom model please refer to the script in the 'custommodels' folder entitled 'custom_models.js'. Here you can see an example model called 'PB Correction'. Clone the repository to your local machine. To add your own model you must do three things:
+- Name your model (e.g. DW CUSTOM MDOEL 2), and add push to the array 'fit_obj.diffModEqSel'.
+- Initialize your model in 'custom_model_init' function, by defining the parameters and their order.
+- Define the equation of your model in 'custom_model_equation'.
+
+By referring to the example and to the pointers in the 'custom_models.js' file it should be possible to install a new model with some basic Javascript expertise. You may want to push your new model to the main branch (e.g. if publishing) or maintain your own fork with the model, either locally or online for others to use. If you follow these steps, then refresh the browser view, then your equation should appear in the equation selection box.
+
+
+
