@@ -2,7 +2,7 @@
 se_initialise_fcs = function(int_obj){
 	int_obj.def_options ={}
 	
-	int_obj.def_options['Diff_eq'] = 1
+	int_obj.def_options['Diff_eq'] = 0
 	int_obj.def_options['Diff_species'] = 1
 	int_obj.def_options['Triplet_eq'] = 1
 	int_obj.def_options['Triplet_species'] = 1
@@ -109,11 +109,11 @@ se_decide_which_to_show = function(int_obj){
 			//2 in this case corresponds to 3D:
 
 			if (int_obj.def_options['Dimen'] == 2){
-				if (int_obj.def_options['Diff_eq'] == 1){
+				if (int_obj.eqn_selected == 0){
 					int_obj.objId_sel.param['tz'+i]['to_show'] = true
 				}
 					
-				if (int_obj.def_options['Diff_eq'] == 2){
+				if (int_obj.eqn_selected == 1){
 					int_obj.objId_sel.param[ 'AR'+i]['to_show'] = true
 				}
 			}
@@ -199,10 +199,11 @@ if (objId.pbc_tb != null){
 
 function se_fit_diff_eq_1A_B(param) {
 		var dimen = fit_obj.def_options['Dimen']
-      var diff_eq = fit_obj.def_options['Diff_eq']
+      var diff_eq = fit_obj.def_options['Diff_eq'] 
       var trip_eq = fit_obj.def_options['Triplet_eq']
       var diffNum = fit_obj.diffNum
       var tripNum = fit_obj.tripNum
+                  
 
         return function(tc){
         //['offset','GN0','A1','A2','A3','txy1','txy2','txy3','tz1','tz2','tz3','alpha1','alpha2','alpha3','AR1','AR2','AR3','B1','B2','B3','T1','T2','T3','tauT1','tauT2','tauT3','N_mom','bri','CV','f0','overtb','ACAC','ACCC','above_zero','s2n']
@@ -212,7 +213,8 @@ function se_fit_diff_eq_1A_B(param) {
           //For no triplets.
         
         if (dimen == 2){
-            if (diff_eq == 1){
+            if (diff_eq == 0){
+              
                //Equation 1A with 3D term.
                 if(diffNum ==1){
                   //for one diffusing species
@@ -255,8 +257,9 @@ function se_fit_diff_eq_1A_B(param) {
                     dif += (A2*((Math.pow(1.+Math.pow((tc/txy2),alpha2),-1))))*((1+Math.pow((tc/tz2),-0.5)))
                     dif += (A3*((Math.pow(1.+Math.pow((tc/txy3),alpha3),-1))))*((1+Math.pow((tc/tz3),-0.5)))
                     }
-            }else if (diff_eq == 2){
+            }else if (diff_eq ==1){
               //['offset','GN0','A1','A2','A3','txy1','txy2','txy3','tz1','tz2','tz3','alpha1','alpha2','alpha3','AR1','AR2','AR3','B1','B2','B3','T1','T2','T3','tauT1','tauT2','tauT3','N_mom','bri','CV','f0','overtb','ACAC','ACCC','above_zero','s2n']
+              
               if (diffNum == 1){
                   let A1 = param[2];
                   let txy1 = param[3];

@@ -38,6 +38,8 @@ class FittingManager{
     
 
     if (this.eqn_selected == 0 || this.eqn_selected ==1){
+    this.def_options['Diff_eq'] = this.eqn_selected
+    console.log('defoptions',this.def_options['Diff_eq'] )
     se_initialise_fcs(this)
     
    }else{
@@ -368,7 +370,6 @@ copy_params(items_in_list){
         rowText.push(this.objIdArr[v_ind].model_autotime[0].toString())
         var last_elem = this.objIdArr[v_ind].model_autotime.length
         rowText.push(this.objIdArr[v_ind].model_autotime[last_elem-1].toString())
-        console.log('rowText',rowText)
         for (var v = 0; v < this.order_list.length; v++) {
           item = this.order_list[v]
           if (param[item]['calc']==false) {

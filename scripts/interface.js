@@ -22,7 +22,6 @@ function RowClick(currenttr, lock) {
         if (!window.event.ctrlKey && !window.event.shiftKey) {
             var sel = currenttr.closest('tr').className
         	clearAll();
-        	console.log('sel',sel)
         	if (sel == 'selected'){
         		currenttr.closest('tr').className = '';
         	}else{
@@ -748,9 +747,8 @@ function react_to_eqn_change(){
 }
 function react_to_fit_change(){
 
-		var selected =  document.getElementById("modelFitSel").value;
+		var selected =  parseInt(document.getElementById("modelFitSel").value);
 
-		
 		
 
 		if (fit_obj.eqn_selected == 0 || fit_obj.eqn_selected ==1){
@@ -759,17 +757,16 @@ function react_to_fit_change(){
 				document.getElementById("diffNumSpecSpin").disabled = false;
 				document.getElementById("tripNumSpecSpin").disabled = false;
 		
-				var eqn =  parseInt(document.getElementById("equation").value);
+				
 				var tri =  parseInt(document.getElementById("triplet").value);
 				var dim =  parseInt(document.getElementById("dimension").value);
 				var diffNum = parseInt(document.getElementById("diffNumSpecSpin").value);
 				var tripNum = parseInt(document.getElementById("tripNumSpecSpin").value);
 				
-				
+		
 				
 		
 				fit_obj.def_options['Dimen'] = dim
-				//fit_obj.def_options['Diff_eq'] = eqn
 				fit_obj.def_options['Triplet_eq'] = tri
 		
 				fit_obj.diffNum = diffNum
