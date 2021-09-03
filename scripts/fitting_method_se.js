@@ -9,7 +9,7 @@ se_initialise_fcs = function(int_obj){
 
 	int_obj.def_options['Dimen'] = 1
 	
-  int_obj.order_list = ['offset','GN0','N_FCS','cpm','A1','A2','A3','txy1','txy2','txy3','tz1','tz2','tz3','alpha1','alpha2','alpha3','AR1','AR2','AR3','B1','B2','B3','T1','T2','T3','tauT1','tauT2','tauT3','N_mom','bri','CV','f0','overtb','ACAC','ACCC','above_zero','s2n']
+  int_obj.order_list = ['offset','GN0','N_FCS','cpm','A1','A2','A3','txy1','txy2','txy3','tz1','tz2','tz3','AR1','AR2','AR3','alpha1','alpha2','alpha3','B1','B2','B3','T1','T2','T3','tauT1','tauT2','tauT3','N_mom','bri','CV','f0','overtb','ACAC','ACCC','above_zero','s2n']
       
 	
 	A1 = {'alias':'A1','value':1.0,'minv':0.0,'maxv':1.0,'vary':false,'to_show':true,'calc':false}
@@ -69,7 +69,7 @@ se_initialise_fcs = function(int_obj){
 	above_zero = {'alias':'above zero','value':0.0,'minv':0.001,'maxv':1000.0,'vary':true,'to_show':true,'calc':true}
 
 
-	int_obj.def_param ={'A1':A1,'A2':A2,'A3':A3,'txy1':txy1,'txy2':txy2,'txy3':txy3,'offset':offset,'GN0':GN0,'alpha1':alpha1,'alpha2':alpha2,'alpha3':alpha3,'tz1':tz1,'tz2':tz2,'tz3':tz3,'AR1':AR1,'AR2':AR2,'AR3':AR3,'B1':B1,'B2':B2,'B3':B3,'T1':T1,'T2':T2,'T3':T3,'tauT1':tauT1,'tauT2':tauT2,'tauT3':tauT3}
+	int_obj.def_param ={'A1':A1,'A2':A2,'A3':A3,'txy1':txy1,'txy2':txy2,'txy3':txy3,'offset':offset,'GN0':GN0,'tz1':tz1,'tz2':tz2,'tz3':tz3,'AR1':AR1,'AR2':AR2,'AR3':AR3,'alpha1':alpha1,'alpha2':alpha2,'alpha3':alpha3,'B1':B1,'B2':B2,'B3':B3,'T1':T1,'T2':T2,'T3':T3,'tauT1':tauT1,'tauT2':tauT2,'tauT3':tauT3}
 	int_obj.def_param['N_FCS'] = N_FCS
 	int_obj.def_param['cpm'] = cpm
 	int_obj.def_param['N_mom'] = N_mom
@@ -199,14 +199,14 @@ if (objId.pbc_tb != null){
 
 function se_fit_diff_eq_1A_B(param) {
 		var dimen = fit_obj.def_options['Dimen']
-      var diff_eq = fit_obj.def_options['Diff_eq'] 
+      var diff_eq = fit_obj.eqn_selected
       var trip_eq = fit_obj.def_options['Triplet_eq']
       var diffNum = fit_obj.diffNum
       var tripNum = fit_obj.tripNum
                   
 
         return function(tc){
-        //['offset','GN0','A1','A2','A3','txy1','txy2','txy3','tz1','tz2','tz3','alpha1','alpha2','alpha3','AR1','AR2','AR3','B1','B2','B3','T1','T2','T3','tauT1','tauT2','tauT3','N_mom','bri','CV','f0','overtb','ACAC','ACCC','above_zero','s2n']
+        //['offset','GN0','A1','A2','A3','txy1','txy2','txy3','tz1','tz2','tz3',AR1','AR2','AR3','alpha1','alpha2','alpha3','B1','B2','B3','T1','T2','T3','tauT1','tauT2','tauT3','N_mom','bri','CV','f0','overtb','ACAC','ACCC','above_zero','s2n']
         let offset = param[0]
         let GN0 = param[1]
         
@@ -224,7 +224,7 @@ function se_fit_diff_eq_1A_B(param) {
                   let tz1 = param[4];
                   let alpha1 = param[5];
                   var c = 6;
-                  var dif = (A1*((Math.pow(1.+Math.pow((tc/txy1),alpha1),-1))))*((1+Math.pow((tc/tz1),-0.5)));
+                  var dif = (A1*((Math.pow(1.+Math.pow((tc/txy1),alpha1),-1))))*((Math.pow(1+(tc/tz1),-0.5)))
                     
                 }else if (diffNum == 2){
                   //for two diffusing species
@@ -237,8 +237,8 @@ function se_fit_diff_eq_1A_B(param) {
                   A1 = A1 / (A1 + A2);
                   A2 = A2 / (A1 + A2);
                     
-                  var dif = (A1*((Math.pow(1.+Math.pow((tc/txy1),alpha1),-1))))*((1+Math.pow((tc/tz1),-0.5)))
-                  dif += (A2*((Math.pow(1.+Math.pow((tc/txy2),alpha2),-1))))*((1+Math.pow((tc/tz2),-0.5)))
+                  var dif = (A1*((Math.pow(1.+Math.pow((tc/txy1),alpha1),-1))))*((Math.pow(1+(tc/tz1),-0.5)))
+                  dif += (A2*((Math.pow(1.+Math.pow((tc/txy2),alpha2),-1))))*((Math.pow(1+(tc/tz2),-0.5)))
                     
                 }else if (diffNum==3){
                   //for three diffusing species
@@ -253,9 +253,9 @@ function se_fit_diff_eq_1A_B(param) {
                     A2 = A2 / (A1 + A2 + A3);
                     A3 = A3 / (A1 + A2 + A3);
                 
-                    var dif = (A1*((Math.pow(1.+Math.pow((tc/txy1),alpha1),-1))))*((1+Math.pow((tc/tz1),-0.5)))
-                    dif += (A2*((Math.pow(1.+Math.pow((tc/txy2),alpha2),-1))))*((1+Math.pow((tc/tz2),-0.5)))
-                    dif += (A3*((Math.pow(1.+Math.pow((tc/txy3),alpha3),-1))))*((1+Math.pow((tc/tz3),-0.5)))
+                    var dif = (A1*((Math.pow(1.+Math.pow((tc/txy1),alpha1),-1))))*((Math.pow(1+(tc/tz1),-0.5)))
+                    dif += (A2*((Math.pow(1.+Math.pow((tc/txy2),alpha2),-1))))*((Math.pow(1+(tc/tz2),-0.5)))
+                    dif += (A3*((Math.pow(1.+Math.pow((tc/txy3),alpha3),-1))))*((Math.pow(1+(tc/tz3),-0.5)))
                     }
             }else if (diff_eq ==1){
               //['offset','GN0','A1','A2','A3','txy1','txy2','txy3','tz1','tz2','tz3','alpha1','alpha2','alpha3','AR1','AR2','AR3','B1','B2','B3','T1','T2','T3','tauT1','tauT2','tauT3','N_mom','bri','CV','f0','overtb','ACAC','ACCC','above_zero','s2n']
@@ -263,8 +263,9 @@ function se_fit_diff_eq_1A_B(param) {
               if (diffNum == 1){
                   let A1 = param[2];
                   let txy1 = param[3];
-                  let alpha1 = param[4];
-                  let AR1 = param[5];
+                  let AR1 = param[4];
+                  let alpha1 = param[5];
+                  
                   var c = 6;
                  
                   var dif = (A1*((Math.pow(1.+Math.pow((tc/txy1),alpha1),-1))))*(Math.pow((1+(tc/(AR1*AR1*txy1))),-0.5));
@@ -275,8 +276,9 @@ function se_fit_diff_eq_1A_B(param) {
                   //for two diffusing species
                   let A1 = param[2]; let A2 = param[3];
                   let txy1 = param[4]; let txy2 = param[5];
-                  let alpha1 = param[6];let alpha2 = param[7];
-                  let AR1 = param[8];let AR2 = param[9];
+                  let AR1 = param[6];let AR2 = param[7];
+                  let alpha1 = param[8];let alpha2 = param[9];
+                  
                   var c = 10;
                   
 
@@ -291,8 +293,9 @@ function se_fit_diff_eq_1A_B(param) {
                   
                   let A1 = param[2];let A2 = param[3];let A3 = param[4];
                   let txy1 = param[5];let txy2 = param[6];let txy3 = param[7];
-                  let alpha1 = param[8];let alpha2 = param[9];let alpha3 = param[10];
-                  let AR1 = param[11];let AR2 = param[12];let AR3 = param[13];
+                  let AR1 = param[8];let AR2 = param[9];let AR3 = param[10];
+                  let alpha1 = param[11];let alpha2 = param[12];let alpha3 = param[13];
+                  
                   var c = 14;
                  
 

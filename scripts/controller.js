@@ -101,9 +101,10 @@ class FittingManager{
       for (i in this.order_list){
         var art = this.order_list[i];
         if (art in this.objId_sel.param){
-         //insures that min max values are synched between different data, as the selected data values are saved.
+         //Ensures that min max values are synched between different data, as the selected data values are saved.
         if (this.objId_sel.param[art]['to_show'] == true && this.objId_sel.param[art]['calc'] == false){
           name.push(art)
+
           initialValues.push(parseFloat(this.objId_sel.param[art]['value']))
           if (this.objId_sel.param[art]['vary'] == true){
            
