@@ -17,6 +17,7 @@
 <script src="scripts/bootstrap-4.1.3-dist/JS/bootstrap.min.js"></script>
 <script src="scripts/d3.min.js"></script>
 <script src="scripts/d3fc.js"></script>
+<script src="https://rawgit.com/hippich/bower-semver/master/semver.min.js"></script>
 
 
 
@@ -107,14 +108,20 @@ div.row {
 //document.body.style.webkitTransform =  scale;    // Chrome, Opera, Safari
 // document.body.style.msTransform =   scale;       // IE 9
 // document.body.style.transform = scale;     // General
+const gitHubPath = 'dwaithe/FCSfitJS';  // example repo
+const url = 'https://api.github.com/repos/' + gitHubPath + '/tags';
 
+$.get(url).done(data => {
+  const versions = data.sort((v1, v2) => semver.compare(v2.name, v1.name));
+  $('#version').html(versions[0].name);
+});
 
   </script>
 
 
 <div class="container-fluid">
 <div style="padding: 10px">
-<h1 style="display: inline;">FoCuS-fit-JS</h1><p  style="display: inline;"> - Open source software for fitting correlated FCS (Fluorescence Correlated Spectroscopy) files - <a href="https://github.com/dwaithe/FCSfitJS"> Visit the Github repository</a> - <a href="https://dwaithe.github.io/FCSfitJS/manual/manual.html">Read the manual and documentation.</a> - <a href="https://github.com/dwaithe/FCSfitJS/#How to Cite">How to cite.</a><a href="download test data"></a></p>
+<h1 style="display: inline;">FoCuS-fit-JS</h1><p  style="display: inline;"> - <span id="version"></span> - Open source software for fitting correlated FCS (Fluorescence Correlated Spectroscopy) files - <a href="https://github.com/dwaithe/FCSfitJS"> Visit the Github repository</a> - <a href="https://dwaithe.github.io/FCSfitJS/manual/manual.html">Read the manual and documentation.</a> - <a href="https://github.com/dwaithe/FCSfitJS/#How to Cite">How to cite.</a><a href="download test data"></a></p>
 
 </div>
 <div class="row">
