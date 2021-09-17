@@ -634,6 +634,117 @@ document.getElementById('clear_fits').onclick = function(event){
 
 
 }
+function loadJSONFile(files) {
+    var input, file, fr;
+
+    if (typeof window.FileReader !== 'function') {
+      alert("The file API isn't supported on this browser yet.");
+      return;
+    }
+
+    
+    else if (!files[0]) {
+      alert("Please select a file before clicking 'Load'");
+    }
+    else {
+      file = files[0];
+      fr = new FileReader();
+      fr.onload = receivedText;
+      fr.readAsText(file);
+    }
+
+    function receivedText(e) {
+      let lines = e.target.result;
+      
+      if (fit_obj.objIdArr.length >0){
+      			fit_obj.fit_profile = JSON.parse(lines);
+				fit_obj.def_options = JSON.parse(JSON.stringify(fit_obj.fit_profile['def_options']))
+	
+				document.getElementById("diffNumSpecSpin").value  = fit_obj.def_options['Diff_species']
+				document.getElementById("tripNumSpecSpin").value = fit_obj.def_options['Triplet_species']
+				fit_obj.objId_sel.param = JSON.parse(JSON.stringify(fit_obj.fit_profile['param']))
+				document.getElementById("equation").value = fit_obj.fit_profile['equation']
+				document.getElementById("triplet").value = fit_obj.def_options['Triplet_eq']
+				document.getElementById("dimension").value = fit_obj.def_options['Dimen']
+				define_form()
+				//fit_obj.defineTable()
+				
+				alert('Profile Applied.')}
+		else{
+					alert("Please load in some data before applying a param profile.")} 
+    }
+  }
+
+
+document.getElementById('load_default_profile').onclick = function(event){
+	let input = document.createElement('input');
+  	input.type = 'file';
+
+  	input.onchange = _ => {
+    // you can use this method to get file and perform respective operations
+            let files =   Array.from(input.files);
+            loadJSONFile(files);
+        };
+  	input.click();
+
+}
+document.getElementById('save_default_profile').onclick = function(event){
+		if (fit_obj.objIdArr.length >0){
+					fit_obj.fit_profile = {}
+					update_params()
+					fit_obj.fit_profile['param'] = JSON.parse(JSON.stringify(fit_obj.objId_sel.param))
+					fit_obj.fit_profile['def_options'] = JSON.parse(JSON.stringify(fit_obj.def_options))
+					fit_obj.fit_profile['equation'] = JSON.parse(JSON.stringify(fit_obj.eqn_selected))
+					var filename = prompt("What would you like to name the profile settings file?", "profile_settings.json");
+					  if (filename != null) {
+					    
+					    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(fit_obj.fit_profile));
+						var dlAnchorElem = document.getElementById('downloadAnchorElem');
+						dlAnchorElem.setAttribute("href",     dataStr     );
+						dlAnchorElem.setAttribute("download", filename);
+						dlAnchorElem.click();
+						alert('Profile saved to file, use the \'load\' button and select file to apply.')}
+					  }
+					
+		else{
+					alert("Please load in some data before saving a param profile.")}
+
+}
+document.getElementById('store_default_profile').onclick = function(event){
+		if (fit_obj.objIdArr.length >0){
+					fit_obj.fit_profile = {}
+					update_params()
+					fit_obj.fit_profile['param'] = JSON.parse(JSON.stringify(fit_obj.objId_sel.param))
+					fit_obj.fit_profile['def_options'] = JSON.parse(JSON.stringify(fit_obj.def_options))
+					fit_obj.fit_profile['equation'] = JSON.parse(JSON.stringify(fit_obj.eqn_selected))
+					
+					alert('Profile stored, use the \'Apply\' button to apply.')}
+		else{
+					alert("Please load in some data before storing a param profile.")}
+
+
+}
+document.getElementById('apply_default_profile').onclick = function(event){
+	if (fit_obj.objIdArr.length >0){
+				fit_obj.def_options = JSON.parse(JSON.stringify(fit_obj.fit_profile['def_options']))
+	
+				document.getElementById("diffNumSpecSpin").value  = fit_obj.def_options['Diff_species']
+				document.getElementById("tripNumSpecSpin").value = fit_obj.def_options['Triplet_species']
+				fit_obj.objId_sel.param = JSON.parse(JSON.stringify(fit_obj.fit_profile['param']))
+				document.getElementById("equation").value = fit_obj.fit_profile['equation']
+				document.getElementById("triplet").value = fit_obj.def_options['Triplet_eq']
+				document.getElementById("dimension").value = fit_obj.def_options['Dimen']
+				define_form()
+				//fit_obj.defineTable()
+				
+				alert('Profile Applied.')}
+		else{
+					alert("Please load in some data before applying a param profile.")}
+
+}
+
+
+
 
 document.getElementById('save_param').onclick = function(event){
 	items_in_list = itemsInList(true)
@@ -781,7 +892,7 @@ function react_to_fit_change(){
 		}
 
 		fit_obj.objId_sel = fit_obj.model_obj_list[selected]
-		fit_obj.defineTable(selected)
+		fit_obj.defineTable()
 		define_form()
 }
 function download(data, filename, type) {
@@ -808,6 +919,7 @@ function update_params(){
             param = fit_obj.objId_sel.param[fit_obj.order_list[i]]
             if (param['to_show'] == true && param['calc'] == false){
                 id = fit_obj.order_list[i]
+                console.log('id',id,param['value'])
                 param['value'] = document.getElementById(id+'_value').value
                 param['vary'] = document.getElementById(id+'_vary').checked
                 param['minv'] = document.getElementById(id+'_minv').value
@@ -917,12 +1029,13 @@ var open_file_imprt = function(event){
       	namestr = input.files[count].name.split(".");
       	ext = namestr[namestr.length-1];
       	console.log('ext',ext)
+      	parse_data = false
       	if(ext == 'csv') parse_data = parse_csv(ev.currentTarget.result,input.files[count].name)
       	else if(ext == 'fcs') parse_data = parse_fcs(ev.currentTarget.result,input.files[count].name)
         else if(ext == 'sin' || ext == 'SIN') parse_data = parse_sin(ev.currentTarget.result,input.files[count].name)
         
         if(parse_data == false){
-          console.log("There was a problem reading file: ",input.files[count].name,ext)
+          alert("There was a problem reading file: "+input.files[count].name)
 
         }
         count +=1

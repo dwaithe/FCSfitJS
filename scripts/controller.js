@@ -52,7 +52,7 @@ class FittingManager{
         this.objIdArr[i].param = JSON.parse(JSON.stringify(this.def_param))}
 
   }
-  defineTable(selected){
+  defineTable(){
       //If data is present in the array.
         if (this.objIdArr != []){
           var modelFitSel = document.getElementById("modelFitSel");
@@ -144,7 +144,7 @@ class FittingManager{
     
       const options = {
          
-        damping:0.15,
+        damping: 0.15,
         initialValues: initialValues,
         minValues: minValues,
         maxValues: maxValues,

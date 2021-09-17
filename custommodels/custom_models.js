@@ -10,7 +10,6 @@ custom_model_init = function(int_obj){
 	var model_number = fit_obj.eqn_selected-2;
 	
 	if(model_number == 0){
-		console.log('workd')
 		//Model parameters
 		//'alias': specifies the name of the parameter within the interface. Can be used to describe also.
 		//'value': This is the value to initailise the fit with, this is the default value in the inteface. It can be changed later as well
