@@ -98,6 +98,67 @@ div.row {
   font-size: 20px;
 }
 
+.show {
+  z-index: 1000;
+  position: absolute;
+  background-color: #C0C0C0;
+  border: 1px solid blue;
+  padding: 2px;
+  display: block;
+  margin: 0;
+  list-style-type: none;
+  list-style: none;
+}
+
+.hide {
+  display: none;
+}
+
+.show li {
+  list-style: none;
+}
+
+.show a {
+  border: 0 !important;
+  text-decoration: none;
+}
+
+.show a:hover {
+  text-decoration: underline !important;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  font-family: "Open Sans", sans-serif;
+  padding: 0;
+  margin: 0;
+}
+
+#context-menu {
+  position: fixed;
+  z-index: 10000;
+  width: 150px;
+  background: #1b1a1a;
+  border-radius: 5px;
+  display: none;
+}
+#context-menu.visible{
+  display: block;
+}
+
+#context-menu .item {
+  padding: 8px 10px;
+  font-size: 15px;
+  color: #eee;
+  cursor: pointer;
+  border-radius: inherit;
+}
+
+#context-menu .item:hover {
+  background: #343434;
+}
 
 /*This is the view
 
@@ -118,6 +179,12 @@ $.get(url).done(data => {
 
   </script>
 
+<!-- Our context menu when we right-click an entry in the dataviewer -->
+    <div id="context-menu">
+      <div class="item" onclick="clear_fits()">Clear Fits</div>
+      <div class="item" onclick="remove_data()">Remove Data</div>
+    
+    </div>
 
 <div class="container-fluid">
 <div style="padding: 10px">
@@ -294,6 +361,10 @@ $.get(url).done(data => {
             </div>
             <div class="form-group">
             <input type="submit" value="Clear Fit Data All/highlighted" class="btn  btn-outline-primary btn-sm" id='clear_fits'>
+          </div>
+          <div class="form-group">
+            <input type="submit" value="Remove Data All/highlighted" class="btn  btn-outline-primary btn-sm" id='remove_data'>
+            
             </div>
 </div>
  </div>

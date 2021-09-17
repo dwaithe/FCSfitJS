@@ -12,12 +12,54 @@ var height = 600
 document.onselectstart = function() {
     return false;
 }
+function mouseX(evt) {
+  if (evt.pageX) {
+    return evt.pageX;
+  } else if (evt.clientX) {
+    return evt.clientX + (document.documentElement.scrollLeft ?
+      document.documentElement.scrollLeft :
+      document.body.scrollLeft);
+  } else {
+    return null;
+  }
+}
+
+function mouseY(evt) {
+  if (evt.pageY) {
+    return evt.pageY;
+  } else if (evt.clientY) {
+    return evt.clientY + (document.documentElement.scrollTop ?
+      document.documentElement.scrollTop :
+      document.body.scrollTop);
+  } else {
+    return null;
+  }
+}
+//This removes our context menu when we right-click on the dataviewer.
+document.querySelector("body").addEventListener("click", (e) => {
+  if (e.target.offsetParent != document.getElementById("context-menu")) {
+    document.getElementById("context-menu").classList.remove("visible");
+  }
+});
+
 
 function RowClick(currenttr, lock) {
     if (window.event.ctrlKey) {
         toggleRow(currenttr.closest('tr'));
     }
+    if (window.event.which === 3) {
+        //console.log('make nav menu appear')
+         //alert("contextmenu"+event);
+      	const { clientX: mouseX, clientY: mouseY } = window.event;
+      	contextMenu = document.getElementById("context-menu");
+  		contextMenu.style.top = `${mouseY}px`;
+  		contextMenu.style.left = `${mouseX}px`;
 
+  		contextMenu.classList.add("visible");
+
+      //window.event.returnValue = false;
+
+        }
     if (window.event.button === 0) {
         if (!window.event.ctrlKey && !window.event.shiftKey) {
             var sel = currenttr.closest('tr').className
@@ -531,6 +573,7 @@ function populate_data_viewer(){
 		row1.appendChild(checkbox)	
 		var cell4 = row1.insertCell();
 		checkbox.setAttribute("onclick","checkedBoxSingle(this)");
+		
 		//cell3.innerHTML = "     - "
 
 		// Add some text to the new cells:
@@ -545,6 +588,7 @@ function populate_data_viewer(){
 		checkbox.checked = true;
 		fit_obj.objIdArr[t].checked = true
 		checkbox.value = t;
+
 
     	
         cell4.setAttribute("onmousedown","RowClick(this,false);");
@@ -611,10 +655,12 @@ document.getElementById('CH43_chbx').onclick = function(event){
 
 
 
-
+//Clear fit parameters from data.
 document.getElementById('clear_fits').onclick = function(event){
-	
+	clear_fits()
 
+	}
+function clear_fits(){
 	items_to_clear = itemsInList(true)
 	
 
@@ -630,10 +676,36 @@ document.getElementById('clear_fits').onclick = function(event){
     
     plt_obj.prepare_axis()
     plt_obj.update_vertical(plt_obj.glb_sel_x0,plt_obj.glb_sel_x1,fit_obj.data_min_y, fit_obj.data_max_y)
-
-
+//This closes the context. menu when you select and option.
+document.getElementById("context-menu").classList.remove("visible");
 
 }
+
+//Remove data from software
+document.getElementById('remove_data').onclick = function(event){
+	remove_data()
+
+	}
+function remove_data(){
+	items_to_clear = itemsInList(true)
+	items_sorted = items_to_clear.sort(function(a,b) { return a - b; });
+	items_sorted.reverse();
+		for (var i = 0; i < items_sorted.length; i++) {
+			selected = items_sorted[i]
+	        fit_obj.objIdArr.splice(selected, 1); 
+           
+
+	}
+//This closes the context. menu when you select and option.
+
+document.getElementById("context-menu").classList.remove("visible");
+populate_data_viewer()
+
+}
+
+
+
+
 function loadJSONFile(files) {
     var input, file, fr;
 
@@ -919,7 +991,6 @@ function update_params(){
             param = fit_obj.objId_sel.param[fit_obj.order_list[i]]
             if (param['to_show'] == true && param['calc'] == false){
                 id = fit_obj.order_list[i]
-                console.log('id',id,param['value'])
                 param['value'] = document.getElementById(id+'_value').value
                 param['vary'] = document.getElementById(id+'_vary').checked
                 param['minv'] = document.getElementById(id+'_minv').value
