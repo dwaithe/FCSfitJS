@@ -300,7 +300,7 @@ $.get(url).done(data => {
 
        <div class=".col-xl-" style="min-width: 400px;">
         <div class="card border-secondary mb-3">
-        <div class="card-header">Main plot</div>
+        <div class="card-header" >Main plot</div>
         <div class="card-body">
           <label>Zoom/Scaling: </label>
             <input type="radio" name="zoom_mode" id ="zoom_both" value="zoom_both" checked/> Both
@@ -316,7 +316,7 @@ $.get(url).done(data => {
             <H3>Or click <a href="test_data.zip">here</a> to download some example data.</H3>
             <H3> The data is zipped, please unzip it before trying to analyse.</H3>
             </div>
-          <div id="chart" style="width:500;height:600px;left-padding:24px"></div>
+          <div id="chart"  oncontextmenu="return false;" style="width:500;height:600px;left-padding:24px"></div>
 
             
         

@@ -102,6 +102,7 @@ function clearAll() {
     }
 };
 function itemsInList(empty){
+	
 
 	items_in_list = []
 	if (document.getElementById('table') == null)

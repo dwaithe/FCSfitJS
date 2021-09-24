@@ -22,6 +22,8 @@ class PlotManager{
         this.y2Res //scale range for residual plot.
         this.reset_zoom = false;
         this.scaleMode =  'both'
+        this.xmpt = 0 //Where the mouse has been clicked. 
+        this.ympt = 0 //Where the mouse has been clicked.
 
 
         }
@@ -116,18 +118,23 @@ class PlotManager{
     gRange.call(sliderRange);
     }
 
-
   prepare_axis(){
+   
+
       //Method for showing the axis and plotting the data.
         this.plot_data = []
         var points = []
         var items_to_highlight = itemsInList(false)
+
+
+        
 
         for (var i = 0; i < items_to_highlight.length; i++) {
             var selected = items_to_highlight[i]
             fit_obj.objIdArr[selected].highlight = true
         }
 
+        const tree = d3.quadtree();
 
         for(t=0;t<fit_obj.objIdArr.length;t++){
             if (fit_obj.objIdArr[t].toFit == true){
@@ -135,9 +142,10 @@ class PlotManager{
                 if(fit_obj.objIdArr[t].highlight == true)
                   {points.push(pointSeriesHigh)}else{points.push(pointSeries)}
                 
-                this.plot_data.push(fit_obj.objIdArr[t].autotime.map((x, i) => [x, fit_obj.objIdArr[t].autoNorm[i]]))
-                
-                
+                this.plot_data.push(fit_obj.objIdArr[t].autotime.map(function(x, i) {tree.add([x, fit_obj.objIdArr[t].autoNorm[i]]);return [x, fit_obj.objIdArr[t].autoNorm[i],t]}))
+             
+
+            
                 if (fit_obj.objIdArr[t].model_autoNorm.length !=0){
                     
                     
@@ -157,25 +165,74 @@ class PlotManager{
               fit_obj.objIdArr[t].highlight = false
             }
         
+        
+        const pointer = fc.pointer().on('point', event => {
+
+            if (event.length != 0)
+            {
+
+             plt_obj.xmpt = this.xScale.invert(event[0].x)
+             plt_obj.ympt = this.yScale.invert(event[0].y)
+
+             
+                
+         }})
+
+       document.getElementById('chart').onmousedown = function(ev) { 
+            if (ev.which ==3){
+            var ptM = tree.find(plt_obj.xmpt,plt_obj.ympt)
+            for (var i = 0; i < plt_obj.plot_data.length; i++) {
+                    for (var b = 0; b < plt_obj.plot_data[i].length; b++) {
+                    
+                    
+                    if (ptM[0] === plt_obj.plot_data[i][b][0] && ptM[1] === plt_obj.plot_data[i][b][1]){
+                        var midx = plt_obj.plot_data[i][b][2]
+                        rows =   document.getElementById('table').rows;
+    
+                        //Finds if they have been selected. 
+                        for (var c = 0; c < rows.length; c++) {
+                            row = rows[c]
+                        if( row.id == ''){
+                            row.className = ''
+                            
+                            if (row.cells[0].id == midx){
+
+                                row.className = 'selected'
+                                }}
+                        }
+                        populate_list_view()
+                        plt_obj.prepare_axis()
 
 
+                    }
+                }}}
 
+        }
+
+        
+        
         points.push(verticalLine)
         points.push(verticalLine)
 
         this.plot_data.push([[[this.glb_sel_x0],[-450]],[[this.glb_sel_x0],[0.1]],[[this.glb_sel_x0],[25]],[[this.glb_sel_x0],[450]]])
         this.plot_data.push([[[this.glb_sel_x1],[-450]],[[this.glb_sel_x1],[0.1]],[[this.glb_sel_x1],[25]],[[this.glb_sel_x1],[450]]])
-
+        
         const decorate = sel => {
             sel.select('d3fc-svg.plot-area')             
-                .call(this.zoom)
+                .call(this.zoom);
+            sel.enter().select('d3fc-svg.plot-area').call(pointer)
             }
 
+
+
+        
 
         var multi = fc.seriesWebglMulti()
             .xScale(this.xScale)
             .yScale(this.yScale)
+
             .series(points)
+
             .mapping((plot_data, index, series) => {
                 switch (series[index]) {
                     case pointSeriesHigh:
@@ -188,6 +245,8 @@ class PlotManager{
                         return plot_data[index];
                     case verticalLine:
                         return plot_data[index];
+                    case brush:
+                        return plot_data.brushedRange;
                     
                     }
                 })
@@ -388,8 +447,10 @@ const pointSeries = fc
     .crossValue(d => d[0])
     .mainValue(d => d[1])
     //.type(d3.symbolSquare)
+    
     .decorate(program => {
             fc.webglFillColor([50 / 255, 50 / 255, 50 / 255, 1.0])(program);
+
     });
 const pointSeriesHigh = fc
     .seriesWebglPoint()
@@ -397,7 +458,9 @@ const pointSeriesHigh = fc
     .mainValue(d => d[1])
     //.type(d3.symbolSquare)
     .decorate(program => {
-            fc.webglFillColor([0 / 255, 0 / 255, 200 / 255, 1.0])(program);
+            fc.webglFillColor([150 / 255, 150/ 255, 150 / 255, 1.0])(program);
+
+        
     });
 
 const lineSeries = fc
@@ -414,7 +477,7 @@ const lineSeriesHigh = fc
     .mainValue(d => d[1])
     .lineWidth(4)
     .decorate(program => {
-            fc.webglStrokeColor([0 / 255, 200 / 255, 0 / 255, 1.0])(program); 
+            fc.webglStrokeColor([200 / 255, 150 / 255, 150 / 255, 1.0])(program); 
         });
 
 
@@ -437,4 +500,7 @@ const gridLineSeries_res = fc
     .annotationSvgGridline()
     .yTicks(5)
     .xTicks(5);
+
+
+
 
