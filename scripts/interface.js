@@ -701,6 +701,7 @@ function remove_data(){
 
 document.getElementById("context-menu").classList.remove("visible");
 populate_data_viewer()
+plt_obj.prepare_axis()
 
 }
 
