@@ -16,7 +16,8 @@ var parse_fcs = function(feed,filepath){
 		}
 
 	read = true
-	ind = 0
+	ind1 = 0
+	ind2 = 0
 	channelnum = 0
 	tdata_arr = []
 	tscale_arr = []
@@ -95,13 +96,23 @@ var parse_fcs = function(feed,filepath){
 		
 
 		if (channel_str == 'Auto-correlation detector Meta1')
-
 			{channel = 0
 			chname = 'CH1'
-			ind +=1}
+			ind1 +=1}
+		if (channel_str == 'Auto-correlation detector Ch1')
+			{channel = 0
+				continue;
+			chname = 'CH1'}
 		if(channel_str == 'Auto-correlation detector Meta2')
 			{channel = 1
-			chname = 'CH2'}
+			chname = 'CH2'
+			ind2 +=1}
+		if(channel_str == 'Auto-correlation detector Ch2')
+			{channel = 1
+							continue;
+;
+			chname = 'CH2'
+			}
 		if (channel_str == 'Cross-correlation detector Meta2 versus detector Meta1')
 			{channel = 3
 			chname = 'CH21'}
@@ -110,6 +121,7 @@ var parse_fcs = function(feed,filepath){
 			chname = 'CH12'}
 
 		
+		ind = Math.max(ind1,ind2)
 
 		num_of_channels = parseInt(text[2])
 
