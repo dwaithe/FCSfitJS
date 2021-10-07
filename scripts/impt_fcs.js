@@ -99,20 +99,18 @@ var parse_fcs = function(feed,filepath){
 			{channel = 0
 			chname = 'CH1'
 			ind1 +=1}
-		if (channel_str == 'Auto-correlation detector Ch1')
-			{channel = 0
-				continue;
-			chname = 'CH1'}
+		if (channel_str == 'Auto-correlation detector Ch1' || channel_str == 'Auto-correlation detector Ch2')
+			{tscale_arr = []
+			tdata_arr = []
+			cscale_arr = []
+			cdata_arr = []
+			continue;
+			}
 		if(channel_str == 'Auto-correlation detector Meta2')
 			{channel = 1
 			chname = 'CH2'
 			ind2 +=1}
-		if(channel_str == 'Auto-correlation detector Ch2')
-			{channel = 1
-							continue;
-;
-			chname = 'CH2'
-			}
+		
 		if (channel_str == 'Cross-correlation detector Meta2 versus detector Meta1')
 			{channel = 3
 			chname = 'CH21'}
