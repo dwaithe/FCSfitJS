@@ -50,7 +50,6 @@ var parse_csv = function(feed,filepath){
 				autoNorm[2].push(parseFloat(line[3]))
 				autoNorm[3].push(parseFloat(line[4]))
 				i++
-				console.log(line)
 				line = lines[i].split(",")
 				}
 		}
