@@ -33,8 +33,8 @@ var parse_csv = function(feed,filepath){
 		if(metadata['numOfCH'] == 1){
 			autoNorm = []
 			autotime = []
-		
-			while(line[0] != "end"){
+			
+			while(line[0].slice(0,3) != "end"){
 				autotime.push(parseFloat(line[0]))
 				autoNorm.push(parseFloat(line[1]))
 				i++
@@ -43,14 +43,14 @@ var parse_csv = function(feed,filepath){
 		}else if(metadata['numOfCH'] == 2){
 			autoNorm = [[],[],[],[]]
 			autotime = []
-		
-			while(line[0] != "end"){
+			while(line[0].slice(0,3) != "end"){
 				autotime.push(parseFloat(line[0]))
 				autoNorm[0].push(parseFloat(line[1]))
 				autoNorm[1].push(parseFloat(line[2]))
 				autoNorm[2].push(parseFloat(line[3]))
 				autoNorm[3].push(parseFloat(line[4]))
 				i++
+				console.log(line)
 				line = lines[i].split(",")
 				}
 		}
