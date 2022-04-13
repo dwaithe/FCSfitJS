@@ -287,7 +287,7 @@ function se_fit_diff_eq_1A_B(param) {
 
 
                   var dif = (A1*((Math.pow(1.+Math.pow((tc/txy1),alpha1),-1))))*(Math.pow((1+(tc/(AR1*AR1*txy1))),-0.5));
-                  dif += (A1*((Math.pow(1.+Math.pow((tc/txy1),alpha1),-1))))*(Math.pow((1+(tc/(AR2*AR2*txy1))),-0.5));
+                  dif += (A2*((Math.pow(1.+Math.pow((tc/txy2),alpha2),-1))))*(Math.pow((1+(tc/(AR2*AR2*txy2))),-0.5));
              }else if (diffNum==3){
                   //for three diffusing species
                   
