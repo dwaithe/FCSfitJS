@@ -302,13 +302,8 @@ $.get(url).done(data => {
         <div class="card border-secondary mb-3">
         <div class="card-header" >Main plot</div>
         <div class="card-body">
-          <label>Zoom/Scaling: </label>
-            <input type="radio" name="zoom_mode" id ="zoom_both" value="zoom_both" checked/> Both
-            <input type="radio" name="zoom_mode" id="zoom_vertical" value="zoom_vertical" /> Vertical
-            <input type="radio" name="zoom_mode" id="zoom_horizontal" value="zoom_horizontal" /> Horizontal.
-            <input type="submit" name="reset_plot" class="btn  btn-outline-primary btn-sm" id="reset_plot" value="Reset zoom" />
-            <input type="submit" name="zoom_in" class="btn  btn-outline-primary btn-sm" id="zoom_in" value="Zoom in" />
-            <input type="submit" name="zoom_out" class="btn  btn-outline-primary btn-sm" id="zoom_out" value="Zoom out" />
+          <label>Zoom/Scaling: Use the scroll wheel on your mouse to zoom in and out. To scroll only in one axis, use the scroll wheel whilst over the x or y-axis.  </label>
+            
           <div id="splash">
             <br>
             <H2> <- Open your files, to load your data and get started. </H2>
@@ -371,6 +366,9 @@ $.get(url).done(data => {
 </div>
 </div>
  </div>
+
+ <div class="test">
+  <div>
 <script src="scripts/main.js"></script>
 <script src="scripts/fitting_method_se.js"></script>
 <script src="scripts/impt_csv.js"></script>
