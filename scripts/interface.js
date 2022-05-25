@@ -1134,26 +1134,17 @@ var open_file_imprt = function(event){
   }
   
 }
-document.getElementById('zoom_vertical').onclick = function(event){
-  if (document.getElementById('zoom_vertical').checked) plt_obj.scaleMode = 'vertical'
-}
-document.getElementById('zoom_horizontal').onclick = function(event){
-    if (document.getElementById('zoom_horizontal').checked) plt_obj.scaleMode = 'horizontal'
-}
-document.getElementById('zoom_both').onclick = function(event){
-     if (document.getElementById('zoom_both').checked) plt_obj.scaleMode = 'both'
-}
-document.getElementById('reset_plot').onclick = function(event){
-    plt_obj.reset_plot()
- 
-}
-document.getElementById('zoom_in').onclick = function(event){
-    plt_obj.change_zoom(1.1)
- 
-}
-document.getElementById('zoom_out').onclick = function(event){
-    plt_obj.change_zoom(0.75)
- 
-}
+
+			
+ $(document).keyup(function(e) {
+        if (e.which === 38) {
+          //up was pressed
+         
+			var event = jQuery.Event( "mousewheel" );
+			event.deltaY = -1;
+			$(".test").trigger(event);
+			console.log('wte')
 
 
+      }
+    });   

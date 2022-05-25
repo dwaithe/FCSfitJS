@@ -218,9 +218,15 @@ class PlotManager{
         this.plot_data.push([[[this.glb_sel_x1],[-450]],[[this.glb_sel_x1],[0.1]],[[this.glb_sel_x1],[25]],[[this.glb_sel_x1],[450]]])
         
         const decorate = sel => {
-            sel.select('d3fc-svg.plot-area')             
-                .call(this.zoom);
-            sel.enter().select('d3fc-svg.plot-area').call(pointer)
+            sel.enter().selectAll('.plot-area')             
+                .call(this.zoom,this.xScale,this.yScale);
+            sel.enter()
+                .selectAll('.x-axis')
+                .call(this.zoom, this.xScale, null);
+            sel.enter()
+                .selectAll('.y-axis')
+                .call(this.zoom, null, this.yScale);
+            //sel.enter().select('d3fc-svg.plot-area').call(pointer)
             }
 
 
@@ -339,105 +345,23 @@ class PlotManager{
           this.scale_x *=factor
           this.scale_y *=factor
           
-          var transform = d3.zoomIdentity
-      
-          .scale(zoom_ele.k) 
-      
+          var transform = d3.zoomIdentity.scale(zoom_ele.k) 
     
           d3.select('d3fc-svg.plot-area').call(this.zoom.transform, transform);
           this.prepare_axis()
 
   }
-  
-  zoom = d3.zoom()
-      .on('zoom', event => {
-      //The zoom functionality works great if you want joint scaling in both x and y.
-      //We want to sometimes scales in one axis and not the other.
-      //This made it necessary to independently store and update the scaling parameters.
-      const t = event.transform;
 
-      var delta_k = t.k-this.prev_s;
-      var delta_x = t.x-this.prev_x
-      var delta_y = t.y-this.prev_y
-          
-      if(this.scaleMode == "vertical") {
-         
-        this.scale_y += delta_k
-       
-        if (this.scale_y < 0.1) {
-          this.scale_y = 0.1;
-          t.x = this.prev_x
-          t.y = this.prev_y
-          t.k = this.prev_s
-
-          
-        }else{
-          this.trans_y += delta_y  
-          this.prev_y = t.y
-          this.prev_s = t.k
-          var ty = d3.zoomIdentity.translate(0,this.trans_y).scale(this.scale_y);
-          this.yScale.domain(ty.rescaleY(this.y2).domain());}
-        }
-        
-      
-      if(this.scaleMode == "horizontal") {
-        this.scale_x += delta_k
-        
-        if (this.scale_x < 0.1) {
-          this.scale_x = 0.1
-          t.x = this.prev_x
-          t.y = this.prev_y
-          t.k = this.prev_s
-
-          }else{
-          this.trans_x += delta_x
-          this.prev_x = t.x
-          this.prev_s = t.k
-          var tx = d3.zoomIdentity.translate(this.trans_x,0).scale(this.scale_x);
-          this.xScale.domain(tx.rescaleX(this.x2).domain());
-
-          }
-        
-        }
-      
-      if(this.scaleMode == "both") {
-        
-        this.scale_y += delta_k
-        this.scale_x += delta_k
-        if (this.scale_x < 0.1) {
-            this.scale_x = 0.1;
-            t.x = this.prev_x
-            t.k = this.prev_s
-           }else{
-             this.trans_x += delta_x
-             this.prev_x = t.x
-             this.prev_y = t.y
-             this.prev_s = t.k
-             var tx = d3.zoomIdentity.translate(this.trans_x,0).scale(this.scale_x);
-             this.xScale.domain(tx.rescaleX(this.x2).domain());
-           }
-        if (this.scale_y < 0.1) {
-            this.scale_y = 0.1;
-            
-            t.y = this.prev_y
-            t.k = this.prev_s
-            }else{
-            this.trans_y += delta_y
-            this.prev_x = t.x
-            this.prev_y = t.y
-            this.prev_s = t.k
-            var ty = d3.zoomIdentity.translate(0,this.trans_y).scale(this.scale_y);
-             this.yScale.domain(ty.rescaleY(this.y2).domain());
-          }
-  
-    }
-
- d3.select('d3fc-group')
+render = function(){
+    d3.select('d3fc-group')
         .node()
-        .requestRedraw();
-  });
-}
+        .requestRedraw()
+  }
+  
+  zoom = fc.zoom().on('zoom',this.render)
 
+    
+  }
 
 
 //Seperate objects which have no dependencies.
