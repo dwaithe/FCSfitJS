@@ -66,7 +66,7 @@ var parse_sin = function(feed,filepath){
 		if (tdata2.length != 0){
 			corrObj2 = new CorrObj(filepath)
 
-			corrObj2.autoNorm = tdata
+			corrObj2.autoNorm = tdata2
 			corrObj2.autotime = tscale
 
 			corrObj2.name = corrObj2.name+'-CH2'
@@ -91,7 +91,7 @@ var parse_sin = function(feed,filepath){
 		if (tdata3.length != 0){
 			corrObj3 = new CorrObj(filepath)
 
-			corrObj3.autoNorm = tdata
+			corrObj3.autoNorm = tdata3
 			corrObj3.autotime = tscale
 			
 			corrObj3.ch_type = 2;
@@ -116,7 +116,7 @@ var parse_sin = function(feed,filepath){
 		if (tdata4.length != 0){
 			corrObj4 = new CorrObj(filepath)
 			
-			corrObj4.autoNorm = tdata
+			corrObj4.autoNorm = tdata4
 			corrObj4.autotime = tscale
 			
 			corrObj4.ch_type = 3;
