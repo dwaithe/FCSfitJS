@@ -7,22 +7,13 @@ class PlotManager{
         this.glb_sel_x0
         this.glb_sel_x1
         this.plot_data
-        this.scale_x = 1
-        this.scale_y = 1
-        this.prev_s = 1
-        this.prev_x = 0
-        this.prev_y = 0
-        this.trans_x = 0
-        this.trans_y = 0
         this.xScale //scale range for main plot
         this.yScale //scale range for main plot
         this.x2 //copy of scale range for plot
         this.y2 //copy of scale range for plot
         this.x2Res //scale range for residual plot
         this.y2Res //scale range for residual plot.
-        this.reset_zoom = false;
-        this.scaleMode =  'both'
-        this.xmpt = 0 //Where the mouse has been clicked. 
+        this.xmpt = 0 //Where the mouse has been clicked.
         this.ympt = 0 //Where the mouse has been clicked.
 
 
@@ -30,13 +21,6 @@ class PlotManager{
 
   define_scale(){
       //resets the scale, to span entire data, and removes any transforms.
-      this.scale_x =1
-      this.scale_y =1
-      this.prev_s = 1
-      this.prev_x =0
-      this.prev_y =0
-      this.trans_x =0
-      this.trans_y = 0
       this.xScale = d3.scaleLog()
                   .domain([fit_obj.data_min_x, fit_obj.data_max_x]) // input
                   .range([0, width]); // output
@@ -326,29 +310,6 @@ class PlotManager{
         .datum(this.plot_data)
         .call(chart);
         this.update_vertical(this.glb_sel_x0,this.glb_sel_x1,fit_obj.data_min_y, fit_obj.data_max_y)
-
-  }
-  reset_plot = function(){
-          var zoom_ele = d3.select('d3fc-svg.plot-area')._groups[0][0].__zoom
-          zoom_ele.x = 0
-          zoom_ele.y = 0
-          zoom_ele.k = 1
-          d3.select('d3fc-svg.plot-area').call(plt_obj.zoom)
-          this.define_scale()
-          this.prepare_axis()
-
-  }
-  change_zoom = function(factor){
-          var zoom_ele = d3.select('d3fc-svg.plot-area')._groups[0][0].__zoom
-          //console.log('zoom_ele',zoom_ele,this.scale_x)
-          zoom_ele.k *= factor
-          this.scale_x *=factor
-          this.scale_y *=factor
-          
-          var transform = d3.zoomIdentity.scale(zoom_ele.k) 
-    
-          d3.select('d3fc-svg.plot-area').call(this.zoom.transform, transform);
-          this.prepare_axis()
 
   }
 
