@@ -197,6 +197,34 @@ body {
   background: #e9ecef;
 }
 
+.empty-state {
+  text-align: center;
+  padding: 56px 24px;
+  color: #495057;
+}
+.empty-state svg {
+  width: 44px;
+  height: 44px;
+  color: #adb5bd;
+  margin-bottom: 18px;
+}
+.empty-state h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #343a40;
+  margin: 0 0 8px;
+}
+.empty-state p {
+  font-size: 0.95rem;
+  margin: 0 0 6px;
+  line-height: 1.5;
+}
+.empty-state .empty-state-secondary {
+  font-size: 0.85rem;
+  color: #868e96;
+  margin-top: 14px;
+}
+
 /*This is the view
 
 </style>
@@ -351,12 +379,11 @@ $.get(url).done(data => {
         <div class="card-body">
           <label>Zoom/Scaling: Use the scroll wheel on your mouse to zoom in and out. To scroll only in one axis, use the scroll wheel whilst over the x or y-axis.  </label>
             
-          <div id="splash">
-            <br>
-            <H2> <- Open your files, to load your data and get started. </H2>
-            <br>
-            <H3>Or click <a href="test_data.zip">here</a> to download some example data.</H3>
-            <H3> The data is zipped, please unzip it before trying to analyse.</H3>
+          <div id="splash" class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+            <h2>Open your files to get started</h2>
+            <p>Select one or more data files above to load and plot your correlation curves.</p>
+            <p class="empty-state-secondary">No data handy? <a href="test_data.zip">Download example data</a> &mdash; unzip it before loading.</p>
             </div>
           <div id="chart"  oncontextmenu="return false;" style="width:500;height:600px;left-padding:24px"></div>
 
