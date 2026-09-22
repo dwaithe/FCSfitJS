@@ -217,7 +217,7 @@ class PlotManager{
 
         
 
-        var multi = fc.seriesWebglMulti()
+        var multi = fc.seriesCanvasMulti()
             .xScale(this.xScale)
             .yScale(this.yScale)
 
@@ -252,7 +252,7 @@ class PlotManager{
             .xTicks(3)
             .yOrient('left')
             .svgPlotArea(gridLineSeries)
-            .webglPlotArea(multi)
+            .canvasPlotArea(multi)
             .decorate(decorate)
 
         var residual_data = []
@@ -279,7 +279,7 @@ class PlotManager{
                 .domain([d3.min(res_min)*1.1,d3.max(res_max)*1.1]) // input 
                 .range([height, 0]); // output
 
-        const res_multi = fc.seriesWebglMulti()
+        const res_multi = fc.seriesCanvasMulti()
           .xScale(this.x2Res)
           .yScale(this.y2Res)
           .series(residual_points)
@@ -297,7 +297,7 @@ class PlotManager{
           .yTicks(5)
           .yOrient('left')
           .svgPlotArea(gridLineSeries_res)
-          .webglPlotArea(res_multi)
+          .canvasPlotArea(res_multi)
               
 
         d3.select('#residuals')
@@ -346,52 +346,51 @@ render = function(){
 //Seperate objects which have no dependencies.
 
 const pointSeries = fc
-    .seriesWebglPoint()
+    .seriesCanvasPoint()
     .crossValue(d => d[0])
     .mainValue(d => d[1])
     //.type(d3.symbolSquare)
-    
-    .decorate(program => {
-            fc.webglFillColor([50 / 255, 50 / 255, 50 / 255, 1.0])(program);
 
+    .decorate(context => {
+            context.fillStyle = 'rgb(50, 50, 50)';
+            context.strokeStyle = 'rgb(50, 50, 50)';
     });
 const pointSeriesHigh = fc
-    .seriesWebglPoint()
+    .seriesCanvasPoint()
     .crossValue(d => d[0])
     .mainValue(d => d[1])
     //.type(d3.symbolSquare)
-    .decorate(program => {
-            fc.webglFillColor([150 / 255, 150/ 255, 150 / 255, 1.0])(program);
-
-        
+    .decorate(context => {
+            context.fillStyle = 'rgb(150, 150, 150)';
+            context.strokeStyle = 'rgb(150, 150, 150)';
     });
 
 const lineSeries = fc
-    .seriesWebglLine()
+    .seriesCanvasLine()
     .crossValue(d => d[0])
     .mainValue(d => d[1])
-    .lineWidth(4)
-    .decorate(program => {
-            fc.webglStrokeColor([255 / 255, 0 / 255, 0 / 255, 1.0])(program); 
+    .decorate(context => {
+            context.strokeStyle = 'rgb(255, 0, 0)';
+            context.lineWidth = 4;
         });
 const lineSeriesHigh = fc
-    .seriesWebglLine()
+    .seriesCanvasLine()
     .crossValue(d => d[0])
     .mainValue(d => d[1])
-    .lineWidth(4)
-    .decorate(program => {
-            fc.webglStrokeColor([200 / 255, 150 / 255, 150 / 255, 1.0])(program); 
+    .decorate(context => {
+            context.strokeStyle = 'rgb(200, 150, 150)';
+            context.lineWidth = 4;
         });
 
 
 
 const verticalLine = fc
-    .seriesWebglLine()
+    .seriesCanvasLine()
     .crossValue(d => d[0])
     .mainValue(d => d[1])
-    .lineWidth(4)
-    .decorate(program => {
-            fc.webglStrokeColor([0 / 255, 0 / 255, 128 / 255, 1.0])(program); 
+    .decorate(context => {
+            context.strokeStyle = 'rgb(0, 0, 128)';
+            context.lineWidth = 4;
         });
 
 const gridLineSeries = fc
