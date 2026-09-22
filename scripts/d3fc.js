@@ -9808,7 +9808,7 @@
 
       if (element.setWebglViewport) {
         var context = node.getContext('webgl');
-        context.viewport(0, 0, width, height);
+        if (context) context.viewport(0, 0, width, height);
       }
     }));
 
