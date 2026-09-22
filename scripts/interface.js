@@ -1142,3 +1142,20 @@ function toggleSidePanel(panelId, btn){
   btn.title = collapsed ? 'Expand' : 'Collapse'
 }
 
+function applyTheme(theme){
+  document.documentElement.setAttribute('data-bs-theme', theme)
+  try { localStorage.setItem('theme', theme) } catch(e) {}
+  var btn = document.getElementById('themeToggleBtn')
+  if (btn) btn.innerHTML = theme === 'dark' ? '&#9789; Dark' : '&#9788; Light'
+  if (typeof plt_obj !== 'undefined' && plt_obj.plot_data){
+    plt_obj.prepare_axis()
+  }
+}
+
+function toggleTheme(){
+  var current = document.documentElement.getAttribute('data-bs-theme')
+  applyTheme(current === 'dark' ? 'light' : 'dark')
+}
+
+applyTheme(document.documentElement.getAttribute('data-bs-theme') || 'light')
+
