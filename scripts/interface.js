@@ -155,7 +155,7 @@ function define_form(){
 
 		param = fit_obj.objId_sel.param[fit_obj.order_list[i]]
 		var createform = document.createElement('div'); // Create New Element Form
-	createform.setAttribute("class", "form-inline"); // Setting Action Attribute on Form
+	createform.setAttribute("class", "d-flex flex-wrap align-items-center gap-1 param-row"); // Setting Action Attribute on Form
 	 // Setting Method Attribute on Form
 	x.appendChild(createform);
 		
@@ -172,7 +172,7 @@ function define_form(){
 				id = fit_obj.order_list[i]
 				var paramValue = document.createElement('input'); // Initial value for the fitting.
 				paramValue.setAttribute("class", "form-control form-control-sm");
-				paramValue.setAttribute("style", "width: 80px");
+				paramValue.setAttribute("style", "width: 60px");
 				paramValue.setAttribute("type","number")
 				paramValue.setAttribute("min",param['minv'])
 				paramValue.setAttribute("max",param['maxv'])
@@ -190,6 +190,7 @@ function define_form(){
 
 				var paramMin = document.createElement('input'); // For setting parameter min.
 				paramMin.setAttribute("class", "form-control form-control-sm");
+				paramMin.setAttribute("style", "width: 52px");
 				paramMin.setAttribute("type","number")
 				paramMin.setAttribute("min",-999.)
 				paramMin.setAttribute("max",999.)
@@ -200,6 +201,7 @@ function define_form(){
 
 				var paramMax = document.createElement('input'); /// For setting parameter max.
 				paramMax.setAttribute("class", "form-control form-control-sm");
+				paramMax.setAttribute("style", "width: 52px");
 				paramMax.setAttribute("type","number")
 				paramMax.setAttribute("min",-999)
 				paramMax.setAttribute("max",999)
@@ -207,8 +209,6 @@ function define_form(){
 				paramMax.setAttribute("step",0.001)
 				paramMax.setAttribute("id",id+'_maxv')
 				createform.appendChild(paramMax);
-				var linebreak = document.createElement('br');
-				createform.appendChild(linebreak);
 			}else{
 				var paramLabel = document.createElement('label'); // Label of parameter
 				paramLabel.setAttribute("class", "label_st_calc");
@@ -218,11 +218,7 @@ function define_form(){
 				paramLabel.setAttribute("class", "label_st_calc");
 				paramLabel.innerHTML = param['value'].toFixed(3);
 				createform.appendChild(paramLabel);
-				
-
-
-				var linebreak = document.createElement('br');
-				createform.appendChild(linebreak);}
+				}
 
 			}
 
