@@ -1132,6 +1132,13 @@ var open_file_imprt = function(event){
 }
     reader[i].readAsText(input.files[i])
   }
-  
+
+}
+
+function toggleSidePanel(panelId, btn){
+  var panel = document.getElementById(panelId)
+  var collapsed = panel.classList.toggle('collapsed')
+  btn.innerHTML = collapsed ? '&plus;' : '&minus;'
+  btn.title = collapsed ? 'Expand' : 'Collapse'
 }
 

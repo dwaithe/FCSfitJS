@@ -159,6 +159,44 @@ body {
   background: #343434;
 }
 
+.side-panel {
+  flex: 0 1 340px;
+  min-width: 220px;
+  transition: flex-basis 0.15s ease, min-width 0.15s ease;
+}
+.side-panel.collapsed {
+  flex: 0 0 auto;
+  min-width: 0;
+  width: 44px;
+}
+.side-panel.collapsed .card-body {
+  display: none;
+}
+.side-panel.collapsed .panel-title {
+  display: none;
+}
+.side-panel.collapsed .card-header {
+  padding: 6px 2px;
+  text-align: center;
+}
+.main-panel {
+  flex: 1 1 500px;
+  min-width: 320px;
+}
+.panel-toggle-btn {
+  float: right;
+  cursor: pointer;
+  border: 1px solid #ced4da;
+  background: #fff;
+  border-radius: 3px;
+  font-size: 13px;
+  line-height: 1;
+  padding: 3px 7px;
+}
+.panel-toggle-btn:hover {
+  background: #e9ecef;
+}
+
 /*This is the view
 
 </style>
@@ -204,9 +242,9 @@ $.get(url).done(data => {
 
 
 <div class="row">
-  <div class="col-xl-3" style="min-width: 470px;"  s>
+  <div class="side-panel" id="fitControlsPanel">
         <div class="card border-secondary" mb-3>
-        <div class="card-header">Fit Controls</div>
+        <div class="card-header"><button type="button" class="panel-toggle-btn" onclick="toggleSidePanel('fitControlsPanel', this)" title="Collapse/expand">&minus;</button><span class="panel-title">Fit Controls</span></div>
         <div class="card-body">
       
           <div>
@@ -307,7 +345,7 @@ $.get(url).done(data => {
 </div>
       </div>
 
-       <div class=".col-xl-" style="min-width: 400px;">
+       <div class="main-panel">
         <div class="card border-secondary mb-3">
         <div class="card-header" >Main plot</div>
         <div class="card-body">
@@ -338,9 +376,9 @@ $.get(url).done(data => {
         
 
        </div>
-  <div class="col-xl-2" style="min-width: 450px;">
+  <div class="side-panel" id="dataViewerPanel">
     <div class="card border-secondary ">
-        <div class="card-header">Data Viewer</div>
+        <div class="card-header"><button type="button" class="panel-toggle-btn" onclick="toggleSidePanel('dataViewerPanel', this)" title="Collapse/expand">&minus;</button><span class="panel-title">Data Viewer</span></div>
         <div class="card-body" >
           <div class="breadcrumb" style="overflow: scroll;white-space: nowrap; min-height: 600px;max-height: 600px">
 
