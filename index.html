@@ -241,6 +241,22 @@ body {
   flex: 1 1 500px;
   min-width: 320px;
 }
+#fitControlsPanel .btn {
+  padding: 0.15rem 0.4rem;
+  font-size: 0.78rem;
+}
+.param-row {
+  margin-bottom: 4px;
+}
+.param-row input[type="number"] {
+  -moz-appearance: textfield;
+  padding: 0.25rem 0.35rem;
+}
+.param-row input[type="number"]::-webkit-outer-spin-button,
+.param-row input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 .panel-toggle-btn,
 .theme-toggle-btn {
   cursor: pointer;
@@ -368,7 +384,7 @@ $.get(url).done(data => {
           <div>
           <div class="mb-2">
           <label for="formFileSm" class="form-label">Select files to analyse:</label>
-          <input type="file" class="form-control" style="width: 400px;" onchange="open_file_imprt(event)" multiple>
+          <input type="file" class="form-control" onchange="open_file_imprt(event)" multiple>
             
           </div>
            
@@ -406,7 +422,7 @@ $.get(url).done(data => {
           </div>
 
             <label> Display model parameters for data: </label><br>
-          <select class="form-control" id="modelFitSel" name="modelFitSel" style="width: 300px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;" onchange="react_to_fit_change();">
+          <select class="form-control" id="modelFitSel" name="modelFitSel" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;" onchange="react_to_fit_change();">
 
           </select>
         </div>
