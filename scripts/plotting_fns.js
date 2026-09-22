@@ -319,7 +319,25 @@ render = function(){
         .requestRedraw()
   }
   
-  zoom = fc.zoom().on('zoom',this.render)
+  zoom = fc.zoom()
+      .on('zoom',this.render)
+      .wheelDelta(function(event){
+          //d3-zoom's default wheelDelta, scaled down. The x-axis spans many
+          //decades on a log scale, so the default sensitivity turns a single
+          //wheel notch into a huge domain jump - see the filter below.
+          return -event.deltaY * (event.deltaMode === 1 ? 0.05 : event.deltaMode ? 1 : 0.002) * (event.ctrlKey ? 10 : 1) * 0.2
+      })
+      .filter(function(event){
+          //Default d3-zoom filter (ignore ctrl-drag and non-primary-button drags),
+          //plus a lower bound on scroll-to-zoom-out. Without this, scrolling out far
+          //enough drives the zoom scale (k) towards 0, which sends the log-scaled
+          //x-axis domain to Infinity/NaN and breaks the plot (SVG "NaN" attribute errors).
+          if (event.type === 'wheel' && event.deltaY > 0){
+              var k = this.__zoom ? this.__zoom.k : 1
+              if (k <= 0.5) return false
+          }
+          return (!event.ctrlKey || event.type === 'wheel') && !event.button
+      })
 
     
   }
