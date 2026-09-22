@@ -1135,16 +1135,3 @@ var open_file_imprt = function(event){
   
 }
 
-			
- $(document).keyup(function(e) {
-        if (e.which === 38) {
-          //up was pressed
-         
-			var event = jQuery.Event( "mousewheel" );
-			event.deltaY = -1;
-			$(".test").trigger(event);
-			console.log('wte')
-
-
-      }
-    });   
