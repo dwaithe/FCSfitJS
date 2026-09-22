@@ -345,6 +345,11 @@ render = function(){
 
 //Seperate objects which have no dependencies.
 
+//Reads a --plot-* colour token from the current theme (light/dark), set in index.html.
+function themeColor(name){
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim()
+}
+
 const pointSeries = fc
     .seriesCanvasPoint()
     .crossValue(d => d[0])
@@ -352,8 +357,9 @@ const pointSeries = fc
     //.type(d3.symbolSquare)
 
     .decorate(context => {
-            context.fillStyle = 'rgb(50, 50, 50)';
-            context.strokeStyle = 'rgb(50, 50, 50)';
+            var c = themeColor('--plot-point');
+            context.fillStyle = c;
+            context.strokeStyle = c;
     });
 const pointSeriesHigh = fc
     .seriesCanvasPoint()
@@ -361,8 +367,9 @@ const pointSeriesHigh = fc
     .mainValue(d => d[1])
     //.type(d3.symbolSquare)
     .decorate(context => {
-            context.fillStyle = 'rgb(150, 150, 150)';
-            context.strokeStyle = 'rgb(150, 150, 150)';
+            var c = themeColor('--plot-point-dim');
+            context.fillStyle = c;
+            context.strokeStyle = c;
     });
 
 const lineSeries = fc
@@ -370,7 +377,7 @@ const lineSeries = fc
     .crossValue(d => d[0])
     .mainValue(d => d[1])
     .decorate(context => {
-            context.strokeStyle = 'rgb(255, 0, 0)';
+            context.strokeStyle = themeColor('--plot-fit');
             context.lineWidth = 4;
         });
 const lineSeriesHigh = fc
@@ -378,7 +385,7 @@ const lineSeriesHigh = fc
     .crossValue(d => d[0])
     .mainValue(d => d[1])
     .decorate(context => {
-            context.strokeStyle = 'rgb(200, 150, 150)';
+            context.strokeStyle = themeColor('--plot-fit-dim');
             context.lineWidth = 4;
         });
 
@@ -389,7 +396,7 @@ const verticalLine = fc
     .crossValue(d => d[0])
     .mainValue(d => d[1])
     .decorate(context => {
-            context.strokeStyle = 'rgb(0, 0, 128)';
+            context.strokeStyle = themeColor('--plot-marker');
             context.lineWidth = 4;
         });
 
