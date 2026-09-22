@@ -92,8 +92,11 @@ div.row {
 
 
 .slider text {
-   
+
   font-size: 16px;
+}
+#slider-range svg text {
+  fill: var(--plot-axis-text) !important;
 }
 .slider {
    
@@ -368,7 +371,7 @@ $.get(url).done(data => {
 
 <div class="container-fluid">
 <div style="padding: 10px" class="d-flex justify-content-between align-items-start flex-wrap gap-2">
-<div><h1 style="display: inline;">FoCuS-fit-JS</h1><span> - <span id="version"></span> - Open source software for fitting correlated FCS (Fluorescence Correlated Spectroscopy) files - <a href="https://github.com/dwaithe/FCSfitJS"> Visit the Github repository</a> - <a href="https://dwaithe.github.io/FCSfitJS/manual/manual.html">Read the manual and documentation.</a> - <a href="https://github.com/dwaithe/FCSfitJS/#How to Cite">How to cite.</a><a href="download test data"></a></span></div>
+<div><h1 style="display: inline;" class="text-warning">FoCuS-fit-JS</h1><span> - <span id="version"></span> - Open source software for fitting correlated FCS (Fluorescence Correlated Spectroscopy) files - <a href="https://github.com/dwaithe/FCSfitJS"> Visit the Github repository</a> - <a href="https://dwaithe.github.io/FCSfitJS/manual/manual.html">Read the manual and documentation.</a> - <a href="https://github.com/dwaithe/FCSfitJS/#How to Cite">How to cite.</a><a href="download test data"></a></span></div>
 <button type="button" class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Switch between light and dark mode">&#9788; Light</button>
 
 </div>
@@ -378,7 +381,7 @@ $.get(url).done(data => {
 <div class="row">
   <div class="side-panel" id="fitControlsPanel">
         <div class="card border-secondary" mb-3>
-        <div class="card-header"><button type="button" class="panel-toggle-btn" onclick="toggleSidePanel('fitControlsPanel', this)" title="Collapse/expand">&minus;</button><span class="panel-title">Fit Controls</span></div>
+        <div class="card-header text-warning"><button type="button" class="panel-toggle-btn" onclick="toggleSidePanel('fitControlsPanel', this)" title="Collapse/expand">&minus;</button><span class="panel-title">Fit Controls</span></div>
         <div class="card-body">
       
           <div>
@@ -475,7 +478,7 @@ $.get(url).done(data => {
 
        <div class="main-panel">
         <div class="card border-secondary mb-3">
-        <div class="card-header" >Main plot</div>
+        <div class="card-header text-warning">Main plot</div>
         <div class="card-body">
           <label>Zoom/Scaling: Use the scroll wheel on your mouse to zoom in and out. To scroll only in one axis, use the scroll wheel whilst over the x or y-axis.  </label>
             
@@ -505,7 +508,7 @@ $.get(url).done(data => {
        </div>
   <div class="side-panel" id="dataViewerPanel">
     <div class="card border-secondary ">
-        <div class="card-header"><button type="button" class="panel-toggle-btn" onclick="toggleSidePanel('dataViewerPanel', this)" title="Collapse/expand">&minus;</button><span class="panel-title">Data Viewer</span></div>
+        <div class="card-header text-warning"><button type="button" class="panel-toggle-btn" onclick="toggleSidePanel('dataViewerPanel', this)" title="Collapse/expand">&minus;</button><span class="panel-title">Data Viewer</span></div>
         <div class="card-body" >
           <div class="scroll-box" style="overflow: scroll;white-space: nowrap; min-height: 600px;max-height: 600px">
 
