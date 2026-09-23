@@ -64,15 +64,20 @@ class PlotManager{
     this.glb_sel_x0 = minx
     this.glb_sel_x1 = maxx
 
+    //Size the slider to the plot pane, with equal margins either side so it is
+    //centred and its end tick labels are not clipped. The viewBox keeps it
+    //centred if the pane is later resized.
+    var sliderMargin = 50
+    var sliderBox = Math.max(300, document.getElementById('slider-range').clientWidth || 800)
     var sliderRange = d3
       .sliderBottom(logScale)
       .min(minx)
       .max(maxx)
-      .width(750)
+      .width(sliderBox - 2 * sliderMargin)
       .ticks(3)
       .tickFormat(d3.format(",.4"))
       .default([minx, maxx])
-      .fill('#2196f3')
+      .fill('#2FA348')
       .on('onchange', function(val){
       
             x0 = Math.round(val[0] * 10000) / 10000
@@ -91,15 +96,18 @@ class PlotManager{
     var gRange = d3
       .select('div#slider-range')
         .append('svg')
-        .attr('width', 800)
-        .attr('height', 100)
+        .attr('viewBox', '0 0 ' + sliderBox + ' 72')
+        .attr('width', '100%')
+        .attr('height', 72)
+        .attr('preserveAspectRatio', 'xMidYMid meet')
 
         .attr("id","slider")
         .append('g')
-        .attr('transform', 'translate(30,30)');
+        .attr('transform', 'translate(' + sliderMargin + ',30)');
         
 
     gRange.call(sliderRange);
+    this.sliderRange = sliderRange //so the fit limits can also be dragged on the plot
     }
 
   prepare_axis(){
@@ -118,83 +126,37 @@ class PlotManager{
             fit_obj.objIdArr[selected].highlight = true
         }
 
-        const tree = d3.quadtree();
+        //Highlighted curves are drawn last, so they sit on top of the others.
+        var high_points = []
+        var high_data = []
 
         for(t=0;t<fit_obj.objIdArr.length;t++){
             if (fit_obj.objIdArr[t].toFit == true){
             if (fit_obj.objIdArr[t].checked==true){
-                if(fit_obj.objIdArr[t].highlight == true)
-                  {points.push(pointSeriesHigh)}else{points.push(pointSeries)}
-                
-                this.plot_data.push(fit_obj.objIdArr[t].autotime.map(function(x, i) {tree.add([x, fit_obj.objIdArr[t].autoNorm[i]]);return [x, fit_obj.objIdArr[t].autoNorm[i],t]}))
-             
+                var high = fit_obj.objIdArr[t].highlight == true
+                var series_out = high ? high_points : points
+                var data_out = high ? high_data : this.plot_data
+                series_out.push(high ? pointSeriesHigh : pointSeries)
+                data_out.push(fit_obj.objIdArr[t].autotime.map(function(x, i) {return [x, fit_obj.objIdArr[t].autoNorm[i],t]}))
 
-            
                 if (fit_obj.objIdArr[t].model_autoNorm.length !=0){
-                    
-                    
-                    if(fit_obj.objIdArr[t].highlight == true)
-                      {points.push(lineSeriesHigh)}else{points.push(lineSeries)}
+                    series_out.push(high ? lineSeriesHigh : lineSeries)
                     //We need to pad the points with the same value to ensure they go upto edge.
                     var m_t = fit_obj.objIdArr[t].model_autotime.map((x, i) => [x, fit_obj.objIdArr[t].model_autoNorm[i]])
                     m_t.unshift([fit_obj.objIdArr[t].model_autotime[0],fit_obj.objIdArr[t].model_autoNorm[0]])
                     const leng = fit_obj.objIdArr[t].model_autotime.length
                     m_t.push([fit_obj.objIdArr[t].model_autotime[leng-1],fit_obj.objIdArr[t].model_autoNorm[leng-1]])
-                    this.plot_data.push(m_t)
-                    
-               
-        
+                    data_out.push(m_t)
                 }
             }}
               fit_obj.objIdArr[t].highlight = false
             }
-        
-        
-        const pointer = fc.pointer().on('point', event => {
+        points.push.apply(points, high_points)
+        this.plot_data.push.apply(this.plot_data, high_data)
 
-            if (event.length != 0)
-            {
+        //Clicking a data point selects its curve in the Data Viewer: see
+        //fitproCurveAt in scripts/fitpro_ui.js.
 
-             plt_obj.xmpt = this.xScale.invert(event[0].x)
-             plt_obj.ympt = this.yScale.invert(event[0].y)
-
-             
-                
-         }})
-
-       document.getElementById('chart').onmousedown = function(ev) { 
-            if (ev.which ==3){
-            var ptM = tree.find(plt_obj.xmpt,plt_obj.ympt)
-            for (var i = 0; i < plt_obj.plot_data.length; i++) {
-                    for (var b = 0; b < plt_obj.plot_data[i].length; b++) {
-                    
-                    
-                    if (ptM[0] === plt_obj.plot_data[i][b][0] && ptM[1] === plt_obj.plot_data[i][b][1]){
-                        var midx = plt_obj.plot_data[i][b][2]
-                        rows =   document.getElementById('table').rows;
-    
-                        //Finds if they have been selected. 
-                        for (var c = 0; c < rows.length; c++) {
-                            row = rows[c]
-                        if( row.id == ''){
-                            row.className = ''
-                            
-                            if (row.cells[0].id == midx){
-
-                                row.className = 'selected'
-                                }}
-                        }
-                        populate_list_view()
-                        plt_obj.prepare_axis()
-
-
-                    }
-                }}}
-
-        }
-
-        
-        
         points.push(verticalLine)
         points.push(verticalLine)
 
@@ -202,12 +164,21 @@ class PlotManager{
         this.plot_data.push([[[this.glb_sel_x1],[-450]],[[this.glb_sel_x1],[0.1]],[[this.glb_sel_x1],[25]],[[this.glb_sel_x1],[450]]])
         
         const decorate = sel => {
-            sel.enter().selectAll('.plot-area')             
+            //Attach the zoom on first render, and again whenever define_scale has
+            //replaced the scales (e.g. after loading more files). Otherwise the zoom
+            //keeps moving the old scale objects and the plot looks locked.
+            var target = sel.enter()
+            if (this.zoomScales !== this.xScale){
+                this.zoomScales = this.xScale
+                target = sel.merge(sel.enter())
+                target.selectAll('.plot-area, .x-axis, .y-axis').property('__zoom', d3.zoomIdentity)
+            }
+            target.selectAll('.plot-area')
                 .call(this.zoom,this.xScale,this.yScale);
-            sel.enter()
+            target
                 .selectAll('.x-axis')
                 .call(this.zoom, this.xScale, null);
-            sel.enter()
+            target
                 .selectAll('.y-axis')
                 .call(this.zoom, null, this.yScale);
             //sel.enter().select('d3fc-svg.plot-area').call(pointer)
@@ -251,6 +222,7 @@ class PlotManager{
             .xTickFormat(d3.format(","))
             .xTicks(3)
             .yOrient('left')
+            .yAxisWidth('5em')
             .svgPlotArea(gridLineSeries)
             .canvasPlotArea(multi)
             .decorate(decorate)
@@ -273,7 +245,7 @@ class PlotManager{
          
         if (residual_data.length > 0){
             this.x2Res = d3.scaleLog()
-                .domain([fit_obj.data_min_x, fit_obj.data_max_x]) // input
+                .domain(this.xScale.domain()) // follows the main plot's tau range (sync_residuals)
                 .range([0, width]); // output
             this.y2Res = d3.scaleLinear()
                 .domain([d3.min(res_min)*1.1,d3.max(res_max)*1.1]) // input 
@@ -296,6 +268,7 @@ class PlotManager{
           .xTicks(3)
           .yTicks(5)
           .yOrient('left')
+          .yAxisWidth('5em')
           .svgPlotArea(gridLineSeries_res)
           .canvasPlotArea(res_multi)
               
@@ -314,9 +287,18 @@ class PlotManager{
   }
 
 render = function(){
-    d3.select('d3fc-group')
+    d3.select('#chart d3fc-group')
         .node()
         .requestRedraw()
+    plt_obj.sync_residuals()
+  }
+
+  //Keep the residuals plot on the same tau range as the main plot.
+  sync_residuals(){
+    if (!this.x2Res || !this.xScale) return
+    this.x2Res.domain(this.xScale.domain())
+    var res = document.querySelector('#residuals d3fc-group')
+    if (res && res.requestRedraw) res.requestRedraw()
   }
   
   zoom = fc.zoom()
@@ -367,7 +349,7 @@ const pointSeriesHigh = fc
     .mainValue(d => d[1])
     //.type(d3.symbolSquare)
     .decorate(context => {
-            var c = themeColor('--plot-point-dim');
+            var c = themeColor('--plot-point-high');
             context.fillStyle = c;
             context.strokeStyle = c;
     });
@@ -385,7 +367,7 @@ const lineSeriesHigh = fc
     .crossValue(d => d[0])
     .mainValue(d => d[1])
     .decorate(context => {
-            context.strokeStyle = themeColor('--plot-fit-dim');
+            context.strokeStyle = themeColor('--plot-fit-high');
             context.lineWidth = 4;
         });
 
