@@ -13,7 +13,9 @@ se_initialise_fcs = function(int_obj){
       
 	
 	A1 = {'alias':'A1','value':1.0,'minv':0.0,'maxv':1.0,'vary':false,'to_show':true,'calc':false}
-	A2 = {'alias':'A2','value':1.0,'minv':0.0,'maxv':1.0,'vary':false,'to_show':true,'calc':false}
+	//A2 is derived (1 - A1, or 1 - A1 - A3): it stays in the fitted parameter list,
+	//held fixed, and the table shows it as a calculated value (see se_derived_value).
+	A2 = {'alias':'A2','value':1.0,'minv':0.0,'maxv':1.0,'vary':false,'to_show':true,'calc':false,'derived':true}
 	A3 = {'alias':'A3','value':1.0,'minv':0.0,'maxv':1.0,'vary':false,'to_show':true,'calc':false}		
 	//The offset
 	offset = { 'alias':'offset','value':0.01,'minv':-0.5,'maxv':1.5,'vary':true,'to_show':true,'calc':false}
@@ -22,14 +24,15 @@ se_initialise_fcs = function(int_obj){
 	GN0 = {'alias':'GN0','minv':0.001,'value':1,'maxv':1.0,'vary':true,'to_show':true,'calc':false}
 	
 	txy1 = {'alias':'txy1','value':0.01,'minv':0.001,'maxv':2000.0,'vary':true,'to_show':true,'calc':false}
-	txy2 = {'alias':'txy2','value':0.01,'minv':0.001,'maxv':2000.0,'vary':true,'to_show':true,'calc':false}
-	txy3 = {'alias':'txy3','value':0.01,'minv':0.001,'maxv':2000.0,'vary':true,'to_show':true,'calc':false}
+	//The species start at different transit times, or a multi-species fit cannot separate them.
+	txy2 = {'alias':'txy2','value':0.1,'minv':0.001,'maxv':2000.0,'vary':true,'to_show':true,'calc':false}
+	txy3 = {'alias':'txy3','value':1.0,'minv':0.001,'maxv':2000.0,'vary':true,'to_show':true,'calc':false}
 
 	
 
-	alpha1 = {'alias':'alpha1','value':1.0,'minv':0.5,'maxv':2.0,'vary':true,'to_show':true,'calc':false}
-	alpha2 = {'alias':'alpha2','value':1.0,'minv':0.5,'maxv':2.0,'vary':true,'to_show':true,'calc':false}
-	alpha3 = {'alias':'alpha3','value':1.0,'minv':0.5,'maxv':2.0,'vary':true,'to_show':true,'calc':false}
+	alpha1 = {'alias':'alpha1','value':1.0,'minv':0.0,'maxv':2.0,'vary':true,'to_show':true,'calc':false}
+	alpha2 = {'alias':'alpha2','value':1.0,'minv':0.0,'maxv':2.0,'vary':true,'to_show':true,'calc':false}
+	alpha3 = {'alias':'alpha3','value':1.0,'minv':0.0,'maxv':2.0,'vary':true,'to_show':true,'calc':false}
 	
 	tz1 = {'alias':'tz1','value':1.0,'minv':0.0,'maxv':1000.0,'vary':true,'to_show':true,'calc':false}
 	tz2 = {'alias':'tz2','value':1.0,'minv':0.0,'maxv':1000.0,'vary':true,'to_show':true,'calc':false}
@@ -84,6 +87,42 @@ se_initialise_fcs = function(int_obj){
 	int_obj.def_param['ACCC'] = ACCC
 
 	}
+//Starting amplitudes for the number of species, while A1/A3 are untouched
+//(still at the one-species default, or at values set here): with two
+//species A1 = 0.5, with three A1 = A3 = 1/3 (so A2 = 1/3), both varied.
+//With one species A1 is always 1, held fixed. Otherwise values the user has set are kept.
+function se_species_defaults(param, diffNum){
+  //Untouched: still the one-species default, or still exactly the value set
+  //here (not fitted, not edited).
+  function untouched(p){
+    if (p.auto === true && parseFloat(p.value) == parseFloat(p.autoValue) && p.vary == true) return true
+    return parseFloat(p.value) == 1 && p.vary == false
+  }
+  function set(p, v, vary){ p.value = v; p.vary = vary; p.auto = vary; p.autoValue = v }
+  var A1 = param['A1']
+  var A3 = param['A3']
+  if (!A1 || !A3) return
+  if (diffNum == 1){
+    //One species: A1 is 1 by definition (any other value only rescales GN0).
+    set(A1, 1.0, false)
+  } else if (untouched(A1)){
+    set(A1, diffNum == 2 ? 0.5 : 0.333, true)
+  }
+  if (untouched(A3)){
+    if (diffNum == 3) set(A3, 0.333, true)
+    else if (A3.auto === true) set(A3, 1.0, false)
+  }
+}
+
+//The value shown for a derived parameter (A2: the amplitudes sum to one).
+function se_derived_value(key, param){
+  if (key == 'A2'){
+    if (fit_obj.diffNum == 2) return 1.0 - parseFloat(param['A1']['value'])
+    if (fit_obj.diffNum == 3) return 1.0 - parseFloat(param['A1']['value']) - parseFloat(param['A3']['value'])
+  }
+  return parseFloat(param[key]['value'])
+}
+
 se_decide_which_to_show = function(int_obj){
 	
 		for (art in int_obj.objId_sel.param){
@@ -101,6 +140,7 @@ se_decide_which_to_show = function(int_obj){
 		//Optional parameters
 		diffNum = int_obj.def_options['Diff_species']
 		
+		se_species_defaults(int_obj.objId_sel.param, diffNum)
 		for (var i = 1; i < diffNum+1; i++) {
 			
 			int_obj.objId_sel.param['A'+i]['to_show'] = true
@@ -137,6 +177,14 @@ se_decide_which_to_show = function(int_obj){
 		//calc_param_fcs(int_obj,objId=int_obj.objId_sel)}
 }
 function se_calc_param_fcs(objId){
+
+//A2 is not fitted freely: the equation sets it so the amplitudes sum to one.
+//Show that value, as FoCuS-point does.
+if (fit_obj.diffNum == 2){
+  objId.param['A2']['value'] = 1.0 - parseFloat(objId.param['A1']['value'])
+}else if (fit_obj.diffNum == 3){
+  objId.param['A2']['value'] = 1.0 - parseFloat(objId.param['A1']['value']) - parseFloat(objId.param['A3']['value'])
+}
 
 if (objId.s2n != null){
   objId.param['s2n']['value'] = objId.s2n
@@ -234,8 +282,8 @@ function se_fit_diff_eq_1A_B(param) {
                   let alpha1 = param[8];let alpha2 = param[9];
                   var c = 10;
 
-                  A1 = A1 / (A1 + A2);
-                  A2 = A2 / (A1 + A2);
+                  //Amplitudes sum to one: A2 is set from A1 (as FoCuS-point).
+                  A2 = 1.0 - A1;
                     
                   var dif = (A1*((Math.pow(1.+Math.pow((tc/txy1),alpha1),-1))))*((Math.pow(1+(tc/tz1),-0.5)))
                   dif += (A2*((Math.pow(1.+Math.pow((tc/txy2),alpha2),-1))))*((Math.pow(1+(tc/tz2),-0.5)))
@@ -249,9 +297,9 @@ function se_fit_diff_eq_1A_B(param) {
                     let alpha1 = param[11];let alpha2 = param[12];let alpha3 = param[13];
                     var c = 14;
 
-                    A1 = A1 / (A1 + A2 + A3);
-                    A2 = A2 / (A1 + A2 + A3);
-                    A3 = A3 / (A1 + A2 + A3);
+                    //Amplitudes sum to one: A2 is set from A1 and A3 (as FoCuS-point).
+                    A2 = 1.0 - A1 - A3;
+                    A3 = 1.0 - A2 - A1;
                 
                     var dif = (A1*((Math.pow(1.+Math.pow((tc/txy1),alpha1),-1))))*((Math.pow(1+(tc/tz1),-0.5)))
                     dif += (A2*((Math.pow(1.+Math.pow((tc/txy2),alpha2),-1))))*((Math.pow(1+(tc/tz2),-0.5)))
@@ -282,8 +330,8 @@ function se_fit_diff_eq_1A_B(param) {
                   var c = 10;
                   
 
-                  A1 = A1 / (A1 + A2);
-                  A2 = A2 / (A1 + A2);
+                  //Amplitudes sum to one: A2 is set from A1 (as FoCuS-point).
+                  A2 = 1.0 - A1;
 
 
                   var dif = (A1*((Math.pow(1.+Math.pow((tc/txy1),alpha1),-1))))*(Math.pow((1+(tc/(AR1*AR1*txy1))),-0.5));
@@ -299,9 +347,9 @@ function se_fit_diff_eq_1A_B(param) {
                   var c = 14;
                  
 
-                  A1 = A1 / (A1 + A2 + A3);
-                  A2 = A2 / (A1 + A2 + A3);
-                  A3 = A3 / (A1 + A2 + A3);
+                  //Amplitudes sum to one: A2 is set from A1 and A3 (as FoCuS-point).
+                  A2 = 1.0 - A1 - A3;
+                  A3 = 1.0 - A2 - A1;
               
                   var dif = (A1*((Math.pow(1.+Math.pow((tc/txy1),alpha1),-1))))*(Math.pow((1+(tc/(AR1*AR1*txy1))),-0.5));
                   dif += (A2*((Math.pow(1.+Math.pow((tc/txy2),alpha2),-1))))*(Math.pow((1+(tc/(AR2*AR2*txy2))),-0.5));
@@ -329,8 +377,8 @@ function se_fit_diff_eq_1A_B(param) {
                   let alpha2 = param[7];
                   var c = 8;
 
-                  A1 = A1 / (A1 + A2);
-                  A2 = A2 / (A1 + A2);
+                  //Amplitudes sum to one: A2 is set from A1 (as FoCuS-point).
+                  A2 = 1.0 - A1;
             
                   var dif = (A1*((Math.pow(1.+Math.pow((tc/txy1),alpha1),-1))))
                   dif += (A2*((Math.pow(1.+Math.pow((tc/txy2),alpha2),-1))))
@@ -343,9 +391,9 @@ function se_fit_diff_eq_1A_B(param) {
                   let alpha1 = param[8];let alpha2 = param[9];let alpha3 = param[10];
                   var c = 11;
 
-                  A1 = A1 / (A1 + A2 + A3);
-                  A2 = A2 / (A1 + A2 + A3);
-                  A3 = A3 / (A1 + A2 + A3);
+                  //Amplitudes sum to one: A2 is set from A1 and A3 (as FoCuS-point).
+                  A2 = 1.0 - A1 - A3;
+                  A3 = 1.0 - A2 - A1;
             
                   var dif = (A1*((Math.pow(1.+Math.pow((tc/txy1),alpha1),-1))))
                   dif += (A2*((Math.pow(1.+Math.pow((tc/txy2),alpha2),-1))))

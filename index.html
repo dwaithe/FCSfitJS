@@ -4,6 +4,7 @@
 <!-- Required meta tags -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>FoCuS-Fit-JS</title>
 
 <script>
 // Applied before any CSS loads, so the page never flashes the wrong theme on load.
@@ -146,10 +147,15 @@ div.row {
   --plot-axis-text: #898781;
   --plot-point: #52514e;
   --plot-point-dim: #898781;
+  --plot-point-high: #1f77d0;
   --plot-fit: #e34948;
   --plot-fit-dim: #e87ba4;
-  --plot-marker: #2a78d6;
-  --scroll-box-bg: #f1f3f5;
+  --plot-fit-high: #f08c00;
+  --plot-marker: #2FA348; /* fit-limit lines */
+  /* Light mode greys, each a step darker: page, panels, boxes in the panels. */
+  --page-bg: #f8f8f5;
+  --panel-bg: #ecece8;
+  --scroll-box-bg: #dfdfd9;
   --context-menu-bg: #1b1a1a;
   --context-menu-hover: #343434;
   --context-menu-text: #eee;
@@ -164,10 +170,12 @@ div.row {
   --plot-axis-text: #898781;
   --plot-point: #c3c2b7;
   --plot-point-dim: #898781;
+  --plot-point-high: #5aa9f5;
   --plot-fit: #e66767;
   --plot-fit-dim: #d55181;
-  --plot-marker: #3987e5;
-  --scroll-box-bg: #212529;
+  --plot-fit-high: #ffa94d;
+  --plot-marker: #2FA348;
+  --scroll-box-bg: #2b3035; /* a shade lighter than the panel, so the boxes stand out */
   --context-menu-bg: #2c2c2a;
   --context-menu-hover: #3a3a38;
   --context-menu-text: #eee;
@@ -188,12 +196,9 @@ body {
 .row {
   gap: 16px 0;
 }
-.row > .side-panel,
-.row > .main-panel {
-  margin-right: 12px;
-}
-.row > .side-panel:last-child {
-  margin-right: 0;
+.container-fluid > .row {
+  --bs-gutter-x: 0;
+  column-gap: 8px;
 }
 
 #context-menu {
@@ -240,6 +245,79 @@ body {
   padding: 6px 2px;
   text-align: center;
 }
+.side-column {
+  flex: 0 1 390px;
+  min-width: 370px;
+}
+/* Panels: title-bar minimise (left column) and a narrow fold
+   (Data Viewer). Buttons use inline Bootstrap Icons (scripts/fitpro_ui.js). */
+.fitpro-panel.collapsed .card-body {
+  display: none;
+}
+.side-panel.fitpro-wide {
+  flex: 0 0 min(720px, 45vw);
+}
+/* While the Data Viewer is wide the plot gives way, so all three panels stay on one row. */
+.row.fitpro-dv-wide > .main-panel {
+  flex-basis: 300px;
+  min-width: 300px;
+}
+.side-panel.collapsed .fitpro-dv-zoom,
+.side-panel.collapsed #dataViewerWideBtn {
+  display: none;
+}
+.side-panel[data-collapse="side"].collapsed {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 0;
+}
+.side-panel[data-collapse="side"].collapsed .card-header {
+  padding: 6px 4px;
+}
+.panel-toggle-btn svg {
+  display: block;
+  width: 12px;
+  height: 12px;
+}
+.panel-toggle-btn {
+  padding: 3px;
+}
+.fitpro-model-row select {
+  flex: 1 1 0;
+  min-width: 0;
+}
+.fitpro-view-btns .btn {
+  padding: 0.1rem 0.5rem;
+  font-size: 0.8rem;
+  min-width: 2rem;
+}
+.fitpro-range {
+  flex: 1 1 0;
+  min-width: 0;
+}
+.fitpro-count {
+  width: 3.5rem;
+  flex: 0 0 auto;
+}
+:root:not([data-bs-theme="dark"]) {
+  --bs-body-bg: var(--page-bg);
+  --bs-body-bg-rgb: 248, 248, 245;
+}
+:root:not([data-bs-theme="dark"]) .card {
+  --bs-card-bg: var(--panel-bg);
+}
+/* Dark mode: the green of the light-mode headers instead of Bootstrap's warning yellow. */
+[data-bs-theme="dark"] .text-warning {
+  color: #2FA348 !important;
+}
+:root:not([data-bs-theme="dark"]) h1.text-warning {
+  color: #2FA348 !important;
+}
+:root:not([data-bs-theme="dark"]) .card-header.text-warning {
+  background-color: #2FA348;
+  color: #fff !important; /* overrides Bootstrap's .text-warning */
+  border-bottom-color: #2FA348;
+}
 .main-panel {
   flex: 1 1 500px;
   min-width: 320px;
@@ -251,6 +329,64 @@ body {
 .param-row {
   margin-bottom: 4px;
 }
+/* Parameter table (rows built by define_form() in interface.js). Every row,
+   and the header, uses the same column widths:
+   Param 60 | Init 96 | Vary 32 | Min 52 | Max 52 (px), 4px apart. */
+#form_sample input[id$="_value"] {
+  width: 96px !important; /* define_form() sets 60px inline */
+  flex: 0 0 96px;
+}
+#form_sample .param-row,
+.param-head {
+  flex-wrap: nowrap !important;
+  min-height: calc(1.5em + 0.5rem + 2px); /* height of a small input, so all rows match */
+}
+/* define_form() adds a row for every parameter, shown or not; the empty
+   ones only added margin, which made the gaps between rows uneven. */
+#form_sample .param-row:empty {
+  display: none !important; /* beats Bootstrap's .d-flex { display: flex !important } */
+}
+#form_sample .label_st {
+  flex: 0 0 60px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#form_sample .check_st {
+  flex: 0 0 20px;
+  margin: 0 6px;
+}
+/* Calculated values: the name spans the Param and Init columns, so labels
+   such as "cpm (kHz)" stay on one line; the value follows. */
+#form_sample .label_st_calc {
+  width: auto;
+  white-space: nowrap;
+}
+#form_sample .label_st_calc:first-child {
+  flex: 0 0 160px; /* spans the Param and Init columns */
+}
+.param-head {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+/* When the parameter table scrolls (scripts/fitpro_ui.js), its headings stay in view. */
+#paramBox { overflow-y: auto; overflow-x: hidden; }
+/* Narrower "?" in the headings, so they still fit beside a vertical scrollbar. */
+#paramBox .param-head .fitpro-help-btn { min-width: 0; padding: 0.05rem 0.35rem; margin-left: auto; }
+#paramBox .param-head {
+  position: sticky;
+  top: -8px; /* the box's padding */
+  z-index: 1;
+  background: var(--scroll-box-bg);
+  margin-top: -8px;
+  padding-top: 8px;
+  box-shadow: 0 1px 0 var(--plot-axis); /* a line between the headings and the rows below */
+}
+.param-head .label_st { flex: 0 0 60px; }
+.param-head .param-col-init { flex: 0 0 96px; text-align: center; }
+.param-head .param-col-vary { flex: 0 0 32px; text-align: center; }
+.param-head .param-col-min,
+.param-head .param-col-max { flex: 0 0 52px; text-align: center; }
 .param-row input[type="number"] {
   -moz-appearance: textfield;
   padding: 0.25rem 0.35rem;
@@ -267,13 +403,19 @@ body {
   background: var(--toggle-btn-bg);
   color: var(--bs-body-color);
   border-radius: 3px;
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1;
-  padding: 3px 7px;
+  padding: 6px 12px;
+  white-space: nowrap;
 }
 .panel-toggle-btn {
   float: right;
 }
+/* Header: the theme button sits at the right, its bottom level with the
+   bottom of the last line of the header text. */
+.fitpro-header { align-items: last baseline; }
+.fitpro-header-text { flex: 1 1 auto; min-width: 0; }
+.fitpro-header .theme-toggle-btn { flex: 0 0 auto; position: relative; top: -6px; } /* baseline to text bottom */
 .panel-toggle-btn:hover,
 .theme-toggle-btn:hover {
   background: var(--toggle-btn-hover);
@@ -333,10 +475,117 @@ body {
   margin-top: 14px;
 }
 
+.empty-state .empty-state-open {
+  background: none;
+  border: 0;
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 12px;
+  color: var(--plot-axis-text);
+  cursor: pointer;
+}
+.empty-state .empty-state-open svg { margin-bottom: 0; display: block; }
+.empty-state .empty-state-open:hover,
+.empty-state .empty-state-open:focus-visible { background: var(--scroll-box-bg); color: var(--bs-body-color); }
+.popover.fitpro-help-popover { background-color: var(--bs-body-bg); color: var(--bs-body-color); max-width: 320px;
+  --bs-popover-border-color: #2FA348; border-color: #2FA348; } /* not the context menu's blue .show border */
+#value-range { margin: 0; }
+.fitpro-slider-row { min-height: 72px; }
+.fitpro-help-btn { min-width: 2em; font-weight: 600; }
+/* Buttons in the header green (light and dark), instead of Bootstrap's blue. */
+.btn-outline-primary {
+  --bs-btn-color: #2FA348;
+  --bs-btn-border-color: #2FA348;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #2FA348;
+  --bs-btn-hover-border-color: #2FA348;
+  --bs-btn-focus-shadow-rgb: 47, 163, 72;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #288c3e;
+  --bs-btn-active-border-color: #288c3e;
+  --bs-btn-disabled-color: #2FA348;
+  --bs-btn-disabled-border-color: #2FA348;
+}
+/* Correlation status (scripts/correlate_view.js): file name, then progress. */
+.correlate-status-file { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.correlate-bar { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; letter-spacing: -1px; }
+.correlate-bar-done { color: #2FA348; font-weight: 700; }
+.correlate-bar-todo { color: var(--bs-secondary-color); opacity: 0.5; }
+.fitpro-footer { text-align: right; padding: 4px 16px 10px; font-size: 0.8rem; color: var(--bs-secondary-color); flex: 0 0 100%; }
+.fitpro-footer.fitpro-footer-placed { position: absolute; right: 0; padding: 0; line-height: 1.2; }
+/* "Buy me a coffee" (the Buy Me a Coffee button's own look, as plain HTML). */
+.fitpro-support { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; text-align: right; }
+.fitpro-support-text { font-size: 0.8rem; line-height: 1.25; }
+.bmc-btn {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 8px;
+  background-color: #2FA348;
+  color: #ffffff !important;
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  font-weight: bold;
+  text-decoration: none !important;
+  white-space: nowrap;
+}
+.bmc-btn:hover { filter: brightness(0.95); }
+.bmc-btn-text { margin-left: 6px; }
+/* Checkboxes (Vary, Data Viewer, Data filter) in the header green when ticked. */
+input[type="checkbox"] { accent-color: #2FA348; }
+.panel-toggle-btn:disabled { opacity: 0.45; cursor: default; }
+/* Links in the header green, in both themes. */
+:root, [data-bs-theme="light"], [data-bs-theme="dark"] {
+  --bs-link-color: #2FA348;
+  --bs-link-color-rgb: 47, 163, 72;
+  --bs-link-hover-color: #257f38;
+  --bs-link-hover-color-rgb: 37, 127, 56;
+}
+[data-bs-theme="dark"] {
+  --bs-link-hover-color: #4cc466;
+  --bs-link-hover-color-rgb: 76, 196, 102;
+}
+/* Square panels. */
+.card { --bs-card-border-radius: 0; --bs-card-inner-border-radius: 0; }
+.fitpro-model-row .fitpro-help-btn, .fitpro-help-btn.btn-sm { flex: 0 0 auto; padding: 0.1rem 0.4rem; font-size: 0.8rem; }
+.fitpro-view-btns .btn svg { vertical-align: -1px; }
+.popover.fitpro-help-popover .popover-body p:last-child, .popover.fitpro-help-popover .popover-body ul:last-child { margin-bottom: 0; }
+.popover.fitpro-help-popover .popover-body ul { padding-left: 1.1rem; margin-bottom: 0.5rem; list-style: disc; }
+.popover.fitpro-help-popover .popover-body li { display: list-item; list-style: disc; } /* beats the context menu's .show li */
+.popover.fitpro-help-popover .popover-body p { margin-bottom: 0.5rem; }
+#fitproDropOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(47, 163, 72, 0.12);
+  border: 4px dashed #2FA348;
+  pointer-events: none;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--bs-body-color);
+}
+#fitproDropOverlay.show { display: flex; }
+#fitproDropOverlay span { background: var(--bs-body-bg); padding: 12px 24px; border-radius: 8px; }
+
+.fitpro-chfilter { font-size: 0.85rem; margin: 8px 0 10px; }
+.fitpro-chfilter-title { font-weight: 600; margin-bottom: 4px; }
+.fitpro-chfilter-empty { color: var(--bs-secondary-color); }
+.fitpro-chfilter-row { display: flex; flex-wrap: wrap; column-gap: 8px; align-items: center; }
+.fitpro-chfilter-kind { font-weight: 600; min-width: 1.8em; }
+.fitpro-chfilter .fitpro-ch { margin: 0; white-space: nowrap; }
+.fitpro-chfilter .fitpro-ch input { vertical-align: -1px; }
+.fitpro-chfilter .fitpro-ch[hidden], .fitpro-chfilter [hidden] { display: none !important; }
+
 /*This is the view
 
 </style>
 <body >
+<div id="fitproDropOverlay" aria-hidden="true"><span>Drop files to load them</span></div>
   <script type="text/javascript">
  //   var scale = 'scale(0.8)';
 //document.body.style.webkitTransform =  scale;    // Chrome, Opera, Safari
@@ -370,8 +619,8 @@ $.get(url).done(data => {
     </div>
 
 <div class="container-fluid">
-<div style="padding: 10px" class="d-flex justify-content-between align-items-start flex-wrap gap-2">
-<div><h1 style="display: inline;" class="text-warning">FoCuS-fit-JS</h1><span> - <span id="version"></span> - Open source software for fitting correlated FCS (Fluorescence Correlated Spectroscopy) files - <a href="https://github.com/dwaithe/FCSfitJS"> Visit the Github repository</a> - <a href="https://dwaithe.github.io/FCSfitJS/manual/manual.html">Read the manual and documentation.</a> - <a href="https://github.com/dwaithe/FCSfitJS/#How to Cite">How to cite.</a><a href="download test data"></a></span></div>
+<div style="padding: 10px" class="d-flex justify-content-between gap-3 fitpro-header">
+<div class="fitpro-header-text"><h1 style="display: inline;" class="text-warning">FoCuS-Fit-JS</h1><span> - <span id="version"></span> - Open source software for correlating and fitting FCS (Fluorescence Correlated Spectroscopy) files. <a href="https://github.com/dwaithe/FCSfitJS">Visit the Github repository</a> - <a href="https://dwaithe.github.io/FCSfitJS/manual/manual.html">Documentation</a> - <a href="https://github.com/dwaithe/FCSfitJS#how-to-cite">How to cite.</a><a href="download test data"></a></span></div>
 <button type="button" class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Switch between light and dark mode">&#9788; Light</button>
 
 </div>
@@ -379,125 +628,170 @@ $.get(url).done(data => {
 
 
 <div class="row">
-  <div class="side-panel" id="fitControlsPanel">
+  <div class="side-column" id="leftColumn">
+  <!-- Correlate raw photon files (scripts/correlate_view.js) -->
+  <div class="fitpro-panel mb-2" id="correlationPanel" data-collapse="title">
+        <div class="card border-secondary">
+        <div class="card-header text-warning"><button type="button" class="panel-toggle-btn" onclick="toggleFitproPanel('correlationPanel', this)" title="Minimise"></button><span class="panel-title">Correlation</span></div>
+        <div class="card-body" id="correlatePanel">
+          <label for="correlate_files" class="form-label">Correlate photon files (.pt3 .ptu .pt2 .spc .asc, time-tag .csv):</label>
+          <input type="file" class="form-control form-control-sm" id="correlate_files" multiple accept=".pt3,.ptu,.pt2,.spc,.asc,.csv">
+          <details class="small mt-1">
+            <summary>Correlation settings</summary>
+            <div class="d-flex flex-wrap gap-2 mt-1">
+              <label>Ncasc start <input type="number" class="form-control form-control-sm" id="corr_NcascStart" min="0" step="1" value="0" style="width:70px"></label>
+              <label>Ncasc end <input type="number" class="form-control form-control-sm" id="corr_NcascEnd" min="1" step="1" value="25" style="width:70px"></label>
+              <label>Nsub <input type="number" class="form-control form-control-sm" id="corr_Nsub" min="1" step="1" value="6" style="width:70px"></label>
+              <label>Decay bin (ch) <input type="number" class="form-control form-control-sm" id="corr_winInt" min="1" step="1" value="10" style="width:70px"></label>
+              <label>Gate from (ch) <input type="number" class="form-control form-control-sm" id="corr_gate0" min="0" step="1" placeholder="none" style="width:80px"></label>
+              <label>to (ch) <input type="number" class="form-control form-control-sm" id="corr_gate1" min="0" step="1" placeholder="none" style="width:80px"></label>
+              <label class="form-check-label" title="Reproduce FoCuS-point exactly, including its binning of repeated photon times (np.unique first-index). Off: each bin's weight is the sum of its photons, as in the original MATLAB."><input type="checkbox" class="form-check-input me-1" id="corr_legacy">FoCuS-point legacy binning</label>
+            </div>
+          </details>
+          <div id="correlate_status" class="small text-body-secondary mt-1" aria-live="polite"></div>
+          </div>
+        </div>
+  </div>
+  <div class="fitpro-panel" id="fitControlsPanel" data-collapse="title">
         <div class="card border-secondary" mb-3>
-        <div class="card-header text-warning"><button type="button" class="panel-toggle-btn" onclick="toggleSidePanel('fitControlsPanel', this)" title="Collapse/expand">&minus;</button><span class="panel-title">Fit Controls</span></div>
+        <div class="card-header text-warning"><button type="button" class="panel-toggle-btn" onclick="toggleFitproPanel('fitControlsPanel', this)" title="Minimise"></button><span class="panel-title">Fit Controls</span></div>
         <div class="card-body">
       
           <div>
           <div class="mb-2">
           <label for="formFileSm" class="form-label">Select files to analyse:</label>
-          <input type="file" class="form-control" onchange="open_file_imprt(event)" multiple>
+          <input type="file" class="form-control form-control-sm" onchange="open_file_imprt(event)" multiple>
             
           </div>
            
         
-         <div class="mb-3">
-        <div class="d-flex flex-wrap align-items-center gap-2">
-          <select class="form-control" id="equation" name="equation" onchange="react_to_eqn_change();">
+         <div class="mb-2">
+        <div class="d-flex flex-nowrap align-items-center gap-1 fitpro-model-row">
+          <select class="form-control form-control-sm" id="equation" name="equation" title="Diffusion model" onchange="react_to_eqn_change();">
             <!-- <option value="1">Equation 1A</option>-->
             <!-- <option value="2">Equation 1B</option>-->
             <!-- <option value="3">GS neuron</option> -->
             <!-- <option value="4">Vesicle Diffusion</option> -->
             <!-- <option value="5">PB Correction</option> -->
           </select>
-          <select class="form-control" id="triplet" name="triplet" onchange="react_to_fit_change();">
+          <select class="form-control form-control-sm" id="triplet" name="triplet" title="Triplet model" onchange="react_to_fit_change();">
             <option value="1">no triplet</option>
             <option value="2">triplet Eq 2A</option>
             <option value="3">triplet Eq 2B</option>
           </select>
-          <select class="form-control" id="dimension" name="dimension" onchange="react_to_fit_change();">
+          <select class="form-control form-control-sm" id="dimension" name="dimension" title="2D or 3D diffusion" onchange="react_to_fit_change();">
             <option value="1">2D</option>
             <option value="2">3D</option>
             </select>
+          <button type="button" class="btn btn-outline-secondary btn-sm fitpro-help-btn" data-help="models" aria-label="Model help">?</button>
           </div>
       </div>
-      <div class="mb-3">
-        <div class="d-flex flex-wrap align-items-center gap-2">
+      <div class="mb-2">
+        <div class="d-flex flex-nowrap align-items-center gap-1 mb-2 text-nowrap">
 
-            <label class=" col-form-label">No. of diff. species </label>
+            <label class="col-form-label" for="diffNumSpecSpin">Diff. species</label>
+              <input class="form-control form-control-sm fitpro-count" type="number" min="1" max="3" step="1" value="1" id="diffNumSpecSpin" onchange="react_to_fit_change();">
 
-
-              <input class="form-control" type="number" min="1" max="3" step="1" value="1" id="diffNumSpecSpin" onchange="react_to_fit_change();">
-
-            <label class="col-form-label">Triplet States</label>
-            <input class="form-control" type="number" min="1" max="3" step="1" value="1" id="tripNumSpecSpin" onchange="react_to_fit_change();">
+            <label class="col-form-label ms-2" for="tripNumSpecSpin">Triplet states</label>
+            <input class="form-control form-control-sm fitpro-count" type="number" min="1" max="3" step="1" value="1" id="tripNumSpecSpin" onchange="react_to_fit_change();">
           </div>
 
             <label> Display model parameters for data: </label><br>
-          <select class="form-control" id="modelFitSel" name="modelFitSel" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;" onchange="react_to_fit_change();">
+          <select class="form-control form-control-sm" id="modelFitSel" name="modelFitSel" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;" onchange="react_to_fit_change();">
 
           </select>
         </div>
-          <div class="mb-3">
-          <label> Fit with param: </label>
+          <div class="mb-3 d-flex flex-nowrap align-items-center gap-1 text-nowrap">
+          <label class="me-1"> Fit with param: </label>
           <input type="submit" value="Current" class="btn  btn-outline-primary btn-sm" id='fitCurrent_btn'>
           <input type="submit" value="All" class="btn  btn-outline-primary btn-sm" id='fitAll_btn'>
           <input type="submit" value="Only highlighted" class="btn  btn-outline-primary btn-sm" id='fitSelected_btn'>
+          <button type="button" class="btn btn-outline-secondary btn-sm fitpro-help-btn" data-help="fitButtons" aria-label="Fitting help">?</button>
         </div>
           <div class="mb-3">
-             <div class="d-flex flex-wrap align-items-center gap-2">
-          <label>Fit from:</label> <input type="number" class="form-control" min="0.000001" max="99999" step="1" value="0.1"  id="fit_btn_min" size="5" onchange="update_fit_range();" required>
-          <label>to:</label> <input type="number" class="form-control" min="0.000001" max="99999" step="1" value="1"  id="fit_btn_max" onchange="update_fit_range();" required>
+             <div class="d-flex flex-nowrap align-items-center gap-1 text-nowrap">
+          <label for="fit_btn_min">Fit from (ms):</label> <input type="number" class="form-control form-control-sm fitpro-range" min="0.000001" max="99999" step="1" value="0.1"  id="fit_btn_min" size="5" onchange="update_fit_range();" required>
+          <label for="fit_btn_max" class="ms-1">to:</label> <input type="number" class="form-control form-control-sm fitpro-range" min="0.000001" max="99999" step="1" value="1"  id="fit_btn_max" onchange="update_fit_range();" required>
 
         </div>
       </div>
       <div class="mb-3">
           <label>Profile: </label>
-          <input type="submit" value="load" class="btn  btn-outline-primary btn-sm" id='load_default_profile'>
-          <input type="submit" value="save" class="btn  btn-outline-primary btn-sm" id='save_default_profile'>
-          <input type="submit" value="store" class="btn  btn-outline-primary btn-sm" id='store_default_profile'>
-          <input type="submit" value="apply" class="btn  btn-outline-primary btn-sm" id='apply_default_profile'>
+          <input type="button" value="Load" class="btn  btn-outline-primary btn-sm" id='profile_load' title="Apply the profile saved in this browser">
+          <input type="button" value="Save" class="btn  btn-outline-primary btn-sm" id='profile_save' title="Save the model and parameter settings in this browser">
+          <input type="button" value="Import" class="btn  btn-outline-primary btn-sm" id='profile_import' title="Apply a profile from a .json file">
+          <input type="button" value="Export" class="btn  btn-outline-primary btn-sm" id='profile_export' title="Save the model and parameter settings to a .json file">
+          <button type="button" class="btn btn-outline-secondary btn-sm fitpro-help-btn" data-help="profiles" aria-label="Profile help">?</button>
+          <span id="profile_status" class="small text-body-secondary ms-1" aria-live="polite"></span>
           </div>
-          <label class="label_st">Param: </label>
-
-          <label class="label_st">Init: </label>
-
-          <label class="label_st">Vary: </label>
-          <label class="spin_st">Min: </label>
-          <label class="spin_st">Max: </label>
-          <br>
-        
-        
-         
-          <div class="scroll-box">
+          <div class="scroll-box mb-2" id="paramBox">
+          <!-- Column headings: same layout and widths as the rows define_form() builds. -->
+          <div class="d-flex align-items-center gap-1 param-row param-head">
+            <span class="label_st">Param</span>
+            <span class="param-col-init">Init</span>
+            <span class="param-col-vary">Vary</span>
+            <span class="param-col-min">Min</span>
+            <span class="param-col-max">Max</span>
+            <button type="button" class="btn btn-outline-secondary btn-sm fitpro-help-btn" data-help="params" aria-label="Parameter help">?</button>
+          </div>
           <div id="form_sample"></div>
 
           
           </div>
+          <div class="mb-2">
           <label>Copy: </label>
           <input type="submit" value="Copy Param" class="btn  btn-outline-primary btn-sm" id='copy_param'>
-          <input type="submit" value="Copy Plot Data" class="btn  btn-outline-primary btn-sm" id='copy_plot_data'><br>
-          <label>Save: </label>
-          <input type="submit" value="Save Param" class="btn  btn-outline-primary btn-sm" id='save_param'>
-          <input type="submit" value="Save Plot Data" class="btn  btn-outline-primary btn-sm" id='save_plot_data'><br>
+          <input type="submit" value="Copy Plot Data" class="btn  btn-outline-primary btn-sm" id='copy_plot_data'>
+          <button type="button" class="btn btn-outline-secondary btn-sm fitpro-help-btn" data-help="copyExport" aria-label="Copy and Export help">?</button>
+          </div>
+          <div>
+          <label>Export: </label>
+          <input type="submit" value="Export Param" class="btn  btn-outline-primary btn-sm" id='save_param'>
+          <input type="submit" value="Export Plot Data" class="btn  btn-outline-primary btn-sm" id='save_plot_data'>
+          </div>
 </div>
 </div>
 </div>
       </div>
+  </div>
 
        <div class="main-panel">
         <div class="card border-secondary mb-3">
-        <div class="card-header text-warning">Main plot</div>
+        <div class="card-header text-warning">Main Plot</div>
         <div class="card-body">
-          <label>Zoom/Scaling: Use the scroll wheel on your mouse to zoom in and out. To scroll only in one axis, use the scroll wheel whilst over the x or y-axis.  </label>
-            
           <div id="splash" class="empty-state">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+            <button type="button" class="empty-state-open" id="splashOpenBtn" title="Choose files" aria-label="Choose files"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg></button>
             <h2>Open your files to get started</h2>
-            <p>Select one or more data files above to load and plot your correlation curves.</p>
+            <p>Click the icon, select one or more data files above, or drag files anywhere onto this page to load and plot your correlation curves.</p>
             <p class="empty-state-secondary">No data handy? <a href="test_data.zip">Download example data</a> &mdash; unzip it before loading.</p>
             </div>
           <div id="chart"  oncontextmenu="return false;" style="width:500;height:600px;left-padding:24px"></div>
+          <!-- Plot view buttons (scripts/fitpro_ui.js) -->
+          <div class="d-flex flex-wrap align-items-center gap-1 mb-2 fitpro-view-btns" id="plotViewButtons">
+            <button type="button" class="btn btn-outline-primary btn-sm" onclick="fitproView('reset')" title="Show all the data">Reset view</button>
+            <button type="button" class="btn btn-outline-primary btn-sm" onclick="fitproView('limits')" title="Zoom to the data between the fit limits">Fit to limits</button>
+            <button type="button" class="btn btn-outline-secondary btn-sm fitpro-help-btn" id="zoomHelpBtn" data-help="zoom" aria-label="Zoom help">?</button>
+            <span class="ms-2 small">X:</span>
+            <button type="button" class="btn btn-outline-primary btn-sm" onclick="fitproView('x-in')" title="Zoom in along τ" aria-label="Zoom in along τ" data-icon="zoom-in">+</button>
+            <button type="button" class="btn btn-outline-primary btn-sm" onclick="fitproView('x-out')" title="Zoom out along τ" aria-label="Zoom out along τ" data-icon="zoom-out">&minus;</button>
+            <span class="ms-2 small">Y:</span>
+            <button type="button" class="btn btn-outline-primary btn-sm" onclick="fitproView('y-in')" title="Zoom in along G(τ)" aria-label="Zoom in along G(τ)" data-icon="zoom-in">+</button>
+            <button type="button" class="btn btn-outline-primary btn-sm" onclick="fitproView('y-out')" title="Zoom out along G(τ)" aria-label="Zoom out along G(τ)" data-icon="zoom-out">&minus;</button>
+            <span class="ms-auto"></span>
+            <button type="button" class="btn btn-outline-primary btn-sm" onclick="fitproExportPlot('chart')" title="Save the main plot as a PNG image"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M15 12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1.172a3 3 0 0 0 2.12-.879l.83-.828A1 1 0 0 1 6.827 3h2.344a1 1 0 0 1 .707.293l.828.828A3 3 0 0 0 12.828 5H14a1 1 0 0 1 1 1zM2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4z"/><path d="M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5m0 1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M3 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0"/></svg> Plot</button>
+            <button type="button" class="btn btn-outline-primary btn-sm" onclick="fitproExportPlot('residuals')" title="Save the residuals plot as a PNG image"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M15 12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1.172a3 3 0 0 0 2.12-.879l.83-.828A1 1 0 0 1 6.827 3h2.344a1 1 0 0 1 .707.293l.828.828A3 3 0 0 0 12.828 5H14a1 1 0 0 1 1 1zM2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4z"/><path d="M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5m0 1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M3 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0"/></svg> Residuals</button>
+          </div>
 
             
         
 
-          <label>Fit Slider Range: </label><div id="slider-range"></div>
+          <div class="d-flex align-items-start gap-2 fitpro-slider-row">
+            <label class="text-nowrap mb-0" for="slider-range" style="margin-top: 18px">Fit Slider Range</label><div id="slider-range" class="flex-grow-1"></div>
+          </div>
           <p id="value-range"></p>
           <div id="uploadsts"></div>
 
-           <div id="residuals" style="width:800px;height:200px;left-padding:24px"></div>
+           <div id="residuals" style="width:100%;height:200px;left-padding:24px"></div>
         </div>
       </div>
            
@@ -506,35 +800,31 @@ $.get(url).done(data => {
         
 
        </div>
-  <div class="side-panel" id="dataViewerPanel">
+  <div class="side-panel" id="dataViewerPanel" data-collapse="side">
     <div class="card border-secondary ">
-        <div class="card-header text-warning"><button type="button" class="panel-toggle-btn" onclick="toggleSidePanel('dataViewerPanel', this)" title="Collapse/expand">&minus;</button><span class="panel-title">Data Viewer</span></div>
+        <div class="card-header text-warning"><button type="button" class="panel-toggle-btn" onclick="toggleFitproPanel('dataViewerPanel', this)" title="Minimise"></button><button type="button" class="panel-toggle-btn me-1" id="dataViewerWideBtn" onclick="toggleDataViewerWide(this)" title="Widen, to read long names"></button><button type="button" class="panel-toggle-btn me-1 fitpro-dv-zoom" id="dataViewerZoomOut" onclick="fitproDataViewerZoom(-1)" title="Smaller text" aria-label="Smaller text in the Data Viewer" data-icon="zoom-out"></button><button type="button" class="panel-toggle-btn me-1 fitpro-dv-zoom" id="dataViewerZoomIn" onclick="fitproDataViewerZoom(1)" title="Larger text" aria-label="Larger text in the Data Viewer" data-icon="zoom-in"></button><span class="panel-title">Data Viewer</span></div>
         <div class="card-body" >
-          <div class="scroll-box" style="overflow: scroll;white-space: nowrap; min-height: 600px;max-height: 600px">
+          <div class="scroll-box" style="overflow: auto;white-space: nowrap; min-height: 600px;max-height: 600px">
 
             
             <div id="data-list" class="disable-select"   oncontextmenu="return false;" ></div>
          </div>
-            <div class="disable-select">
-            ac: CH1 <input type="checkbox"  id="CH1_chbx" checked> CH2 <input type="checkbox" id="CH2_chbx" checked> CH3 <input type="checkbox" id="CH3_chbx" checked> CH4 <input type="checkbox" id="CH4_chbx" checked>
+            <!-- Data filter: only the channels in the loaded data are shown (scripts/fitpro_ui.js) -->
+            <div class="disable-select fitpro-chfilter" id="channelFilter">
+              <div class="fitpro-chfilter-title">Data filter <button type="button" class="btn btn-outline-secondary btn-sm fitpro-help-btn" data-help="dataFilter" aria-label="Data filter help">?</button></div>
+              <div class="fitpro-chfilter-empty">Load data to filter by channel.</div>
+              <div class="fitpro-chfilter-row" data-row="ac"><span class="fitpro-chfilter-kind" title="Auto-correlations">ac:</span> <label class="fitpro-ch" data-ch="CH1">CH1 <input type="checkbox" id="CH1_chbx" checked></label> <label class="fitpro-ch" data-ch="CH2">CH2 <input type="checkbox" id="CH2_chbx" checked></label> <label class="fitpro-ch" data-ch="CH3">CH3 <input type="checkbox" id="CH3_chbx" checked></label> <label class="fitpro-ch" data-ch="CH4">CH4 <input type="checkbox" id="CH4_chbx" checked></label></div>
+              <div class="fitpro-chfilter-row" data-row="cc"><span class="fitpro-chfilter-kind" title="Cross-correlations">cc:</span> <label class="fitpro-ch" data-ch="CH12">CH12 <input type="checkbox" id="CH12_chbx" checked></label> <label class="fitpro-ch" data-ch="CH13">CH13 <input type="checkbox" id="CH13_chbx" checked></label> <label class="fitpro-ch" data-ch="CH14">CH14 <input type="checkbox" id="CH14_chbx" checked></label> <label class="fitpro-ch" data-ch="CH23">CH23 <input type="checkbox" id="CH23_chbx" checked></label> <label class="fitpro-ch" data-ch="CH24">CH24 <input type="checkbox" id="CH24_chbx" checked></label> <label class="fitpro-ch" data-ch="CH34">CH34 <input type="checkbox" id="CH34_chbx" checked></label> <label class="fitpro-ch" data-ch="CH21">CH21 <input type="checkbox" id="CH21_chbx" checked></label> <label class="fitpro-ch" data-ch="CH31">CH31 <input type="checkbox" id="CH31_chbx" checked></label> <label class="fitpro-ch" data-ch="CH41">CH41 <input type="checkbox" id="CH41_chbx" checked></label> <label class="fitpro-ch" data-ch="CH32">CH32 <input type="checkbox" id="CH32_chbx" checked></label> <label class="fitpro-ch" data-ch="CH42">CH42 <input type="checkbox" id="CH42_chbx" checked></label> <label class="fitpro-ch" data-ch="CH43">CH43 <input type="checkbox" id="CH43_chbx" checked></label></div>
             </div>
-            <div class="disable-select">
-            CH12 <input type="checkbox"  id="CH12_chbx" checked> CH13 <input type="checkbox" id="CH13_chbx" checked>  CH14 <input type="checkbox" id="CH14_chbx" checked> CH23 <input type="checkbox" id="CH23_chbx" checked> CH24 <input type="checkbox" id="CH24_chbx" checked> CH34 <input type="checkbox" id="CH34_chbx" checked>
-            </div>
-
-            <div class="disable-select">
-            CH21 <input type="checkbox"  id="CH21_chbx" checked> CH31 <input type="checkbox" id="CH31_chbx" checked>  CH41 <input type="checkbox" id="CH41_chbx" checked> CH32 <input type="checkbox" id="CH32_chbx" checked> CH42 <input type="checkbox" id="CH42_chbx" checked> CH43 <input type="checkbox" id="CH43_chbx" checked>
-            </div>
-
-            <br>
-            <div class="mb-3">
+            <div class="mb-1">
             <input type="submit" value="Plot Checked Data" class="btn  btn-outline-primary btn-sm" id='plot_checked'>
             <input type="submit" value="Check All" class="btn  btn-outline-primary btn-sm" id='check_all'>
+            <button type="button" class="btn btn-outline-secondary btn-sm fitpro-help-btn" data-help="dataViewer" aria-label="Data Viewer help">?</button>
             </div>
-            <div class="mb-3">
+            <div class="mb-1">
             <input type="submit" value="Clear Fit Data All/highlighted" class="btn  btn-outline-primary btn-sm" id='clear_fits'>
           </div>
-          <div class="mb-3">
+          <div>
             <input type="submit" value="Remove Data All/highlighted" class="btn  btn-outline-primary btn-sm" id='remove_data'>
             
             </div>
@@ -543,6 +833,12 @@ $.get(url).done(data => {
 </div>
 </div>
  </div>
+<footer class="fitpro-footer">
+  <div class="fitpro-support">
+    <a class="bmc-btn" target="_blank" rel="noopener" href="https://buymeacoffee.com/odlogo">&#9749;<span class="bmc-btn-text">Buy me a coffee</span></a>
+    <span class="fitpro-support-text">FoCuS-Fit-JS is provided for free, please help by clicking this button and supporting us. Copyright <a href="https://www.odlogo.co.uk" target="_blank" rel="noopener">Odlogo.co.uk</a> 2026</span>
+  </div>
+</footer>
 
 <script src="scripts/main.js"></script>
 <script src="scripts/fitting_method_se.js"></script>
@@ -553,6 +849,26 @@ $.get(url).done(data => {
 <script src="scripts/interface.js"></script>
 <script src="scripts/controller.js"></script>
 <script src="custommodels/custom_models.js"></script>
+
+<!-- core/ (plain scripts, see core/registry.js) and the Correlate view -->
+<script src="core/registry.js"></script>
+<script src="core/io/records.js"></script>
+<script src="core/io/pt3.js"></script>
+<script src="core/io/ht3.js"></script>
+<script src="core/io/ptu.js"></script>
+<script src="core/io/pt2.js"></script>
+<script src="core/io/spc.js"></script>
+<script src="core/io/text.js"></script>
+<script src="core/io/asc.js"></script>
+<script src="core/io/tttr_csv.js"></script>
+<script src="core/io/tttr.js"></script>
+<script src="core/correlation/tttr2xfcs.js"></script>
+<script src="core/correlation/point.js"></script>
+<script src="core/workers/correlate.worker.js"></script>
+<script src="scripts/correlate_view.js"></script>
+<script src="scripts/tooltips.js"></script>
+<script src="scripts/fitpro_ui.js"></script>
+<script src="scripts/profiles.js"></script>
 
 <script type="text/javascript">
 //Updates models from custom_models

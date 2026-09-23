@@ -163,7 +163,20 @@ function define_form(){
 
 			
 
-			if (param['calc'] == false){
+			if (param['calc'] == false && param['derived'] == true){
+				//Derived from other parameters (e.g. A2 = 1 - A1): shown, not set.
+				id = fit_obj.order_list[i]
+				var value = typeof se_derived_value === 'function' ? se_derived_value(id, fit_obj.objId_sel.param) : parseFloat(param['value'])
+				var paramLabel = document.createElement('label');
+				paramLabel.setAttribute("class", "label_st_calc");
+				paramLabel.innerHTML = param['alias'];
+				createform.appendChild(paramLabel);
+				var paramLabel = document.createElement('label');
+				paramLabel.setAttribute("class", "label_st_calc");
+				paramLabel.setAttribute("title", "Calculated so that the amplitudes sum to one");
+				paramLabel.innerHTML = value.toFixed(3);
+				createform.appendChild(paramLabel);
+			}else if (param['calc'] == false){
 				
 				var paramLabel = document.createElement('label'); // Label of parameter
 				paramLabel.setAttribute("class", "label_st");
@@ -704,114 +717,7 @@ plt_obj.prepare_axis()
 
 
 
-function loadJSONFile(files) {
-    var input, file, fr;
-
-    if (typeof window.FileReader !== 'function') {
-      alert("The file API isn't supported on this browser yet.");
-      return;
-    }
-
-    
-    else if (!files[0]) {
-      alert("Please select a file before clicking 'Load'");
-    }
-    else {
-      file = files[0];
-      fr = new FileReader();
-      fr.onload = receivedText;
-      fr.readAsText(file);
-    }
-
-    function receivedText(e) {
-      let lines = e.target.result;
-      
-      if (fit_obj.objIdArr.length >0){
-      			fit_obj.fit_profile = JSON.parse(lines);
-				fit_obj.def_options = JSON.parse(JSON.stringify(fit_obj.fit_profile['def_options']))
-	
-				document.getElementById("diffNumSpecSpin").value  = fit_obj.def_options['Diff_species']
-				document.getElementById("tripNumSpecSpin").value = fit_obj.def_options['Triplet_species']
-				fit_obj.objId_sel.param = JSON.parse(JSON.stringify(fit_obj.fit_profile['param']))
-				document.getElementById("equation").value = fit_obj.fit_profile['equation']
-				document.getElementById("triplet").value = fit_obj.def_options['Triplet_eq']
-				document.getElementById("dimension").value = fit_obj.def_options['Dimen']
-				define_form()
-				//fit_obj.defineTable()
-				
-				alert('Profile Applied.')}
-		else{
-					alert("Please load in some data before applying a param profile.")} 
-    }
-  }
-
-
-document.getElementById('load_default_profile').onclick = function(event){
-	let input = document.createElement('input');
-  	input.type = 'file';
-
-  	input.onchange = _ => {
-    // you can use this method to get file and perform respective operations
-            let files =   Array.from(input.files);
-            loadJSONFile(files);
-        };
-  	input.click();
-
-}
-document.getElementById('save_default_profile').onclick = function(event){
-		if (fit_obj.objIdArr.length >0){
-					fit_obj.fit_profile = {}
-					update_params()
-					fit_obj.fit_profile['param'] = JSON.parse(JSON.stringify(fit_obj.objId_sel.param))
-					fit_obj.fit_profile['def_options'] = JSON.parse(JSON.stringify(fit_obj.def_options))
-					fit_obj.fit_profile['equation'] = JSON.parse(JSON.stringify(fit_obj.eqn_selected))
-					var filename = prompt("What would you like to name the profile settings file?", "profile_settings.json");
-					  if (filename != null) {
-					    
-					    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(fit_obj.fit_profile));
-						var dlAnchorElem = document.getElementById('downloadAnchorElem');
-						dlAnchorElem.setAttribute("href",     dataStr     );
-						dlAnchorElem.setAttribute("download", filename);
-						dlAnchorElem.click();
-						alert('Profile saved to file, use the \'load\' button and select file to apply.')}
-					  }
-					
-		else{
-					alert("Please load in some data before saving a param profile.")}
-
-}
-document.getElementById('store_default_profile').onclick = function(event){
-		if (fit_obj.objIdArr.length >0){
-					fit_obj.fit_profile = {}
-					update_params()
-					fit_obj.fit_profile['param'] = JSON.parse(JSON.stringify(fit_obj.objId_sel.param))
-					fit_obj.fit_profile['def_options'] = JSON.parse(JSON.stringify(fit_obj.def_options))
-					fit_obj.fit_profile['equation'] = JSON.parse(JSON.stringify(fit_obj.eqn_selected))
-					
-					alert('Profile stored, use the \'Apply\' button to apply.')}
-		else{
-					alert("Please load in some data before storing a param profile.")}
-
-
-}
-document.getElementById('apply_default_profile').onclick = function(event){
-	if (fit_obj.objIdArr.length >0){
-				fit_obj.def_options = JSON.parse(JSON.stringify(fit_obj.fit_profile['def_options']))
-	
-				document.getElementById("diffNumSpecSpin").value  = fit_obj.def_options['Diff_species']
-				document.getElementById("tripNumSpecSpin").value = fit_obj.def_options['Triplet_species']
-				fit_obj.objId_sel.param = JSON.parse(JSON.stringify(fit_obj.fit_profile['param']))
-				document.getElementById("equation").value = fit_obj.fit_profile['equation']
-				document.getElementById("triplet").value = fit_obj.def_options['Triplet_eq']
-				document.getElementById("dimension").value = fit_obj.def_options['Dimen']
-				define_form()
-				//fit_obj.defineTable()
-				
-				alert('Profile Applied.')}
-		else{
-					alert("Please load in some data before applying a param profile.")}
-
-}
+// Fit profiles (Load / Save / Import / Export) are in scripts/profiles.js.
 
 
 
@@ -927,6 +833,11 @@ function react_to_eqn_change(){
 	react_to_fit_change()
 }
 function react_to_fit_change(){
+		//Keep values typed into the parameter table (of the curve shown so far)
+		//before the table is redrawn for the new settings.
+		if (fit_obj.objId_sel && document.querySelector('#form_sample input')){
+			try { update_params() } catch (e) {}
+		}
 
 		var selected =  parseInt(document.getElementById("modelFitSel").value);
 
@@ -941,8 +852,11 @@ function react_to_fit_change(){
 				
 				var tri =  parseInt(document.getElementById("triplet").value);
 				var dim =  parseInt(document.getElementById("dimension").value);
-				var diffNum = parseInt(document.getElementById("diffNumSpecSpin").value);
-				var tripNum = parseInt(document.getElementById("tripNumSpecSpin").value);
+				//One to three species and triplet states (typing can go outside the spin's range).
+				var diffNum = Math.min(3, Math.max(1, parseInt(document.getElementById("diffNumSpecSpin").value) || 1));
+				var tripNum = Math.min(3, Math.max(1, parseInt(document.getElementById("tripNumSpecSpin").value) || 1));
+				document.getElementById("diffNumSpecSpin").value = diffNum;
+				document.getElementById("tripNumSpecSpin").value = tripNum;
 				
 		
 				
@@ -987,7 +901,9 @@ function update_params(){
 //Reads values from inteface and updates the fit paramaters values in the current selected object.
     for (var i = 0; i < fit_obj.order_list.length; i++) {
             param = fit_obj.objId_sel.param[fit_obj.order_list[i]]
-            if (param['to_show'] == true && param['calc'] == false){
+            if (param['to_show'] == true && param['calc'] == false && param['derived'] == true){
+                param['vary'] = false //set by the model, never fitted directly
+            }else if (param['to_show'] == true && param['calc'] == false){
                 id = fit_obj.order_list[i]
                 param['value'] = document.getElementById(id+'_value').value
                 param['vary'] = document.getElementById(id+'_vary').checked
@@ -1025,16 +941,17 @@ document.getElementById('fitSelected_btn').onclick = function(event){
         if (row.id != ''){
             
             if(row.className == 'selected'){    
-                    for(t=0;t<num_of_plots;t++){
+                    //A selected group header: every curve in that group.
+                    for(t=0;t<fit_obj.objIdArr.length;t++){
                     
-                        if(fit_obj[t].parent_name == row.id)
+                        if(fit_obj.objIdArr[t].parent_name == row.id && items_to_fit.indexOf(t) == -1)
                             {items_to_fit.push(t)}
 
                     }
                 }
             }else{
                 
-                if(row.className == 'selected'){    
+                if(row.className == 'selected' && items_to_fit.indexOf(parseInt(row.cells[0].id)) == -1){    
                 items_to_fit.push(parseInt(row.cells[0].id))} 
 
             }

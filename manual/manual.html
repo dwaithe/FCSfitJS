@@ -10,7 +10,7 @@
     <meta name="author" content="">
     
 
-    <title>FoCuS-fit-JS Manual</title>
+    <title>FoCuS-Fit-JS Manual</title>
 
     <!-- Bootstrap core CSS -->
     <link href="../scripts/bootstrap.min.css" rel="stylesheet">
@@ -53,17 +53,19 @@
       <div class="col-md-6">
         <div class="blog-post">
 
-          <h1 class="blog-title">The FoCuS-fit-JS Manual</h1>
-          <p class="lead blog-description">The official manual for fitting FCS curves with FoCuS-fit-JS.</p>
+          <h1 class="blog-title">The FoCuS-Fit-JS Manual</h1>
+          <p class="lead blog-description">The official manual for correlating and fitting FCS curves with FoCuS-Fit-JS.</p>
           <img  src="images/screenshot.png"  class="img-fluid">
 
-      <p> Figure 1) Overview image of FoCuS-fit-JS Interface.</p>
-      <h3>FoCuS-fit-JS interface</h3>
-      <p> FoCuS-fit-JS is browser-based software designed for the bulk fitting of Fluorescence Correlation Spectroscopy (FCS) curves. This software closely mimics the functionality of the fitting interface in FoCuS-point[1] and FoCuS-scan[2] Python software. FoCuS-fit-JS does not correlate raw data, like FoCuS-point/scan, but does allow you to fit curves that have been correlated by these software or correlated using another software package or hardware correlator. Please see the Github page for an up-to-date list of supported file types. FoCuS-fit-JS is completely browser-based and so it can be run from any system which can run a conventional browser. </p>
+      <p> Figure 1) Overview image of the FoCuS-Fit-JS interface.</p>
+      <h3>FoCuS-Fit-JS interface</h3>
+      <p> FoCuS-Fit-JS is software for correlating and bulk fitting Fluorescence Correlation Spectroscopy (FCS) curves. It closely mimics the correlation and fitting of the FoCuS-point[1] and FoCuS-scan[2] Python software. It can correlate raw photon (time-tagged, TCSPC) files itself, and it can fit curves that have been correlated by FoCuS-point/scan, by another software package or by a hardware correlator. Please see the GitHub page for an up-to-date list of supported file types. FoCuS-Fit-JS runs in any modern browser, with nothing to install, and is also available as a desktop application. Your data never leaves your computer: files are read and processed locally.</p>
 
-<p>The FoCuS-fit-JS interface is divided up into three sections (Figure 1, A-C). There is the area where files are imported and the fit and model parameters organised (A, Fit controls). There is the main plot area for the FCS curves, their models and the accompanying residuals (B, Main Plot Window. Whereas for organising the data, and for controlling which data gets plotted, there is Data Viewer Window (C, Data Viewer Window).</p>
+<p>The interface is divided into four panels (Figure 1, A-D). The Correlation panel (A) correlates raw photon files. The Fit Controls panel (B) is where correlated files are imported and the model and its parameters are set. The Main Plot (C) shows the FCS curves, their fitted models and the residuals. The Data Viewer (D) organises the data and controls which data are plotted. The Correlation, Fit Controls and Data Viewer panels can be minimised with the arrow button in their title bar, to give the plot more room.</p>
 <p>
-FoCuS-fit-JS has been designed to make it as easy as possible to process and analyze large amounts of data. The following manual describes the functionality of the interface as well as providing background into the models which are currently available to fit the data with. If you have any questions or suggestions, please raise an issues here: <a href="https://github.com/dwaithe/FCSfitJS/issues">issues</a></p>
+Files can be loaded with the 'Choose Files' buttons, by clicking the icon in the middle of the plot before any data are loaded, or by dragging them anywhere onto the page. Dropped files go to the right place: correlated curves (.sin, .fcs, .csv) to the fitter, photon files (.pt3, .ptu, .pt2, .spc, .asc and time-tag .csv) to the correlator, and fit profiles (.json) to the profile import.</p>
+<p>
+Most areas have a small '?' button, which gives a short description of the controls next to it. FoCuS-Fit-JS has been designed to make it as easy as possible to process and analyse large amounts of data. This manual describes the functionality of the interface and gives background on the models available to fit the data. Lag times are in milliseconds (ms) throughout. If you have any questions or suggestions, please raise an issue here: <a href="https://github.com/dwaithe/FCSfitJS/issues">issues</a></p>
 
       </div>
       </div>
@@ -71,11 +73,12 @@ FoCuS-fit-JS has been designed to make it as easy as possible to process and ana
 <div class="col-md-2 col-sm-offset-1 blog-sidebar">
           <div class="sidebar-module sidebar-module-inset">
             <h4>About</h4>
-            FoCuS-fit-JS is a javascript browser based software for fitting correlated FCS (Fluorescence Correlation Spectroscopy) curves.</p>
+            <p>FoCuS-Fit-JS is javascript software for correlating raw photon data and fitting correlated FCS (Fluorescence Correlation Spectroscopy) curves.</p>
           </div>
                 <div class="sidebar-module">
                   <h4>Sections</h4>
                   <ol class="list-unstyled">
+                    <li><a href="#correlation">Correlation</a></li>
                     <li><a href="#import">File Import and Fitting Parameters</a></li>
                     <li><a href="#plot">Main Plot Window</a></li>
                     <li><a href="#viewer">Data Viewer</a></li>
@@ -88,7 +91,7 @@ FoCuS-fit-JS has been designed to make it as easy as possible to process and ana
                   <ol class="list-unstyled">
                     <li><a href="https://github.com/dwaithe/FCSfitJS">GitHub Repository</a></li>
                     <li><a href="https://dwaithe.github.io/FCSfitJS/">Link to software</a></li>
-                    <li><a href="https://github.com/dwaithe/FCSfitJShttps://dwaithe.github.io/home/">Author's homepage</a></li>
+                    <li><a href="https://dwaithe.github.io/home/">Author's homepage</a></li>
                     <li><a href="https://twitter.com/dwaithe">Author's Twitter</a></li>
                    
                   </ol>
@@ -100,13 +103,41 @@ FoCuS-fit-JS has been designed to make it as easy as possible to process and ana
 
     <div class="container-fluid">
 
-      
+      <div class="row">
+        <div class="col-md-3">
+          <img  src="images/Correlation.png" class="img-fluid" alt="The Correlation panel"><br>
+          <p>
+           Figure 2) Correlation panel detail.
+          </p>
+        </div>
+
+<div class="col-md-5 blog-main">
+<a name="correlation"></a>
+<h3>Correlation</h3>
+<p>
+<strong>1</strong>) Raw photon files are loaded with the 'Choose Files' button in the Correlation panel (A), or by dragging them onto the page. The supported formats are PicoQuant .pt3, .ptu and .pt2, Becker &amp; Hickl .spc, .asc, and the FoCuS time-tag .csv format. Several files can be chosen at once.<br>
+<strong>2</strong>) The files are read and correlated in the background, one at a time, using the photon arrival-time correlator of Wahl, Gregor, Patting and Enderlein [4], as in FoCuS-point. The name of the file being processed is shown below the button, with a progress bar while it is read and correlated, and the number of photon records and curves added when it is finished. Large files (millions of photons) take a few seconds.<br>
+<strong>3</strong>) Each file gives an autocorrelation curve for every channel that recorded photons, and a cross-correlation curve for every pair of channels, in both directions. They are added to the Data Viewer (D) under 'point FCS', named after the file, e.g. <i>myfile_CH1_CH1_Auto_Corr</i> and <i>myfile_CH1_CH2_Cross_Corr</i>, and can be fitted like any other curve. Autocorrelation curves carry the count rate, so that the counts per molecule (cpm) are calculated when they are fitted, and cross-correlation curves carry the coincidence value (CV, Equation 3).<br>
+<strong>4</strong>) 'Correlation settings' opens the settings of the correlator. They are the same as in FoCuS-point, and are read when the files are chosen:
+</p>
+<ul>
+<li><b>Ncasc start</b>, <b>Ncasc end</b> and <b>Nsub</b> set the lag times. The correlator calculates <i>Nsub</i> lag times per cascade, and the spacing of the lag times doubles from one cascade to the next, giving quasi-logarithmic lag times. <i>Ncasc end</i> is the number of cascades (with the defaults, 25 cascades of 6 lags), and so sets the longest lag time. Cascades below <i>Ncasc start</i> are not calculated: their lags are left out of the correlation (shown as G(τ) = −1), which can save time for very long recordings.</li>
+<li><b>Decay bin (ch)</b> is the bin width, in TCSPC channels, of the photon decay (micro-time) histogram calculated for each channel.</li>
+<li><b>Gate from (ch) / to (ch)</b> apply lifetime gating (time-gated FCS): only photons whose micro-time, in TCSPC channels, is inside this window are correlated. Leave them empty to use all photons. Gated curves are grouped separately in the Data Viewer, labelled with the gate.</li>
+<li><b>FoCuS-point legacy binning</b>: see below.</li>
+</ul>
+<p>
+<strong>FoCuS-point legacy binning.</strong> To reach long lag times, the correlator merges photons into coarser time bins at every cascade, and each bin should carry the total weight (number of photons) of the photons in it. The original MATLAB code did this with MATLAB's <i>unique</i> function, which up to MATLAB R2013a returned the <i>last</i> occurrence of each value. FoCuS-point uses the Python equivalent, <i>numpy.unique</i>, which returns the <i>first</i> occurrence (as MATLAB has done since R2013a). As a result, FoCuS-point moves some weight between neighbouring bins and loses part of the last bin, which slightly distorts the correlation at longer lag times, where many photons share a bin. FoCuS-Fit-JS sums the photons in each bin directly, as the original algorithm intended; this has been checked against a direct (brute-force) calculation of the binned correlation. The difference is usually small (for example up to about 0.01-0.02 in G(τ) at long lag times on a typical measurement), but can be larger for sparse or synthetic data.<br>
+Tick <b>FoCuS-point legacy binning</b> to reproduce FoCuS-point's results exactly instead, e.g. to compare with results obtained earlier with FoCuS-point. Leave it unticked for new analyses.
+</p>
+</div>
+</div>
 
       <div class="row">
         <div class="col-md-3">
           <img  src="images/Fitcontrols.png" class="img-fluid"><br>
           <p>
-           Figure 2) Fit controls detail.
+           Figure 3) Fit controls detail.
           </p>
 
         </div>
@@ -122,16 +153,16 @@ FoCuS-fit-JS has been designed to make it as easy as possible to process and ana
 <p>
 
 
-<strong>1</strong>) Previously correlated data files, can be loaded int FoCuS-fit-JS software using the 'Choose Files' button. Loaded files will appear in the Data Viewer on the right-hand side (<strong>C</strong>). <br>  
-<strong>2</strong>) The first drop-down box (with Equation 1A as default) refers to which diffusion equation to apply and the method in which the axial diffusion component is handled when fitting a 3D diffusion equation. The second drop-down box, describes which of the two triplet state equations to use, either 'no triplet' or 'Triplet Eq. 2A' or 'Triplet Eq. 2B'. The final dropdown box sets whether 2D or 3D diffusion is used. N.B. More details about the equations are described in Diffusion coefficient calculation section of this manual.  <br>  
-<strong>3</strong>) Once the equations have been chosen the number of diffusing species and triplet states can be selected in the next row of interface controls (3) in both cases.   <br>  
-<strong>4</strong>) Every correlated curve has fit parameters associated with it. To view the parameters of any of the correlated data, select it from the drop-down list 'Display model parameters for data'. When this data-file is selected in this list its parameters will appear below.  <br>  
-<strong>5</strong>) When clicked, the button marked 'Current' fits a curve to the selected data-file using the parameters depicted in (<strong>8</strong>). Whereas, the button marked 'All' will fit all of the correlation functions loaded in the data-series box (<strong>C</strong>) with the parameters currently shown in (<strong>8</strong>). The button marked 'Only highlighted' will fit those data-files that have been highlighted in the data-series box (<strong>C</strong>) with the displayed parameters.  <br>  
-<strong>6</strong>) The 'Fit from' and 'to' fields refer to time range which will be fit and is linked to the grey bar limits which are shown in the plot area (<strong>8</strong>).<br>  
-<strong>7</strong>) For complicated experiments, where multiple fit parameters are changed from the defaults, it can be useful to save the fit profile to make it straight-forward to repeat the experiment. During a single session this can be done through using the ‘store’ button to save the currently used settings, and the ‘apply’ button to apply them. If the settings will be used for subsequent experiments it can be useful to write them to a file and store on the clients computer, do this by using the ‘save’ button and then later loading them through using the ‘load’ button. <br>  
-<strong>8</strong>) This section contains the parameters that are fit as well as the controls that control the fitting. The parameters that are visible are linked to the equation options that have been selected using the menus in (2-3).  (<strong>9</strong>) The left-hand column specifies the variable name of this fit parameter. (<strong>10</strong>) During the fitting each variable will be initiated at the value specified in the ‘Init’ column. During fitting those parameters that have the 'vary' check box <strong>(11)</strong> checked will be estimated by the fit algorithm within the ranges specified by the 'min'  <strong>(12)</strong> and 'max'  (<strong>13</strong>) boxes which are specified for each parameter.<br>  
+<strong>1</strong>) Previously correlated data files (.sin, .fcs and FoCuS .csv files) can be loaded into FoCuS-Fit-JS using the 'Choose Files' button, or by dragging them onto the page. Loaded files will appear in the Data Viewer on the right-hand side (<strong>D</strong>). <br>  
+<strong>2</strong>) The first drop-down box (with Equation 1A as default) sets which diffusion equation to apply, and how the axial diffusion component is handled when fitting a 3D diffusion equation. The second drop-down box sets which of the two triplet state equations to use: 'no triplet', 'Triplet Eq 2A' or 'Triplet Eq 2B'. The third drop-down box sets whether 2D or 3D diffusion is used. N.B. More details about the equations are given in the Diffusion coefficient calculation section of this manual.  <br>  
+<strong>3</strong>) Once the equations have been chosen, the number of diffusing species (Diff. species) and triplet states can be set, from one to three in both cases.   <br>  
+<strong>4</strong>) Every correlated curve has fit parameters associated with it. To view the parameters of any of the curves, select it from the drop-down list 'Display model parameters for data'. Its parameters will appear in the table below (<strong>8</strong>).  <br>  
+<strong>5</strong>) The button marked 'Current' fits the curve selected in (<strong>4</strong>), starting from the parameters shown in (<strong>8</strong>). The button marked 'All' fits all of the curves listed in (<strong>4</strong>), that is all loaded curves that pass the Data filter of the Data Viewer (<strong>D</strong>), with the parameters currently shown in (<strong>8</strong>). The button marked 'Only highlighted' fits the curves that are highlighted (selected) in the Data Viewer (<strong>D</strong>) with the displayed parameters. 'All' and 'Only highlighted' copy the displayed parameters (initial values, vary, min and max) to each curve they fit, replacing its own. <br>  
+<strong>6</strong>) The 'Fit from' and 'to' fields set the range of lag times (ms) which will be fitted. The range is linked to the green vertical lines shown on the plot and to the Fit Slider Range below the plot (<strong>C</strong>), and can be changed with any of them.<br>  
+<strong>7</strong>) For complicated experiments, where many fit parameters are changed from the defaults, it can be useful to save the fit profile, to make it straightforward to repeat the analysis. A profile is the model (equation, triplet, 2D/3D, number of species and triplet states) together with the parameter table (initial values, vary, min and max). 'Save' keeps the current profile in the browser (or the desktop application) on this computer, and 'Load' applies it again, also in a later session. 'Export' saves the profile to a .json file, to keep or to share with others, and 'Import' applies a profile from such a file (a profile file can also be dragged onto the page). A profile is applied to the curve shown in (<strong>4</strong>); use 'All' or 'Only highlighted' to fit other curves with it. Profiles saved by earlier versions of FoCuS-fit-JS can still be imported.<br>  
+<strong>8</strong>) This table contains the parameters that are fitted, and the controls for the fitting. The parameters shown depend on the options selected in (2-3).  (<strong>9</strong>) The left-hand column gives the name of the parameter. (<strong>10</strong>) Each parameter starts the fit at the value in the 'Init' column; after a fit, this column shows the fitted value. The parameters that have the 'Vary' check box <strong>(11)</strong> ticked are estimated by the fit algorithm, within the range given by 'Min' <strong>(12)</strong> and 'Max' (<strong>13</strong>); the others are held at their 'Init' value. Some values, such as N (FCS) and cpm, are calculated from the fit and have no controls. The meaning of the parameters is given in the Diffusion coefficient calculation section.<br>  
 
-The parameters for the data-series, or the raw plot data can be exported to the clipboard (<strong>14</strong>) or saved to a file (<strong>15)</strong>) using these buttons. If data is specifically highlighted in the Data Viewer box (<strong>C</strong>) it alone will be copied and not all the data in the data series. <br> 
+The fitted parameters, or the plotted data with their fitted models, can be copied to the clipboard with the 'Copy' buttons (<strong>14</strong>), to paste into a spreadsheet, or exported to a .csv file with the 'Export' buttons (<strong>15</strong>). 'Param' gives one row per fitted curve with its name, the model, the fit range and the fitted parameters; 'Plot Data' gives the lag times (ms) with the data and fitted model of each curve. If curves are highlighted in the Data Viewer (<strong>D</strong>), only those are copied or exported, otherwise all of them are. <br> 
 </p>
 </div>
 </div>
@@ -140,7 +171,7 @@ The parameters for the data-series, or the raw plot data can be exported to the 
         <div class="col-md-3">
            <img  src="images/MainPlot.png" class="img-fluid"><br>
           <p>
-           Figure 3) Main plot detail.
+           Figure 4) Main plot detail.
           </p>
         </div>
 
@@ -148,13 +179,13 @@ The parameters for the data-series, or the raw plot data can be exported to the 
 <br>
 <a name="plot"></a>
 <h2>Main Plot Window</h2>
-1) Above the plot window is a Navigation Toolbar. The tools on the toolbar allow manipulation of the plotted correlation functions. The 'Zoom/Scaling' buttons allows the user to zoom in and out of the visualisations and controls how the plot can be moved. By clicking the 'Both' option (default) the plot, when mainpulated with the mouse will expand and contract, and move in both the x-axis and y-axis. If 'Vertical' is selected then the plot will scale and zoom only in the y-axis. Similarly, if the 'Horizontal' option is selected the plot can only be manipulated in the x-axis. This options allow the user to easily zoom and scale plots, especially when the amplitudes of the curves vary drammatically. Click 'Reset' to remove any previous movement or zoom transformation, click 'Zoom in' to expand the plot in the display by 10%, click 'Zoom out' to shrink the plot conversely by 10%. Alternatively, Zoom actions can be performed by rolling the mouse button either forwards or backwards <br>  
-2) This is the main plot window. The data-files which has been checked in the Data Viewer (C) will appear here along with the corresponding fit function if these particular data-files have been fitted and their parameters estimated. To move the plotted curves, 'left-click-and-hold' with the mouse as you reposition the plot. <br>
-3) This correponds to the blue vertical bars on the blot and represents limits being applied to any fiting operation. To move this limits please use the Fit slider Range (6) or manually type in values in (A - 6).
-4) dark-grey/black circles present datapoints from each imported curve.
-5) The red continuous function represents the curve generated from fitting a model to the data.
-6) By clicking and dragging on it is possible to restrict or increase the region being fit, as depicted by the blue vertical limits shown by (3).  <br>  
-7) This plot window displays the residuals calculated from the fitting procedure for each of the plotted data-files.<br>  
+<strong>1</strong>) This is the main plot window. The curves that are checked in the Data Viewer (<strong>D</strong>) appear here, along with their fitted model if they have been fitted. The dark-grey circles are the data points of each curve, and the red lines are the fitted models. Curves that are highlighted in the Data Viewer are drawn in blue, with their fitted model in orange, on top of the others. Click a data point to highlight its curve in the Data Viewer (Ctrl-click, or Command-click on MacOS, to add or remove curves). The plot grows or shrinks to fit the window.<br>
+<strong>2</strong>) To zoom, roll the mouse wheel over the plot. To zoom along one axis only, roll the wheel over that axis. To move the plot, click and drag it.<br>
+<strong>3</strong>) The two green vertical lines are the limits of the range that is fitted. Drag them on the plot to change the range, or use the Fit Slider Range (<strong>6</strong>) or the 'Fit from' and 'to' fields of the Fit Controls (<strong>B</strong>).<br>
+<strong>4</strong>) The toolbar below the plot: 'Reset view' shows all the data, and 'Fit to limits' zooms to the data between the fit limits. The magnifier buttons zoom in and out along the lag time axis (X) or the G(τ) axis (Y), like the mouse wheel.<br>
+<strong>5</strong>) 'Plot' and 'Residuals' save the main plot or the residuals plot as a PNG image, as shown on screen.<br>
+<strong>6</strong>) The Fit Slider Range: drag its handles to restrict or increase the range being fitted, shown by the green lines (<strong>3</strong>).<br>
+<strong>7</strong>) This plot shows the residuals of the fit for each of the plotted, fitted curves, on the same lag time axis as the main plot.<br>
 
 
 </div>
@@ -164,7 +195,7 @@ The parameters for the data-series, or the raw plot data can be exported to the 
         <div class="col-md-3">
           <img  src="images/Dataviewer.png" class="img-fluid"><br>
            <p>
-           Figure 3) Data Viewer detail.
+           Figure 5) Data Viewer detail.
           </p>
         </div>
 
@@ -173,13 +204,13 @@ The parameters for the data-series, or the raw plot data can be exported to the 
 <a name="viewer"></a>
 <h2>Data Viewer Window</h2>
 
-<strong>1</strong>) The Data Viewer panel contains all the data-files which can be plotted and fit using the FoCuS-fit-js software. The data-files, each representing an input recording are grouped by input file type (i.e. .fcs files). To plot a data-file correlation function, check the box associated with each name in the list, followed by clicking the 'Plot Checked Data’ button (<strong>3</strong>).  Checked files will be plotted. Highlighting is different to checking. Highlighting files will affect the processing of the data-files whereas checking only affects the plotting.  <br>  
+<strong>1</strong>) The Data Viewer lists all the curves that can be plotted and fitted. The curves are grouped by input file type (e.g. .fcs files) or source (e.g. point FCS for correlated photon files). To plot a curve, tick the box next to its name and click the 'Plot Checked Data' button (<strong>3</strong>). Highlighting is different to checking: highlighting a curve selects it for processing (fitting, copying, clearing and removing), and shows it in blue on the plot, whereas checking only affects the plotting. The buttons in the title bar make the text of the list larger or smaller, widen the panel towards the plot to read long names, and minimise the panel.<br>  
 
-<strong>2</strong>) This set of check boxes represent the different correlation channels to be included or hidden in the data-series box, enabling them or not for plotting or fitting. CH1 refers to 1st channel, CH2 refers to the 2nd channel, CH12 refers to the cross-correlation with respect to the 1st channel to the 2nd and the CH21 represents the alternate cross-correlation function.  <br>  
+<strong>2</strong>) The Data filter shows or hides curves by channel, in the Data Viewer, the plot and the fitting lists, enabling them or not for plotting or fitting. 'ac' lists the autocorrelations: CH1 refers to the first channel, CH2 to the second, and so on. 'cc' lists the cross-correlations: CH12 is the cross-correlation of the first channel with the second, and CH21 the alternate cross-correlation. Only the channels present in the loaded data are listed.<br>  
 
-<strong>3</strong>) Clicking 'Plot Checked data' will plot all of the data in the list (1). To check all data in the list (1) click the 'check all’ button. To uncheck all checked data click the 'check all' button a second time.  The 'Clear Fit Data All/Highlighted' will clear all parameters which have been estimated during fitting or will clear those of only the highlighted data-files should any be highlighted.    <br>  
-<strong>Tip: There are certain actions that can be performed on highlighted data. To highlight data, left-click and select multiple data-file names by using the 'shift' key or the 'ctrl' (windows) or 'command' key (MacOS). </strong> <br>   
-<strong>Tip: To select all the data-files of a given type, click it's group header (e.g. .fcs files) </strong><br>  
+<strong>3</strong>) 'Plot Checked Data' plots all the checked curves in the list (1). To check all the curves in the list, click 'Check All'; click it a second time ('Check None') to uncheck them all. 'Clear Fit Data All/highlighted' clears the fitted models and parameters of the highlighted curves, or of all curves if none are highlighted, and 'Remove Data All/highlighted' removes the highlighted curves (or all curves) from the software. Both are also available by right-clicking the list.<br>  
+<strong>Tip: Certain actions are performed on highlighted data. To highlight a curve, click its name; to highlight several, use the 'shift' key for a range or the 'ctrl' (Windows) or 'command' (MacOS) key. Curves can also be highlighted by clicking them on the plot.</strong> <br>   
+<strong>Tip: To select all the curves of a given type, click its group header (e.g. .fcs files).</strong><br>  
 
  <br>  
 
@@ -187,7 +218,7 @@ The parameters for the data-series, or the raw plot data can be exported to the 
 <a name="equations"></a>
 <h3>Diffusion coefficient calculation </h3>
 <p>
-FoCuS-fit-JS has a number of options for configuring the equation that is used to fit the calculated correlation function. Within FoCuS-fit-JS, it is possible to fit an equation with either 2D or 3D diffusion equations with between one to three diffusion components. There is also the option to include, one to three triplet states in the equation also (although 'no triplet 'is the default). Triplet state equations are used to model the cases when the fluorophores under investigation have dark-states that can be induced by the imaging regime. If present it is normal to correct for triplet states in the diffusion equation, due to the impact they have on the overall correlation curve. The overall equation for analyzing the correlation function is</p>
+FoCuS-Fit-JS has a number of options for configuring the equation that is used to fit the calculated correlation function. Within FoCuS-Fit-JS, it is possible to fit an equation with either 2D or 3D diffusion equations with between one to three diffusion components. There is also the option to include, one to three triplet states in the equation also (although 'no triplet 'is the default). Triplet state equations are used to model the cases when the fluorophores under investigation have dark-states that can be induced by the imaging regime. If present it is normal to correct for triplet states in the diffusion equation, due to the impact they have on the overall correlation curve. The overall equation for analyzing the correlation function is</p>
 
 <span class="displayed">
   
@@ -206,7 +237,15 @@ where τ represents time, O<sub>f</sub> represents the offset (normally zero), G
 
 </span>
 <p>
-and between one and three diffusing species are included using the Ds parameter. For the case D<sub>s</sub> = 1, A<sub>1</sub> = 1, else ∑D<sub>s</sub> A<sub>k</sub> = 1 and this parameter k=1 serves to establish how the amplitude is composed of the different diffusing species. τ<sub>xyk</sub> is the lateral diffusion rate coefficient and represents the time taken for the diffusing species to move laterally through the illumination area. α is the anomalous factor which is important for compensating for when the diffusion kinetics are non-idea. For ideal diffusion, the anomalous factor = 1.0 whereas if, for example, Continuous Wave STED depletion is used this factor can drop towards 0.0 unless time-gating is employed. A similar factor is not included for the z-dimension at this time as anomalous diffusion from conventional STED illumination is only potent in the z-axis. For studying cases of 3D diffusion, FoCuS-fit-JS has two different equations at its disposal: 
+and between one and three diffusing species are included using the Ds parameter. For the case D<sub>s</sub> = 1, A<sub>1</sub> = 1, else ∑D<sub>s</sub> A<sub>k</sub> = 1 and this parameter k=1 serves to establish how the amplitude is composed of the different diffusing species.</p>
+<p>
+<strong>Species amplitudes.</strong> In FoCuS-Fit-JS, as in FoCuS-point, A<sub>2</sub> is calculated from the other amplitudes so that they always sum to one: with two species A<sub>2</sub> = 1 − A<sub>1</sub>, and with three species A<sub>2</sub> = 1 − A<sub>1</sub> − A<sub>3</sub>. A<sub>1</sub> (and A<sub>3</sub>) are fitted, within their Min and Max (0 to 1 by default); A<sub>2</sub> is shown in the parameter table as a calculated value, without Init, Vary, Min or Max. With one species A<sub>1</sub> is always 1. When two or three species are chosen, A<sub>1</sub> (and A<sub>3</sub>) start at 0.5 (two species) or 1/3 each (three species) with Vary ticked, and the transit times of the species start at different values (τ<sub>xy1</sub> = 0.01 ms, τ<sub>xy2</sub> = 0.1 ms, τ<sub>xy3</sub> = 1 ms) so that the fit can separate them; values that you have set yourself are kept. With three species, keep A<sub>1</sub> + A<sub>3</sub> ≤ 1 so that A<sub>2</sub> is not negative.</p>
+<p>
+Note that the amplitudes are fractions of the correlation amplitude, not of the number of molecules: each species contributes in proportion to its number of molecules times the square of its brightness (A<sub>k</sub> ∝ N<sub>k</sub>·q<sub>k</sub><sup>2</sup>). The amplitudes equal the molecular fractions only if the species are equally bright.</p>
+<p>
+<strong>Changes to earlier versions.</strong> The version of FoCuS-fit-JS used in the original publication (Nature Photonics, 2021, DOI <a href="https://doi.org/10.1038/s41566-021-00876-x">10.1038/s41566-021-00876-x</a>) used a ratio instead: A<sub>1</sub>, A<sub>2</sub> and A<sub>3</sub> were each set in the parameter table and divided by their sum during the fit (A<sub>k</sub>/∑A). In that implementation the amplitudes were rescaled one after another, each using the already rescaled values, so they did not sum exactly to one. The current version uses FoCuS-point's method described above instead, so fits with two or three species can differ from those made with that earlier version; single-species fits are unaffected. The default starting values for two and three species, and showing A<sub>2</sub> as a calculated value, are also new in this version.</p>
+<p>
+τ<sub>xyk</sub> is the lateral diffusion rate coefficient and represents the time taken for the diffusing species to move laterally through the illumination area. α is the anomalous factor which is important for compensating for when the diffusion kinetics are non-idea. For ideal diffusion, the anomalous factor = 1.0 whereas if, for example, Continuous Wave STED depletion is used this factor can drop towards 0.0 unless time-gating is employed. A similar factor is not included for the z-dimension at this time as anomalous diffusion from conventional STED illumination is only potent in the z-axis. For studying cases of 3D diffusion, FoCuS-Fit-JS has two different equations at its disposal: 
 </p> 
 <span class="displayed">
   <img src="images/11_CodeCogsEqn.gif" class="eqn" style="width: 49.63ex">
@@ -220,7 +259,7 @@ and between one and three diffusing species are included using the Ds parameter.
 
 </span>
 <p>
-τ<sub>zk</sub> is the transit time in the axial dimension of each species. The reason you might use the second G<sub>3</sub>D equation is that in ideal cases τ<sub>z</sub> is related to τ<sub>xy</sub> through some constant factor (AR) and so it is desirable to just find AR rather than trying to learn τ<sub>z</sub> that is dependent on τ. The anomalous factor is not applied to the calculation of τ<sub>z</sub> as often the dominant dimension of diffusion is in the lateral dimension and so the contribution of the anomalous factor in the axial-dimension is considered to be trivial. Finally, FoCuS-fit-JS offers two triplet equations [3], </p>
+τ<sub>zk</sub> is the transit time in the axial dimension of each species. The reason you might use the second G<sub>3</sub>D equation is that in ideal cases τ<sub>z</sub> is related to τ<sub>xy</sub> through some constant factor (AR) and so it is desirable to just find AR rather than trying to learn τ<sub>z</sub> that is dependent on τ. The anomalous factor is not applied to the calculation of τ<sub>z</sub> as often the dominant dimension of diffusion is in the lateral dimension and so the contribution of the anomalous factor in the axial-dimension is considered to be trivial. Finally, FoCuS-Fit-JS offers two triplet equations [3], </p>
 <span class="displayed">
   <img src="images/13_CodeCogsEqn.gif" class="eqn" style="width: 40.63ex">
   <span class="eqno">(2A)</span>
@@ -235,10 +274,12 @@ and between one and three diffusing species are included using the Ds parameter.
 </span>
 
 <p>
-The fitting itself in FoCuS-fit-JS is performed using a Levenberg-Marquardt algorithm implemented in Javascript (<a href="https://github.com/mljs/levenberg-marquardt">https://github.com/mljs/levenberg-marquardt</a>). In addition to the parameters derived directly from fitting the diffusion equations mentioned above there are also some other parameters which are indirectly calculated by which are equally useful.
-With the above models it is possible to calculate the diffusion coefficient with knowledge of the detection beam radius and the measured transit time using: D<sub>k</sub>=ω<sub>xy</sub><sup>2</sup>/4.τ<sub>xyk</sub>, where D<sup>k</sup> is the diffusion coefficient (μm<sup>2</sup>.s<sup>-1</sup>) of species k and ω<sub>xy</sub> is the lateral beam radius (μm). The lateral beam radius can be calculated from the beam FWHM with: ω<sub>xy</sub>= FWHM/√(2.In(2)). Furthermore, the diffusion coefficient can also be calculated from the axial transit time measurement with D<sub>k</sub>=ω<sub>z</sub><sup>2</sup>/4.τ<sub>zk</sub>  where  ω<sub>z</sub>=FWHM<sub>z</sub>/√(2.In(2)) and FWHMz  is the FWHM in the axial direction. </p>
+The other fit parameters are: the offset O<sub>f</sub> ('offset'); the amplitude G<sub>N</sub>(0) ('GN0'), from which the number of molecules in the focus, N (FCS) = 1/G<sub>N</sub>(0), and the counts per molecule (cpm, kHz), the count rate divided by N, are calculated; the lateral and axial transit times τ<sub>xy</sub> and τ<sub>z</sub> ('txy', 'tz', in ms), the aspect ratio AR and the anomalous factor α ('alpha') of each species; and the triplet amplitude B (Equation 2A) or fraction T (Equation 2B) and triplet time τ<sub>T</sub> ('tauT', in ms) of each triplet state.</p>
 <p>
-To assist in the calculation and interpretation of cross-correlation data FoCuS-fit-JS also offers coincidence analysis through:
+The fitting itself in FoCuS-Fit-JS is performed using a Levenberg-Marquardt algorithm implemented in Javascript (<a href="https://github.com/mljs/levenberg-marquardt">https://github.com/mljs/levenberg-marquardt</a>). In addition to the parameters derived directly from fitting the diffusion equations mentioned above there are also some other parameters which are indirectly calculated by which are equally useful.
+With the above models it is possible to calculate the diffusion coefficient with knowledge of the detection beam radius and the measured transit time using: D<sub>k</sub>=ω<sub>xy</sub><sup>2</sup>/4.τ<sub>xyk</sub>, where D<sup>k</sup> is the diffusion coefficient (μm<sup>2</sup>.s<sup>-1</sup>) of species k, ω<sub>xy</sub> is the lateral beam radius (μm) and τ<sub>xyk</sub> is in seconds (the fitted transit times are in ms, so divide them by 1000 first). The lateral beam radius can be calculated from the beam FWHM with: ω<sub>xy</sub>= FWHM/√(2.ln(2)). Furthermore, the diffusion coefficient can also be calculated from the axial transit time measurement with D<sub>k</sub>=ω<sub>z</sub><sup>2</sup>/4.τ<sub>zk</sub>  where  ω<sub>z</sub>=FWHM<sub>z</sub>/√(2.ln(2)) and FWHMz  is the FWHM in the axial direction. </p>
+<p>
+To assist in the calculation and interpretation of cross-correlation data FoCuS-Fit-JS also offers coincidence analysis through:
 </p>
 <span class="displayed">
   <img src="images/15_CodeCogsEqn.gif" class="eqn" style="width: 30.63ex">
@@ -274,6 +315,7 @@ where ACA<sub>01</sub> is the amplitude ratio of the first channel with respect 
 [1] Waithe D., Clausen P. M., Sezgin E. Eggeling C., 2016. FoCuS-point: software for STED fluorescence correlation and time-gated single photon counting <br>
 [2] Waithe D., Schneider F., Chojnacki J., Clausen M.P. , Dilip Shrestha 2,  Bernardino de la Serna, J., Eggeling C., 2018. Optimized processing and analysis of conventional confocal microscopy generated scanning FCS data.<br>
 [3] Haustein, E. and Schwille, P., 2004. Fluorescence correlation spectroscopy: an introduction to its concepts and applications. Biophysics Textbook Online.<br>
+[4] Wahl M., Gregor I., Patting M., Enderlein J., 2003. Fast calculation of fluorescence correlation data with asynchronous time-correlated single-photon counting. Optics Express 11, 3583-3591.<br>
 </p>
 
           

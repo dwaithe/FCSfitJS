@@ -106,7 +106,7 @@ class FittingManager{
           name.push(art)
 
           initialValues.push(parseFloat(this.objId_sel.param[art]['value']))
-          if (this.objId_sel.param[art]['vary'] == true){
+          if (this.objId_sel.param[art]['vary'] == true && this.objId_sel.param[art]['derived'] !== true){
            
             var minv = parseFloat(this.objId_sel.param[art]['minv'])
             var maxv = parseFloat(this.objId_sel.param[art]['maxv'])  
@@ -126,8 +126,10 @@ class FittingManager{
       var minarrL = objId.autotime.map(function(v){return Math.abs(v-xpos1)})
       var minarrR = objId.autotime.map(function(v){return Math.abs(v-xpos2)})
       
-      var minL = 99999
-      var minR = 99999
+      //Infinity, not a large number: a fit limit can be further than that
+      //from every point (e.g. limits set by another, longer curve).
+      var minL = Infinity
+      var minR = Infinity
       var indx_L = -1
       var indx_R = -1
       
@@ -249,8 +251,8 @@ copy_plot_data(items_in_list){
   var minarrL = this.objIdArr[items_in_list[0]].autotime.map(function(v){return Math.abs(v-xpos1)})
   var minarrR = this.objIdArr[items_in_list[0]].autotime.map(function(v){return Math.abs(v-xpos2)})
   
-  var minL = 99999
-  var minR = 99999
+  var minL = Infinity //see fitToParameters
+  var minR = Infinity
   var indx_L = -1
   var indx_R = -1
   
