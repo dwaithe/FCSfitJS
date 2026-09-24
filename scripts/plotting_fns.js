@@ -36,9 +36,10 @@ class PlotManager{
       this.plot_data[this.plot_data.length-2] = [[[x0],[y0]],[[x0],[y0]],[[x0],[y1]],[[x0],[y1]],[[x0],[y1]]]
       this.plot_data[this.plot_data.length-1] = [[[x1],[y0]],[[x1],[y0]],[[x1],[y1]],[[x1],[y1]],[[x1],[y1]]]
 
-       d3.select('d3fc-group')
-          .node()
-          .requestRedraw();
+       //The lines are on their own canvas over the plot (scripts/plot_cache.js):
+       //only it is redrawn, not the data.
+       if (typeof fitproDrawLimits === 'function') fitproDrawLimits();
+       else d3.select('d3fc-group').node().requestRedraw();
 
 
     }
@@ -332,27 +333,10 @@ function themeColor(name){
     return getComputedStyle(document.documentElement).getPropertyValue(name).trim()
 }
 
-const pointSeries = fc
-    .seriesCanvasPoint()
-    .crossValue(d => d[0])
-    .mainValue(d => d[1])
-    //.type(d3.symbolSquare)
-
-    .decorate(context => {
-            var c = themeColor('--plot-point');
-            context.fillStyle = c;
-            context.strokeStyle = c;
-    });
-const pointSeriesHigh = fc
-    .seriesCanvasPoint()
-    .crossValue(d => d[0])
-    .mainValue(d => d[1])
-    //.type(d3.symbolSquare)
-    .decorate(context => {
-            var c = themeColor('--plot-point-high');
-            context.fillStyle = c;
-            context.strokeStyle = c;
-    });
+//Points: one path per curve (scripts/fast_points.js), much faster than
+//fc.seriesCanvasPoint with many curves.
+const pointSeries = fitproPointSeries('--plot-point');
+const pointSeriesHigh = fitproPointSeries('--plot-point-high');
 
 const lineSeries = fc
     .seriesCanvasLine()
@@ -373,14 +357,8 @@ const lineSeriesHigh = fc
 
 
 
-const verticalLine = fc
-    .seriesCanvasLine()
-    .crossValue(d => d[0])
-    .mainValue(d => d[1])
-    .decorate(context => {
-            context.strokeStyle = themeColor('--plot-marker');
-            context.lineWidth = 4;
-        });
+//The fit-limit lines: drawn over the plot by fitproDrawLimits (scripts/plot_cache.js).
+const verticalLine = fitproLimitSeries();
 
 const gridLineSeries = fc
     .annotationSvgGridline()
