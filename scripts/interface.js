@@ -345,19 +345,16 @@ function populate_list_view(response_data){
 $(document).on("click", ".down", function() {
 	//To expand and contract the table rows.
   	
-  	rowIndex = $(this).parent().index('tr')
-
-    rows =   document.getElementById('table').rows;
-    rowId =  rows[rowIndex].id
-    endidx = parent_dict[rowId]+rowIndex
-    //console.log('ebd',rowIndex+1,endidx)
-    cells =  rows[rowIndex].cells[1];
-    rows[rowIndex+1].style.display = ((rows[rowIndex+1].style.display == '') ? cells.innerHTML = "►" : cells.innerHTML = "▼");
+  	//The header's row in the Data Viewer table. (Not $(this).parent().index('tr'),
+  	//which counts every table row on the page, so other tables shifted it.)
+  	var rowIndex = this.parentElement.rowIndex
+    var rows = document.getElementById('table').rows;
+    var endidx = parent_dict[rows[rowIndex].id]+rowIndex
+    //The arrow gives the group's state: collapse it (►) or expand it (▼).
+    var collapse = this.innerHTML == "▼"
+    this.innerHTML = collapse ? "►" : "▼"
     for (var i = rowIndex+1; i < endidx; i++) {
-    	row = rows[i];
-    	
-    	row.style.display = ((row.style.display == '') ? 'none' : '');
-    	
+    	rows[i].style.display = collapse ? 'none' : '';
     }
 		
 
