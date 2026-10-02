@@ -267,6 +267,7 @@ function fitproSetLimit (which, tau) {
 
 var FITPRO_PHOTON_EXT = ['pt3', 'ptu', 'pt2', 'spc', 'asc']
 var FITPRO_CURVE_EXT = ['sin', 'fcs', 'csv']
+var FITPRO_SCAN_EXT = ['lsm', 'czi', 'tif', 'tiff', 'msr', 'lif']
 
 function fitproExtension (name) {
   var dot = name.lastIndexOf('.')
@@ -286,6 +287,7 @@ async function fitproLoadFiles (fileList) {
   var curves = []
   var photons = []
   var profiles = []
+  var scans = []
   var unknown = []
   for (var i = 0; i < files.length; i++) {
     var f = files[i]
@@ -294,11 +296,12 @@ async function fitproLoadFiles (fileList) {
     else if (ext === 'csv' && await fitproIsTimeTagCsv(f)) photons.push(f)
     else if (FITPRO_CURVE_EXT.indexOf(ext) >= 0) curves.push(f)
     else if (ext === 'json') profiles.push(f)
+    else if (FITPRO_SCAN_EXT.indexOf(ext) >= 0 && window.openScanFiles) scans.push(f)
     else unknown.push(f.name)
   }
   if (unknown.length) {
     alert('These files are not a type that can be loaded:\n' + unknown.join('\n') +
-      '\n\nCorrelated curves: .sin .fcs .csv\nPhoton files: .pt3 .ptu .pt2 .spc .asc, time-tag .csv\nFit profiles: .json')
+      '\n\nCorrelated curves: .sin .fcs .csv\nPhoton files: .pt3 .ptu .pt2 .spc .asc, time-tag .csv\nScanning FCS line scans: .lsm .czi .tif .msr .lif\nFit profiles: .json')
   }
   // open_file_imprt dispatches on the extension in lower case for .csv/.fcs.
   if (curves.length) open_file_imprt({ target: { files: curves } })
@@ -314,6 +317,7 @@ async function fitproLoadFiles (fileList) {
     }
     await window.correlatePhotonFiles(photons)
   }
+  if (scans.length) await window.openScanFiles(scans)
 }
 
 (function () {
@@ -521,6 +525,8 @@ function fitproFitPlotHeight () {
   var res = document.getElementById('residuals')
   var card = chart && chart.closest('.card')
   if (!chart || !res || !card) return false
+  // Not while the Photon data view hides the fit plot (it would measure 0).
+  if (chart.parentElement.classList.contains('photon-mode')) return false
   var chartH = chart.offsetHeight
   var resH = res.offsetHeight
   var chartTop = chart.getBoundingClientRect().top + window.scrollY

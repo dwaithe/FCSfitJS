@@ -547,6 +547,33 @@ input[type="checkbox"] { accent-color: #2FA348; }
   --bs-link-hover-color: #4cc466;
   --bs-link-hover-color-rgb: 76, 196, 102;
 }
+/* Main Plot view switch (Fit | Photon data), in the green header. */
+.fitpro-view-switch .btn { --bs-btn-padding-y: 0.05rem; --bs-btn-padding-x: 0.6rem; --bs-btn-font-size: 0.8rem;
+  color: #fff; border-color: rgba(255,255,255,0.7); }
+.fitpro-view-switch .btn.active, .fitpro-view-switch .btn:hover { background: #fff; color: #2FA348; border-color: #fff; }
+[data-bs-theme="dark"] .fitpro-view-switch .btn { color: #2FA348; border-color: #2FA348; }
+[data-bs-theme="dark"] .fitpro-view-switch .btn.active, [data-bs-theme="dark"] .fitpro-view-switch .btn:hover { background: #2FA348; color: #fff; }
+/* Photon data view: hide the fit plot while it is shown. */
+.card-body.photon-mode > :not(#photonView) { display: none !important; }
+/* Carpets view (scripts/carpet_view.js) */
+.card-body.carpets-mode > :not(#carpetView) { display: none !important; }
+.carpet-settings label { display: flex; flex-direction: column; margin-bottom: 0; }
+.carpet-settings input { width: 110px; }
+.carpet-head { margin-top: 4px; margin-bottom: 2px; }
+.carpet-ch .btn { --bs-btn-padding-y: 0; --bs-btn-padding-x: 0.5rem; --bs-btn-font-size: 0.75rem; }
+#carpetProfile.carpet-profile { width: 110px; flex: none; }
+#carpetCorr.carpet-chart { width: auto; min-width: 0; cursor: ns-resize; }
+#carpetRaw.carpet-chart { cursor: crosshair; }
+.photon-chart { width: 100%; }
+.photon-section-head { margin-bottom: 2px; }
+.photon-gate-row input { width: 80px; }
+.photon-legend .sw { display: inline-block; width: 14px; height: 3px; margin: 0 4px 3px 8px; vertical-align: middle; }
+.photon-stats { width: auto; --bs-table-bg: transparent; }
+.photon-stats th, .photon-stats td { padding: 1px 8px; text-align: right; }
+.photon-stats th:first-child, .photon-stats td:first-child { text-align: left; }
+.photon-chart .x-axis .domain, .photon-chart .y-axis .domain,
+.photon-chart .x-axis .tick path, .photon-chart .y-axis .tick path { stroke: var(--plot-axis) !important; }
+.photon-chart .x-axis .tick text, .photon-chart .y-axis .tick text { fill: var(--plot-axis-text) !important; }
 /* Square panels. */
 .card { --bs-card-border-radius: 0; --bs-card-inner-border-radius: 0; }
 .fitpro-model-row .fitpro-help-btn, .fitpro-help-btn.btn-sm { flex: 0 0 auto; padding: 0.1rem 0.4rem; font-size: 0.8rem; }
@@ -649,6 +676,8 @@ $.get(url).done(data => {
             </div>
           </details>
           <div id="correlate_status" class="small text-body-secondary mt-1" aria-live="polite"></div>
+          <label for="scan_files" class="form-label mt-2">Scanning FCS line scans (.lsm .czi .tif .msr .lif):</label>
+          <input type="file" class="form-control form-control-sm" id="scan_files" multiple accept=".lsm,.czi,.tif,.tiff,.msr,.lif">
           </div>
         </div>
   </div>
@@ -757,7 +786,14 @@ $.get(url).done(data => {
 
        <div class="main-panel">
         <div class="card border-secondary mb-3">
-        <div class="card-header text-warning">Main Plot</div>
+        <div class="card-header text-warning d-flex align-items-center"><span class="panel-title">Main Plot</span>
+          <!-- Fit | Photon data | Carpets (scripts/photon_view.js, scripts/carpet_view.js) -->
+          <div class="btn-group btn-group-sm ms-auto fitpro-view-switch" role="group" aria-label="Main Plot view">
+            <button type="button" class="btn active" data-view="fit" aria-pressed="true">Fit</button>
+            <button type="button" class="btn" data-view="photon" aria-pressed="false">Photon data</button>
+            <button type="button" class="btn" data-view="carpets" aria-pressed="false">Carpets</button>
+          </div>
+        </div>
         <div class="card-body">
           <div id="splash" class="empty-state">
             <button type="button" class="empty-state-open" id="splashOpenBtn" title="Choose files" aria-label="Choose files"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg></button>
@@ -792,6 +828,132 @@ $.get(url).done(data => {
           <div id="uploadsts"></div>
 
            <div id="residuals" style="width:100%;height:200px;left-padding:24px"></div>
+          <!-- Carpets view (scripts/carpet_view.js): scanning FCS carpets, correlated column by column -->
+          <div id="carpetView" hidden>
+            <input type="file" id="carpetFiles" multiple accept=".lsm,.czi,.tif,.tiff,.msr,.lif" hidden>
+            <div class="empty-state" id="carpetEmpty">
+              <h2>No scanning FCS data yet</h2>
+              <p>Open line scans (.lsm, .czi, .tif, .msr or .lif) here or in the Correlation panel, or drag them onto the page, to see their intensity and correlation carpets.</p>
+              <button type="button" class="btn btn-outline-primary btn-sm" id="carpetOpenBtn">Open scan files&hellip;</button>
+            </div>
+            <div id="carpetContent" hidden>
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <label for="carpetSel" class="text-nowrap mb-0">Carpet:</label>
+                <select class="form-control form-control-sm" id="carpetSel"></select>
+                <button type="button" class="btn btn-outline-primary btn-sm text-nowrap" id="carpetOpenBtn2">Open&hellip;</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm fitpro-help-btn" data-help="carpets" aria-label="Carpets help">?</button>
+              </div>
+              <div class="d-flex flex-wrap align-items-end gap-2 mb-1 small carpet-settings">
+                <label>Line frequency (Hz)<input type="number" class="form-control form-control-sm" id="carpetHz" min="0" step="any"></label>
+                <label>Pixel dwell (&micro;s)<input type="number" class="form-control form-control-sm" id="carpetUs" min="0" step="any"></label>
+                <label title="Points per level of the multiple-tau correlator (even; FoCuS-scan uses 30)">m<input type="number" class="form-control form-control-sm" id="carpetM" min="2" step="2" value="30"></label>
+                <label title="Pixels summed around each column before correlating">Spatial binning<input type="number" class="form-control form-control-sm" id="carpetBin" min="1" max="51" step="2" value="1"></label>
+                <label title="Lines summed for the count rate and N&amp;B statistics">Count window (lines)<input type="number" class="form-control form-control-sm" id="carpetInt" min="1" step="1" value="1"></label>
+                <button type="button" class="btn btn-outline-primary btn-sm" id="carpetCorrelate">Correlate</button>
+              </div>
+              <details class="small mb-1 carpet-crop" id="carpetCropBox" hidden>
+                <summary>Crop and intervals</summary>
+                <div class="d-flex flex-wrap align-items-end gap-2 mt-1 carpet-settings">
+                  <label>From (ms)<input type="number" class="form-control form-control-sm" id="carpetCropFrom" min="0" step="any"></label>
+                  <label>To (ms)<input type="number" class="form-control form-control-sm" id="carpetCropTo" min="0" step="any"></label>
+                  <label>First pixel<input type="number" class="form-control form-control-sm" id="carpetCropPx0" min="0" step="1"></label>
+                  <label>Last pixel<input type="number" class="form-control form-control-sm" id="carpetCropPx1" min="0" step="1"></label>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" id="carpetCropSel" title="Use the columns selected on the correlation carpet">Selected columns</button>
+                  <label title="Split the time range into this many carpets (1-20)">Intervals<input type="number" class="form-control form-control-sm" id="carpetCropN" min="1" max="20" step="1" value="1"></label>
+                  <button type="button" class="btn btn-outline-primary btn-sm" id="carpetCropGo">Crop</button>
+                </div>
+                <div class="text-body-secondary mt-1"><span id="carpetCropInfo"></span> Each interval becomes a new carpet in the list, correlated with the settings above.</div>
+              </details>
+              <div class="small text-body-secondary mb-1" id="carpetStatus" aria-live="polite"></div>
+              <div id="carpetResult" hidden>
+                <div class="d-flex align-items-center gap-3 small carpet-head">
+                  <span class="fw-semibold text-nowrap">Intensity carpet</span>
+                  <span class="text-body-secondary" id="carpetRawInfo"></span>
+                  <span class="text-body-secondary ms-auto text-nowrap">Drag a box to crop</span>
+                  <span class="photon-legend" id="carpetRawLegend"></span>
+                </div>
+                <div id="carpetRaw" class="photon-chart carpet-chart"></div>
+                <div class="d-flex align-items-center gap-3 small carpet-head">
+                  <span class="fw-semibold">Correlation carpet</span>
+                  <div class="btn-group btn-group-sm carpet-ch" id="carpetChSel" role="group" aria-label="Correlation shown">
+                    <button type="button" class="btn btn-outline-primary active" data-carpet="autoCH0" aria-pressed="true">CH1</button>
+                    <button type="button" class="btn btn-outline-primary" data-carpet="autoCH1" aria-pressed="false">CH2</button>
+                    <button type="button" class="btn btn-outline-primary" data-carpet="cross01" aria-pressed="false">CH1 &times; CH2</button>
+                  </div>
+                  <span class="text-body-secondary ms-auto">Drag up or down across the carpet to select columns</span>
+                </div>
+                <div class="d-flex carpet-corr-row">
+                  <div id="carpetCorr" class="photon-chart carpet-chart flex-grow-1"></div>
+                  <div id="carpetProfile" class="photon-chart carpet-chart carpet-profile" title="Counts per column"></div>
+                </div>
+                <div class="d-flex align-items-center gap-3 small carpet-head">
+                  <span class="fw-semibold">Selected columns</span>
+                  <span class="text-body-secondary" id="carpetSelInfo"></span>
+                </div>
+                <div id="carpetCurves" class="photon-chart carpet-chart"></div>
+                <div class="d-flex flex-wrap align-items-start gap-3 mt-1">
+                  <table class="table table-sm small mb-0 photon-stats" id="carpetStats"></table>
+                  <div class="ms-auto d-flex flex-column align-items-end gap-1 small">
+                    <div class="d-flex gap-1">
+                      <button type="button" class="btn btn-outline-primary btn-sm" id="carpetSendSel" disabled>Send selected columns to fit</button>
+                      <button type="button" class="btn btn-outline-primary btn-sm" id="carpetSendAll">Send all columns</button>
+                    </div>
+                    <div class="text-body-secondary" id="carpetSendStatus" aria-live="polite"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Photon data view (scripts/photon_view.js): decay, gating, intensity trace, statistics -->
+          <div id="photonView" hidden>
+            <div class="photon-empty empty-state" id="photonEmpty">
+              <h2>No photon data yet</h2>
+              <p>Correlate photon files (.pt3, .ptu, .pt2, .spc, .asc or time-tag .csv) in the Correlation panel, or drag them onto the page, to see their photon decay and intensity trace here.</p>
+            </div>
+            <div id="photonContent" hidden>
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <label for="photonFileSel" class="text-nowrap mb-0">File:</label>
+                <select class="form-control form-control-sm" id="photonFileSel"></select>
+                <button type="button" class="btn btn-outline-secondary btn-sm fitpro-help-btn" data-help="photonData" aria-label="Photon data help">?</button>
+              </div>
+              <div class="d-flex align-items-center gap-3 small photon-section-head">
+                <span class="fw-semibold">Photon decay</span>
+                <label class="mb-0"><input type="checkbox" id="photonLog" checked> Log scale</label>
+                <label class="mb-0"><input type="checkbox" id="photonNorm"> Normalise</label>
+                <span class="photon-legend ms-auto" id="photonLegend"></span>
+              </div>
+              <div id="photonDecay" class="photon-chart"></div>
+              <div class="d-flex flex-wrap align-items-center gap-2 mb-2 small photon-gate-row">
+                <span class="fw-semibold">Lifetime gate (TCSPC ch):</span>
+                <input type="number" class="form-control form-control-sm" id="photonGate0" step="1" placeholder="from" aria-label="Gate from">
+                <span>to</span>
+                <input type="number" class="form-control form-control-sm" id="photonGate1" step="1" placeholder="to" aria-label="Gate to">
+                <span class="text-body-secondary">or drag across the decay</span>
+                <span class="ms-auto">Gated curves:</span>
+                <button type="button" class="btn btn-outline-primary btn-sm" id="photonGateThis">This file</button>
+                <button type="button" class="btn btn-outline-primary btn-sm" id="photonGateAll">All files</button>
+              </div>
+              <div class="small text-body-secondary mb-2" id="photonGateStatus" aria-live="polite"></div>
+              <div class="d-flex align-items-center gap-3 small photon-section-head">
+                <span class="fw-semibold">Intensity trace</span>
+                <label class="mb-0">Bin
+                  <select class="form-control form-control-sm d-inline-block w-auto" id="photonBin">
+                    <option value="1">25 ms</option><option value="2">50 ms</option><option value="4">100 ms</option>
+                    <option value="10">250 ms</option><option value="20">500 ms</option><option value="40">1 s</option>
+                  </select>
+                </label>
+              </div>
+              <div id="photonTrace" class="photon-chart"></div>
+              <div class="d-flex flex-wrap align-items-start gap-3 mt-2">
+                <table class="table table-sm small mb-0 photon-stats" id="photonStats"></table>
+                <div class="ms-auto d-flex align-items-center gap-1 small">
+                  <span>Export:</span>
+                  <button type="button" class="btn btn-outline-primary btn-sm" id="photonExportDecay">Decay .csv</button>
+                  <button type="button" class="btn btn-outline-primary btn-sm" id="photonExportTrace">Trace .csv</button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
            
@@ -863,10 +1025,22 @@ $.get(url).done(data => {
 <script src="core/io/asc.js"></script>
 <script src="core/io/tttr_csv.js"></script>
 <script src="core/io/tttr.js"></script>
+<script src="core/io/tiff.js"></script>
+<script src="core/io/lsm.js"></script>
+<script src="core/io/czi.js"></script>
+<script src="core/io/msr.js"></script>
+<script src="core/io/lif.js"></script>
+<script src="core/io/scan.js"></script>
 <script src="core/correlation/tttr2xfcs.js"></script>
 <script src="core/correlation/point.js"></script>
+<script src="core/correlation/traces.js"></script>
+<script src="core/correlation/multipletau.js"></script>
+<script src="core/correlation/carpets.js"></script>
 <script src="core/workers/correlate.worker.js"></script>
+<script src="core/workers/scan.worker.js"></script>
 <script src="scripts/correlate_view.js"></script>
+<script src="scripts/photon_view.js"></script>
+<script src="scripts/carpet_view.js"></script>
 <script src="scripts/tooltips.js"></script>
 <script src="scripts/fitpro_ui.js"></script>
 <script src="scripts/plot_cache.js"></script>

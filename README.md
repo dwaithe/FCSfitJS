@@ -57,3 +57,17 @@ A few things to know when writing them:
 - The triplet, 2D/3D and number-of-species options do not apply to custom models, and are disabled while one is selected.
 
 By referring to the example and to the pointers in the 'custom_models.js' file it should be possible to add a new model with some basic JavaScript expertise. You may want to push your new model to the main branch (e.g. if publishing), or maintain your own fork with the model, either locally or online for others to use. After these steps, refresh the browser page and your equation will appear in the equation selection box.
+
+### Implementation notes
+
+FoCuS-fit-JS ports the Python tools FoCuS-point and FoCuS-scan to JavaScript. The ports reproduce the Python results (they are tested against reference outputs made by running the original Python code), with the following deliberate differences.
+
+**Scanning FCS: the last lags of the multiple-tau correlator.** Scanning-FCS carpets are correlated column by column with a multiple-tau correlator derived from the `multipletau` package (Paul Müller). The lag times are spaced quasi-logarithmically: after the first m lags, the intensity trace is repeatedly halved in time resolution (neighbouring points averaged), and m/2 more lags are computed at each level. For some trace lengths, the last level has too few points to compute its last lag. This happens when the number of lines N, rounded down to an even number, satisfies floor(N / 2^k) = m, where k = floor(log2(N / m)); that is about one line count in m (for m = 30: 240-247, 480-495, ..., 61440-63487 lines).
+
+- FoCuS-scan's autocorrelation then kept the full curve length. It left the last-but-one point unnormalised (a raw sum of products, often large and of either sign) and set the last point to 0. The cross-correlation of two channels was instead shortened, so the two curves no longer had the same length and two-channel files with such line counts could not be loaded.
+- FoCuS-fit-JS does what the original `multipletau` package does (and what FoCuS-scan's own cross-correlation already did): the calculation stops and the curve ends two lags early (the original package also drops the lag just before the one that cannot be computed). Every point returned is correctly normalised, and auto- and cross-correlations have the same lags. All other points are unchanged. For every other line count, the results are identical to FoCuS-scan's.
+
+**Scanning FCS: spatial binning.** Spatial binning adds up neighbouring pixels along the scanned line before each column is correlated, for more signal. FoCuS-scan added up one pixel too few, and not centred: with binning 3, column *i* was pixels *i*−1 and *i*, while the count rate and N&B brightness were still divided by 3 (so they came out at 2/3 of the true value; 4/5 with binning 5). Even values gave empty curves (2) or repeated the next odd value. FoCuS-fit-JS adds up the s pixels centred on each column (*i*−(s−1)/2 to *i*+(s−1)/2) and accepts odd values only (1, 3, 5, …). Binning 1 (no binning) is unchanged.
+
+**Scanning FCS: crop.** FoCuS-scan's crop applied the line and column range twice for two-channel TIFF files, so every interval after the first, and any column range not starting at pixel 0, came out wrong or empty (one-channel files and the other formats were correct). For .lsm files the default column range could stop at the number of lines rather than the number of pixels. FoCuS-fit-JS crops once, for every format, with all pixels by default.
+

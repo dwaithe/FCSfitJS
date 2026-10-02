@@ -108,6 +108,50 @@ var FITPRO_TOOLTIPS = {
       '<b>Export</b> saves it as a .csv file.</p>'
   },
 
+  photonData: {
+    title: 'Photon data',
+    html:
+      '<p>The photon data of each correlated photon file, as in FoCuS-point.</p>' +
+      '<ul>' +
+      '<li><b>Photon decay</b>: the micro-time histogram of each channel. Drag across it ' +
+      '(or type the limits) to set a lifetime gate, then <b>Gated curves</b> correlates ' +
+      'this file, or all files, using only the photons inside the gate and adds the ' +
+      'curves to the Data Viewer. Click the decay to clear the gate.</li>' +
+      '<li><b>Intensity trace</b>: the count rate of each channel over the measurement; ' +
+      'look for bleaching, drift or bright aggregates.</li>' +
+      '<li>The table gives the photons and mean count rate of each channel, the number ' +
+      'and brightness (N&amp;B) analysis and the coincidence value of each pair of channels.</li>' +
+      '</ul>' +
+      '<p>Switch back with <b>Fit</b> in the Main Plot title bar.</p>'
+  },
+
+  carpets: {
+    title: 'Carpets (scanning FCS)',
+    html:
+      '<p>Line scans correlated column by column, as in FoCuS-scan. Each column is ' +
+      'one position along the scanned line, followed over time.</p>' +
+      '<ul>' +
+      '<li><b>Line frequency</b> (lines scanned per second) and <b>pixel dwell</b> time: ' +
+      'filled in when the file suggests them; check them against your acquisition. ' +
+      '.lif files store their own. <b>m</b>: points per level of the multiple-tau ' +
+      'correlator. <b>Spatial binning</b>: pixels summed, centred on each column (odd). ' +
+      '<b>Count window</b>: lines summed for the count rate and N&amp;B.</li>' +
+      '<li><b>Intensity carpet</b>: counts along the line (up) over time (across); ' +
+      'two channels are shown in red (CH1) and green (CH2).</li>' +
+      '<li><b>Correlation carpet</b>: G(τ) of every column, each scaled to its own ' +
+      'maximum. The line on the right is the counts per column: a membrane shows as a peak. ' +
+      'Drag up or down across the carpet to select columns.</li>' +
+      '<li><b>Selected columns</b>: their curves (the mean in bold) and mean count rate, ' +
+      'N&amp;B and signal to noise.</li>' +
+      '<li><b>Crop and intervals</b>: drag a box on the intensity carpet (or type the ' +
+      'times and pixels) to choose a time range and pixel range, split into 1-20 ' +
+      'intervals; each becomes a new carpet in the list, correlated with the same settings.</li>' +
+      '<li><b>Send selected columns to fit</b> (or all columns) adds one curve per ' +
+      'column, and per channel, to the Data Viewer, named ..._row_&lt;column&gt;_CH0_Auto_Corr.</li>' +
+      '</ul>' +
+      '<p>Switch back with <b>Fit</b> in the Main Plot title bar.</p>'
+  },
+
   dataFilter: {
     title: 'Data filter',
     html:
