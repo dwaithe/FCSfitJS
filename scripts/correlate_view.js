@@ -16,6 +16,16 @@
 
   var correlator = null
 
+  // Every correlated photon file, for the Photon data view
+  // (scripts/photon_view.js): { name, file, options, result }. result is the
+  // analysePoint result (decay histograms, intensity traces, statistics).
+  // The File is kept so the view can correlate it again with a lifetime gate.
+  var photonFiles = []
+  window.photonFiles = photonFiles
+  function announce () {
+    document.dispatchEvent(new CustomEvent('photonfileschanged'))
+  }
+
   function intValue (id) {
     var v = document.getElementById(id).value
     return v === '' ? null : parseInt(v, 10)
@@ -124,6 +134,7 @@
           else if (p.stage === 'correlating') showStatus(label, 'Correlating', p.fraction)
         })
         addCurves(file.name, result, options)
+        if (!options.gate) photonFiles.push({ name: file.name, file: file, options: options, result: result })
         added++
         showStatus(label, result.records.toLocaleString() + ' records, ' + result.curves.length + ' curves added')
       } catch (err) {
@@ -134,7 +145,40 @@
     input.disabled = false
     input.value = ''
     if (added && fit_obj.objIdArr.length > 0) refreshViews()
+    if (added) announce()
   }
+
+  /**
+   * Correlate photon files again with a lifetime gate and add the gated
+   * curves to the fitter (from the Photon data view).
+   * @param {Array<{file: File, options: object}>} entries from photonFiles
+   * @param {number[]} gate [from, to] micro-time, in TCSPC channels
+   * @param {function(string)} [onStatus] progress text
+   */
+  async function correlateGated (entries, gate, onStatus) {
+    if (!correlator) correlator = FocusCore.require('workers/correlate').createCorrelator(FocusCore)
+    var say = onStatus || function () {}
+    var added = 0
+    for (var k = 0; k < entries.length; k++) {
+      var e = entries[k]
+      var options = Object.assign({}, e.options, { gate: gate })
+      var prefix = (entries.length > 1 ? '(' + (k + 1) + '/' + entries.length + ') ' : '') + e.name + ': '
+      try {
+        var result = await correlator.correlate(e.file, options, function (p) {
+          say(prefix + (p.stage === 'correlating' ? 'correlating ' + Math.round(100 * p.fraction) + '%' : p.stage))
+        })
+        addCurves(e.name, result, options)
+        added++
+      } catch (err) {
+        say(prefix + 'error: ' + err.message)
+        alert('There was a problem correlating file: ' + e.name + '\n' + err.message)
+      }
+    }
+    if (added && fit_obj.objIdArr.length > 0) refreshViews()
+    say(added ? 'Gated curves added for ' + added + ' file' + (added > 1 ? 's' : '') + '.' : '')
+    return added
+  }
+  window.correlateGated = correlateGated
 
   input.addEventListener('change', function () { correlateFiles(input.files) })
   window.correlatePhotonFiles = correlateFiles

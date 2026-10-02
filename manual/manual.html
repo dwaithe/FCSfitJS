@@ -79,6 +79,8 @@ Most areas have a small '?' button, which gives a short description of the contr
                   <h4>Sections</h4>
                   <ol class="list-unstyled">
                     <li><a href="#correlation">Correlation</a></li>
+                    <li><a href="#photon">Photon data</a></li>
+                    <li><a href="#carpets">Carpets (scanning FCS)</a></li>
                     <li><a href="#import">File Import and Fitting Parameters</a></li>
                     <li><a href="#plot">Main Plot Window</a></li>
                     <li><a href="#viewer">Data Viewer</a></li>
@@ -135,9 +137,57 @@ Tick <b>FoCuS-point legacy binning</b> to reproduce FoCuS-point's results exactl
 
       <div class="row">
         <div class="col-md-3">
+          <img  src="images/PhotonData.png" class="img-fluid" alt="The Photon data view"><br>
+          <p>
+           Figure 3) Photon data view.
+          </p>
+        </div>
+
+<div class="col-md-5 blog-main">
+<a name="photon"></a>
+<h3>Photon data</h3>
+<p>
+The 'Photon data' button in the title bar of the Main Plot (C) switches the plot area to the photon data of the correlated photon files, as in FoCuS-point's 'Load TCSPC' tab; 'Fit' switches back.<br>
+<strong>1</strong>) Choose the file to show. Every photon file correlated in this session is listed, with its number of photons.<br>
+<strong>2</strong>) The photon decay: the histogram of the micro-times (arrival times after each excitation pulse, in TCSPC channels) of each channel, in bins of the 'Decay bin' of the Correlation settings. It can be shown on a log scale and normalised to the maximum of each channel.<br>
+<strong>3</strong>) Lifetime gate: drag across the decay (or type the limits, in TCSPC channels) to select a window of micro-times; click the decay to clear it. 'Gated curves: This file' correlates the file again using only the photons inside the gate, and adds the curves to the Data Viewer (D) in their own group, labelled with the gate. 'All files' does the same for every photon file, with the same gate. Time-gating is used, for example, to remove scattered light or to improve the resolution in STED-FCS.<br>
+<strong>4</strong>) The intensity trace: the count rate (kHz) of each channel over the measurement, in bins of 25 ms to 1 s. Look for photobleaching, drift or bright aggregates, which distort the correlation.<br>
+<strong>5</strong>) For each channel: the number of photons and the duration of the trace, the mean count rate (kHz), and the brightness (kHz per molecule) and number of molecules from number and brightness (N&amp;B) analysis of the 25 ms intensity bins. For each pair of channels, the coincidence value (CV, Equation 3).<br>
+<strong>6</strong>) Export the decay or the intensity trace (at the bin shown) as a .csv file.
+</p>
+</div>
+</div>
+
+      <div class="row">
+        <div class="col-md-3">
+          <img  src="images/Carpets.png" class="img-fluid" alt="The Carpets view"><br>
+          <p>
+           Figure 3b) Carpets view, with the columns of a membrane selected.
+          </p>
+        </div>
+
+<div class="col-md-5 blog-main">
+<a name="carpets"></a>
+<h3>Carpets (scanning FCS)</h3>
+<p>
+The 'Carpets' button in the title bar of the Main Plot (C) shows scanning FCS line scans, as in FoCuS-scan's 'Load And Correlate Data' tab. Open .lsm, .czi, .tif, .msr or .lif files with 'Open…', with 'Scanning FCS line scans' in the Correlation panel, or by dragging them onto the page. A line scan is a carpet: the same line scanned over and over, one row per scan. Each column (one position along the line) is correlated over time.<br>
+<strong>1</strong>) Choose the carpet. An .msr file lists its time series of more than 500 lines, and a .lif file its line-scan series.<br>
+<strong>2</strong>) Settings. The line frequency (lines scanned per second, Hz) and pixel dwell time (µs), as in FoCuS-scan's import dialog; they are filled in when the file suggests them, and .lif files store their own. m is the number of points per level of the multiple-tau correlator (even; 30 in FoCuS-scan), 'Spatial binning' the number of pixels summed, centred on each column (odd: 1, 3, 5, …), and 'Count window' the number of lines summed for the count rate and N&amp;B. Then 'Correlate'. The work is done in the background, so large files (e.g. 200,000 lines × 128 pixels × 2 channels) take up to a minute.<br>
+<strong>3</strong>) Intensity carpet: the counts along the line (up) over time (across). Two channels are shown in red (CH1) and green (CH2).<br>
+<strong>4</strong>) Correlation carpet: G(τ) of every column, each scaled to its own maximum (negative values shown as 0). For two channels, choose CH1, CH2 or their cross-correlation. The line on the right is the number of counts in each column: a membrane shows as a peak. Drag up or down across the carpet to select columns.<br>
+<strong>5</strong>) The curves of the selected columns (their mean in bold), and their mean count rate (kHz), N&amp;B number and brightness, and signal to noise.<br>
+<strong>6</strong>) 'Crop and intervals' (below the settings, once a carpet is correlated), as FoCuS-scan's crop tool: a time range (ms) and a range of pixels along the line. Drag a box on the intensity carpet to set both (click the carpet to clear it), type them, or use 'Selected columns' for the columns selected on the correlation carpet; split in time into 1 to 20 intervals. Each interval becomes a new carpet in the list, correlated with the same settings, e.g. to follow a measurement over time or to leave out a bleached start. Times and pixels are always those of the original file.<br>
+<strong>7</strong>) 'Send selected columns to fit' (or 'Send all columns') adds one curve per column to the Data Viewer (D), and for two channels also the second channel and the cross-correlation, named &lt;name&gt;_row_&lt;column&gt;_CH0_Auto_Corr (CH1_, CH01_), with the column's count rate, N&amp;B, signal to noise and coincidence value.<br>
+Differences from FoCuS-scan are listed in the README (implementation notes).
+</p>
+</div>
+</div>
+
+      <div class="row">
+        <div class="col-md-3">
           <img  src="images/Fitcontrols.png" class="img-fluid"><br>
           <p>
-           Figure 3) Fit controls detail.
+           Figure 4) Fit controls detail.
           </p>
 
         </div>
@@ -171,7 +221,7 @@ The fitted parameters, or the plotted data with their fitted models, can be copi
         <div class="col-md-3">
            <img  src="images/MainPlot.png" class="img-fluid"><br>
           <p>
-           Figure 4) Main plot detail.
+           Figure 5) Main plot detail.
           </p>
         </div>
 
@@ -195,7 +245,7 @@ The fitted parameters, or the plotted data with their fitted models, can be copi
         <div class="col-md-3">
           <img  src="images/Dataviewer.png" class="img-fluid"><br>
            <p>
-           Figure 5) Data Viewer detail.
+           Figure 6) Data Viewer detail.
           </p>
         </div>
 
